@@ -33,6 +33,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -73,7 +74,7 @@ public class HttpReader
     // it guesses the wrong encoding and later detects the mistake, it will store the
     // new encoding in "encodingInOut[0]" and will return null.
 
-    private static List<QdmlFragment> readAndParse(URL url, String[] encodingInOut) throws IOException
+    public static List<QdmlFragment> readAndParse(URL url, String[] encodingInOut) throws IOException
     {
         // Open the connection and get the encoding if one hasn't already been specified.
         URLConnection connection = url.openConnection();
@@ -103,7 +104,7 @@ public class HttpReader
     // encoding is different, this method will copy the new encoding into "encodingInOut[0]"
     // and will then immediately return null.
     
-    private static List<QdmlFragment> readAndParseFromReader(InputStreamReader reader, String[] encodingInOut) 
+    public static List<QdmlFragment> readAndParseFromReader(Reader reader, String[] encodingInOut) 
         throws IOException
     {
         QdmlParser parser = new QdmlParser();

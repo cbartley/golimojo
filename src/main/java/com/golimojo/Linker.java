@@ -54,6 +54,51 @@ public class Linker
         _pageDataStore = pageDataStore;
     }
 
+    // ---------------------------------------- Linker getExampleHtml
+
+    public static String getExampleHtml()
+    {
+        String[] exampleLines = new String[]
+        {
+            "... Rhodes spends a great ",
+            "deal of time at the <a href='#'>Cavendish Laboratory</a> at Cambridge, the marvelous site where so ",
+            "many discoveries were made in the early 20th Century. Giants walk the pages of ",
+            "Rhodes' book: men like J.J. Thomson, Ernest Rutherford, Niels Bohr, <a href='#'>Robert ",
+            "Oppenheimer</a>, Enrico Fermi, Leo Szilard, Leslie Groves, Vannevar Bush, and Albert ",
+            "Einstein all make important appearances throughout the book. ...",
+            ""
+        };
+        
+        StringBuffer sbExample = new StringBuffer();
+        for (String line : exampleLines)
+        {
+            sbExample.append(line);
+            sbExample.append("\n");
+        }
+        
+        return sbExample.toString();    
+    }
+
+    // ---------------------------------------- Linker addLinksToHtmlFragmentText
+
+    public String addLinksToHtmlFragmentText(String htmlFragmentText)
+    {
+        try
+        {
+            Reader reader = new StringReader(htmlFragmentText);
+            String[] encodingInOut = new String[] {"UTF-8"};
+            List<QdmlFragment> fragmentList = HttpReader.readAndParseFromReader(reader, encodingInOut);
+            fragmentList.add(0, new QdmlStartTagFragment("BODY", ""));  // rude hack
+            fragmentList = addLinksToHtmlDocument(fragmentList);
+            return QdmlParser.join(fragmentList);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
     // ---------------------------------------- Linker addLinksToHtmlDocument
 
     public List<QdmlFragment> addLinksToHtmlDocument(List<QdmlFragment> fragmentList, String baseUrl)
@@ -79,7 +124,7 @@ public class Linker
     
     // ---------------------------------------- Linker addLinksToHtmlDocument
 
-    public List<QdmlFragment> addLinksToHtmlDocument(List<QdmlFragment> fragmentList)
+    private List<QdmlFragment> addLinksToHtmlDocument(List<QdmlFragment> fragmentList)
     {   
         boolean inBody = false;
         boolean inStyle = false;

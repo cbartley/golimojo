@@ -63,8 +63,8 @@ public class MissingLinkProxyServlet extends HttpServlet
     {
         String localName = request.getLocalName();
         int localPort = request.getLocalPort();
-        String proxyPageUrl = "http://" + localName + ":" + localPort + "/servlet/missing-link";
-        
+        String proxyPageUrl = "http://" + localName + ":" + localPort + "/proxy.html";
+
         String pathInfo = URLDecoder.decode(request.getQueryString(), "UTF-8");
         String urlArg = "http://"+ pathInfo;
         
@@ -159,18 +159,18 @@ public class MissingLinkProxyServlet extends HttpServlet
     {
         String[] fragments = splitAnchorAtHrefUrl(anchorText);
         
+        // Proxy the URL if we can.
         if (fragments != null)
         {
             String url = fragments[1];
             String proxyUrl = createProxyUrl(url, baseUrl);
             if (proxyUrl != null)
             {
-                String proxiedAnchorText = fragments[0] + proxyUrl + fragments[2];
-                return proxiedAnchorText;
+                anchorText = fragments[0] + proxyUrl + fragments[2];
             }
         }
         
-        // Couldn't proxy the URL, just target it at the top window instead.
+        // Proxied or not, we want to target it to the top window.
         String prefix = anchorText.substring(0, anchorText.length() - 1);
         String suffix = anchorText.substring(anchorText.length() - 1);
         assert suffix.equals(">");
@@ -233,7 +233,6 @@ public class MissingLinkProxyServlet extends HttpServlet
             assert splitAnchorAtHrefUrl("<a href=\"/intl/en/ads/\">")[1].equals("/intl/en/ads/");
         }
 
-    
     // ---------------------------------------- MissingLinkProxyServlet createProxyUrl
 
     private static String createProxyUrl(String url, String baseUrl)

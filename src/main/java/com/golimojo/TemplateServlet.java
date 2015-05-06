@@ -30,6 +30,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.golimojo;
 
 import java.io.*;
+import java.net.URLDecoder;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -40,7 +41,12 @@ import javax.servlet.http.*;
 public class TemplateServlet extends HttpServlet 
 {
     
-    // ---------------------------------------- MissingLinkProxyServlet doGet
+    // ---------------------------------------- TemplateServlet instance variables
+    
+    private static String our_exampleBeforeHtml = "";
+    private static String our_exampleAfterHtml = "";
+    
+    // ---------------------------------------- TemplateServlet doGet
     
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException
@@ -55,9 +61,20 @@ public class TemplateServlet extends HttpServlet
             String templateText = readFile(pathToRequestedTemplateFile);
             Dictionary<String, String> subDict = new Hashtable<String, String>();
             String queryString = request.getQueryString();
-            subDict.put("queryString", queryString != null ? queryString : "null");
+            if (queryString != null)
+            {
+                subDict.put("queryString", queryString);
+                subDict.put("queryStringUnescaped", URLDecoder.decode(queryString, "UTF-8"));
+            }
+            else
+            {
+                subDict.put("queryString", "null");
+                subDict.put("queryStringUnescaped", "null");
+            }
             subDict.put("localName", request.getLocalName());
             subDict.put("localPort", Integer.toString(request.getLocalPort()));
+            subDict.put("exampleBeforeHtml", our_exampleBeforeHtml);
+            subDict.put("exampleAfterHtml", our_exampleAfterHtml);
             String finalText = applySubstitutions(templateText, subDict);
             out.print(finalText);
         }
@@ -67,7 +84,21 @@ public class TemplateServlet extends HttpServlet
         }
     }
     
-    // ---------------------------------------- MissingLinkProxyServlet applySubstitutions
+    // ---------------------------------------- TemplateServlet setSharedExampleBeforeHtml
+    
+    public static void setSharedExampleBeforeHtml(String exampleBeforeHtml)
+    {
+        our_exampleBeforeHtml = exampleBeforeHtml;
+    }
+    
+    // ---------------------------------------- TemplateServlet setSharedExampleAfterHtml
+    
+    public static void setSharedExampleAfterHtml(String exampleAfterHtml)
+    {
+        our_exampleAfterHtml = exampleAfterHtml;        
+    }
+    
+    // ---------------------------------------- TemplateServlet applySubstitutions
     
     private static String readFile(String pathToFile) throws IOException
     {
@@ -85,7 +116,7 @@ public class TemplateServlet extends HttpServlet
         return sbText.toString();
     }
     
-    // ---------------------------------------- MissingLinkProxyServlet applySubstitutions
+    // ---------------------------------------- TemplateServlet applySubstitutions
 
     private static String applySubstitutions(String templateText, Dictionary<String, String> subDict)
     {

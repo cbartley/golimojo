@@ -39,6 +39,18 @@ import org.mortbay.util.InetAddrPort;
 
 public class Server {
 
+    // ---------------------------------------- Server main
+    
+    public static void main(String[] args) throws Exception
+    {
+        // Run the unit tests.
+        Tester tester = new Tester("L1TEST");
+        tester.runTests();
+
+        String articleTitlePath = "resource-root/article-titles-medium.txt";
+        start(8085, articleTitlePath);
+    }
+
     // ---------------------------------------- Server start
     
     protected static void start(int port, String articleTitlePath) throws Exception
@@ -53,6 +65,12 @@ public class Server {
         // Create the page linker.
         Linker linker = new Linker(pageDataStore);
         MissingLinkProxyServlet.setSharedLinker(linker);
+        
+        // Set up the example HTML.
+        String exampleBeforeHtml = Linker.getExampleHtml();
+        TemplateServlet.setSharedExampleBeforeHtml(exampleBeforeHtml);
+        String exampleAfterHtml = linker.addLinksToHtmlFragmentText(exampleBeforeHtml);
+        TemplateServlet.setSharedExampleAfterHtml(exampleAfterHtml);
 
         // Run level 2 tests.
         Tester tester = new Tester("L2TEST");
@@ -81,17 +99,4 @@ public class Server {
         server.start();
     }
 
-    // ---------------------------------------- Server main
-    
-    public static void main(String[] args) throws Exception
-    {
-        // Run the unit tests.
-        Tester tester = new Tester("L1TEST");
-        tester.runTests();
-
-        String articleTitlePath = "resource-root/article-titles-medium.txt";
-        start(8085, articleTitlePath);
-    }
-    
 }
-

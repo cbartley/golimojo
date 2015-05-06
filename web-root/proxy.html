@@ -42,6 +42,11 @@
                 padding-bottom: 3px;
             }
             
+            .topbar-content
+            {
+                overflow: hidden;
+            }
+            
             .sidebar
             {
                 border: solid darkgray 1px;
@@ -93,16 +98,18 @@
                 <tr>
                 
                     <td class="keystone">
-                        xxxx
+                        &nbsp;
                     </td>
                     
                     <td class="topbar">
-                        <div class="topbar-title">
-                            Golimojo Missing Link Proxy of 
-                            <a href="http://{{queryString}}">http://{{queryString}}</a>
-                        </div>
-                        <div class="topbar-subtitle">
-                            Note that forms and other interativity may not work correctly on this proxied page.
+                        <div class="topbar-content">
+                            <div class="topbar-title">
+                                Golimojo Missing Link Proxy of 
+                                <a href="http://{{queryString}}">http://{{queryStringUnescaped}}</a>
+                            </div>
+                            <div class="topbar-subtitle">
+                                Note that forms and other interativity may not work correctly on this proxied page.
+                            </div>
                         </div>
                     </td>
                     
@@ -111,7 +118,7 @@
                 <tr>
                 
                     <td class="sidebar">
-                        xxxxx
+                        &nbsp;
                     </td>
                     
                     <td class="content-area">
