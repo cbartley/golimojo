@@ -55,6 +55,7 @@ public class HttpReader
         String[] encodingInOut = new String[1];
         encodingInOut[0] = null;
 
+        long startTimeMs = System.currentTimeMillis();
         List<QdmlParser.QdmlFragment> fragmentList = readAndParse(url, encodingInOut);
         if (fragmentList == null)
         {
@@ -62,7 +63,9 @@ public class HttpReader
             // encoding in "encodingInOut[0]", so all we have to do is try again.
             fragmentList = readAndParse(url, encodingInOut);
         }
-               
+        long elapsedTimeMs = System.currentTimeMillis() - startTimeMs;
+        System.out.printf("### %s: elapsed time: %1.2f\n", HttpReader.class.getName(), (0.001 * elapsedTimeMs));
+
         if (fragmentList != null) return fragmentList;
     
         throw new IOException("Could not figure out encoding: " + urlString);
@@ -121,6 +124,7 @@ public class HttpReader
             }
             if (chInt == -1) break;
         }
+        
         return fragmentList;
     }
 

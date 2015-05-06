@@ -226,4 +226,12 @@ ul.examples li
     text-decoration: underline;
 }
 
-
+.explanatory-callout
+{
+    margin-right: 80px;
+    border: dotted black 1px;
+    background-color: whitesmoke;
+    padding: 3px;
+    font-family: sans-serif;
+    font-size: 0.8em;
+}

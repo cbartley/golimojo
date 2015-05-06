@@ -59,6 +59,8 @@ public class GetPageDataAjaxServlet extends GolimojoServlet
     public void customDoGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException
     {
+        long servletStartTimeMs = System.currentTimeMillis();
+
         // Get the target URL.
         String pathInfo = URLDecoder.decode(request.getQueryString(), "UTF-8");
         String urlArg = "http://"+ pathInfo;
@@ -87,6 +89,9 @@ public class GetPageDataAjaxServlet extends GolimojoServlet
         {
             out.close();
         }
+
+        long servletElapsedTimeMs = System.currentTimeMillis() - servletStartTimeMs;
+        System.out.printf("--- %s: elapsed time: %1.2f\n", this.getClass().getName(), (0.001 * servletElapsedTimeMs));
     }
     
     // ---------------------------------------- GetPageDataAjaxServlet generatePageTitleXml

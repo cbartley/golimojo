@@ -21,6 +21,7 @@
                 var strippedUrl = url.replace(/^http:\/\//, "");
                 var escapedStrippedUrl = escape(strippedUrl);
                 var proxyServletUrl = "http://{{serverName}}:{{serverPort}}/proxy.html?";
+                if (url.indexOf(proxyServletUrl) >= 0) return url;      // just say no to nested proxies
                 var proxyUrl = proxyServletUrl + escapedStrippedUrl;
                 return proxyUrl;
             }
@@ -38,7 +39,7 @@
                                 .replace(/"/g, "'");
                 return bookmarklet;
             }
-            
+
             function blockClick(event)
             {
                 // If there's a click message, then show it.
@@ -65,191 +66,6 @@
                                     .replace(/#clickMessage#/, clickMessage)
                                         .replace(/#bookmarklet#/, createBookmarklet());
                 document.write(html);
-            }
-
-            // ---------------------------------------- behavior framework
-        
-            function dumpError(e)
-            {
-                var lineList = [];
-                for (var id in e)
-                {
-                    var value = e[id];
-                    if (typeof(value) == "string")
-                    {
-                        var line = "[" + id + "]\t==> " + value;
-                        lineList.push(line);
-                    }
-                }
-                return lineList.join("\n");
-            }
-            
-            function typeCheck(obj, constructor)
-            {
-                if (obj == null) throw new Error("typeCheck: object was null!");
-                if (obj.constructor != constructor) throw new Error("typeCheck: type mismatch");
-                return obj;
-            }
-
-            function createThunk(fun, receiver, thunkName)
-            {
-                function thunk()
-                {
-                    try
-                    {
-                        return fun.apply(receiver, arguments);
-                    }
-                    catch (e)
-                    {
-                        alert(thunkName + " thunk error: " + dumpError(e));
-                        throw e;
-                    }
-                }
-                
-                return thunk;
-            }
-
-            function attachEventHandlers(elem, behavior)
-            {
-                for (var id in behavior)
-                {
-                    if (id.substring(0, 2) == "on")
-                    {
-                        elem[id] = createThunk(behavior[id], behavior, id);
-                    }
-                }
-            }
-
-            function attachBehavior(elem, behaviorBag, parentBehavior)
-            {
-                var behaviorName = elem.getAttribute("custom-behavior");
-                if (behaviorName == null) return null;
-                var behaviorConstructor = behaviorBag[behaviorName];
-                if (behaviorConstructor == null) return null;
-                var behavior = new behaviorConstructor(elem, parentBehavior);
-                attachEventHandlers(elem, behavior);
-                return behavior;
-            }           
-            
-            function recursiveAttachBehaviors(rootElem, behaviorBag, parentBehavior)
-            {
-                var behavior = attachBehavior(rootElem, behaviorBag, parentBehavior);
-                if (behavior != null)
-                {
-                    parentBehavior = behavior;
-                }
-                
-                var childNodes = rootElem.childNodes;
-                for (var i = 0; i < childNodes.length; i++)
-                {
-                    var childNode = childNodes[i];
-                    if (childNode.nodeType == 1)
-                    {
-                        recursiveAttachBehaviors(childNode, behaviorBag, parentBehavior);
-                    }
-                
-                }
-            }
-
-            // ---------------------------------------- class TabSet
-
-            function TabSet(elem, parentBehavior)
-            {
-                this.tabList = [];
-            }
-            
-            TabSet.prototype.registerTab = function (tab)
-            {
-                this.tabList.push(tab);
-            }
-            
-            TabSet.prototype.selectTab = function (tabToSelect)
-            {
-                tabToSelect.select();
-                for (var i = 0; i < this.tabList.length; i++)
-                {
-                    var tab = this.tabList[i];
-                    if (tab != tabToSelect)
-                    {
-                        tab.unselect();
-                    }
-                }
-            }
-
-            // ---------------------------------------- class Tab
-
-            function Tab(elem, parentBehavior)
-            {
-                this.elem = elem;
-                this.tabSet = typeCheck(parentBehavior, TabSet);
-                this.targetElem = document.getElementById(elem.getAttribute("custom-target-id"));
-                this.tabSet.registerTab(this);
-                
-                var queryString = elem.href.replace(/[^?]*/, "");
-                if (location.search == queryString)
-                {
-                    this.select();
-                }
-                else
-                {
-                    this.unselect();
-                }
-            }
-            
-            Tab.prototype.select = function ()
-            {
-                this.elem.className = this.elem.className.replace(/tab-unselected/, "tab-selected");
-                this.targetElem.className = this.targetElem.className.replace(/page-unselected/, "page-selected");          
-            }
-
-            Tab.prototype.unselect = function ()
-            {
-                this.elem.className = this.elem.className.replace(/tab-selected/, "tab-unselected");            
-                this.targetElem.className = this.targetElem.className.replace(/page-selected/, "page-unselected");          
-            }
-
-            // ---------------------------------------- class StackedTab
-            
-            function StackedTab(elem, parentBehavior)
-            {
-                this.elem = elem;
-                this.tabSet = typeCheck(parentBehavior, TabSet);
-                this.targetElem = document.getElementById(elem.getAttribute("custom-target-id"));
-                this.tabSet.registerTab(this);
-            }
-            
-            StackedTab.prototype.select = function ()
-            {
-                this.elem.style.zIndex = "100";
-            }
-
-            StackedTab.prototype.unselect = function ()
-            {
-                // IE and Firefox seem to have some disagreement about z-index.
-                this.elem.style.zIndex = (document.all) ? "-1" : "0";
-            }
-
-            StackedTab.prototype.onclick = function ()
-            {
-                this.tabSet.selectTab(this);
-            }
-
-            // ---------------------------------------- class ProxyLink
-            
-            function ProxyLink(elem, parentBehavior)
-            {
-                if (elem.href != null)
-                {
-                    elem.href = createProxyUrl(elem.href);
-                }
-            }
-
-            // ---------------------------------------- window onload
-
-            window.onload = function ()
-            {
-                var behaviorBag = {"tab-set": TabSet, "tab": Tab, "stacked-tab": StackedTab, "proxy-link": ProxyLink};
-                recursiveAttachBehaviors(document.body, behaviorBag);
             }
 
         </script>
@@ -301,14 +117,14 @@
                             
                                 <tr>
                                 
-                                    <td custom-behavior="tab-set" class="left">
+                                    <td class="left">
 
-                                        <a custom-behavior="tab" custom-target-id="page-introduction" class="tab tab-unselected" href="index.html">Introduction/Overview</a>
-                                        <a custom-behavior="tab" custom-target-id="page-examples" class="tab tab-unselected" href="index.html?examples">Examples</a>
-                                        <a custom-behavior="tab" custom-target-id="page-try" class="tab tab-unselected" href="index.html?try">Try It Out</a>
-                                        <a custom-behavior="tab" custom-target-id="page-bookmarklet" class="tab tab-unselected" href="index.html?bookmarklet">Bookmarklet</a>
-                                        <a custom-behavior="tab" custom-target-id="page-extension" class="tab tab-unselected" href="index.html?extension">Firefox Extension</a>
-                                        <a custom-behavior="tab" custom-target-id="page-contact" class="tab tab-unselected" href="index.html?contact">Contact</a>
+                                        <a class="tab {{null??tab-selected::tab-unselected}}" href="index.html">Introduction/Overview</a>
+                                        <a class="tab {{examples??tab-selected::tab-unselected}}" href="index.html?examples">Examples</a>
+                                        <a class="tab {{try??tab-selected::tab-unselected}}" href="index.html?try">Try It Out</a>
+                                        <a class="tab {{bookmarklet??tab-selected::tab-unselected}}" href="index.html?bookmarklet">Bookmarklet</a>
+                                        <a class="tab {{extension??tab-selected::tab-unselected}}" href="index.html?extension">Firefox Extension</a>
+                                        <a class="tab {{contact??tab-selected::tab-unselected}}" href="index.html?contact">Contact</a>
 
                                     </td>
 
@@ -316,7 +132,7 @@
 
                                         <!-------------------------------------------------------------->
 
-                                        <div class="page page-selected" id="page-introduction">
+                                        <div class="page {{null??page-selected::page-unselected}}" id="page-introduction">
 
                                             <h2>Introduction</h2>
 
@@ -364,7 +180,7 @@
 
                                         <!-------------------------------------------------------------->
 
-                                        <div class="page page-unselected" id="page-examples">
+                                        <div class="page {{examples??page-selected::page-unselected}}" id="page-examples">
 
                                             <h2>Examples</h2>
 
@@ -377,42 +193,43 @@
                                             <ul class="examples">
 
                                                 <li>
-                                                    <a href="http://www.intel-dump.com/posts/1146979959.shtml" custom-behavior="proxy-link">
+                                                    <a href="http://{{serverName}}:{{serverPort}}/proxy.html?www.intel-dump.com/posts/1146979959.shtml">
                                                     Phil Carter's review</a> of Richard Rhodes' <b>The Making of the Atomic Bomb</b> on the Intel Dump blog.
                                                 </li>
 
                                                 <li>
-                                                    <a href="http://www.economist.com/displaystory.cfm?story_id=1337165" custom-behavior="proxy-link">
+                                                    <a href="http://{{serverName}}:{{serverPort}}/proxy.html?www.economist.com/displaystory.cfm?story_id=1337165">
                                                     The clockwork computer</a>: An article in The Economist about the <i>Antikythera mechanism</i>, 
                                                     an ancient Greek device for computing astronomical dates.
                                                 </li>
 
                                                 <li>
-                                                    <a href="http://www.washingtonpost.com/wp-dyn/content/article/2006/07/21/AR2006072101515.html" custom-behavior="proxy-link">
+                                                    <a href="http://{{serverName}}:{{serverPort}}/proxy.html?www.washingtonpost.com/wp-dyn/content/article/2006/07/21/AR2006072101515.html">
                                                     An Electric Car With Juice</a>: A Washington Post article about the all-electric Tesla Roadster.
                                                 </li>
 
                                                 <li>
-                                                    <a href="http://seattlepi.nwsource.com/local/260744_kennewick24.html" custom-behavior="proxy-link">
+                                                    <a href="http://{{serverName}}:{{serverPort}}/proxy.html?seattlepi.nwsource.com/local/260744_kennewick24.html">
                                                     Kennewick Man buried by others, scientist finds</a>: An article in the Seattle Post-Intelligencer
                                                     about 9,000 year-old remains discovered on the banks of the Columbia River in 1996.
                                                 </li>
 
                                                 <li>
-                                                    <a href="http://www.newyorker.com/fact/content/articles/060731fa_fact" custom-behavior="proxy-link">
+                                                    <a href="http://{{serverName}}:{{serverPort}}/proxy.html?www.newyorker.com/fact/content/articles/060731fa_fact">
                                                     Can Wikipedia conquer expertise?</a> -- an article in The New Yorker about Wikipedia.
                                                 </li>
 
                                                 <li>
-                                                    <a href="http://www.discover.com/issues/feb-06/features/megadeath-in-mexico/" custom-behavior="proxy-link">
+                                                    <a href="http://{{serverName}}:{{serverPort}}/proxy.html?www.discover.com/issues/feb-06/features/megadeath-in-mexico/">
                                                     Megadeath in Mexico</a> -- A Discover Magazine article about a theory that epidemics in
                                                     post-conquest Mexico might have been hemorrhagic fever rather than smallpox.
                                                 </li>
 
                                                 <li>
-                                                    <a href="http://www.msnbc.msn.com/id/12502996/" custom-behavior="proxy-link">
+                                                    <a href="http://{{serverName}}:{{serverPort}}/proxy.html?www.msnbc.msn.com/id/12502996/">
                                                     Olive branch solves a Bronze Age mystery</a> -- an MSNBC article about dating
                                                     several ancient Mediterranean civilizations.
+
 
                                                 </li>
 
@@ -425,7 +242,7 @@
 
                                         <!-------------------------------------------------------------->
 
-                                        <div class="page page-unselected" id="page-try">
+                                        <div class="page {{try??page-selected::page-unselected}}" id="page-try">
 
 
                                             <style>         
@@ -465,20 +282,29 @@
 
                                         <!-------------------------------------------------------------->
 
-                                        <div class="page page-unselected" id="page-bookmarklet">
+                                        <div class="page {{bookmarklet??page-selected::page-unselected}}" id="page-bookmarklet">
 
                                             <h2>The Bookmarklet</h2>
 
+                                            <div class="explanatory-callout">
+                                                A <b>bookmarklet</b> is a special kind of bookmark.  Normal bookmarks take you to another page
+                                                when they are selected.  Bookmarklets simply make changes to the page you are viewing, rather
+                                                than taking you to a new one.
+                                            </div>
+
                                             <p>
-                                                The Golimojo <b>bookmarklet</b> allows you to invoke the 
-                                                Golimojo proxy service directly on the page you are looking at.
-                                                You just need to save the bookmarklet as a bookmark or favorite.
-                                                Then you can select it from your bookmarks/favorites menu at 
-                                                any time, and the page you are currently viewing will be
-                                                reloaded through the Golimojo proxy service.
+                                                The <b>Golimojo</b> bookmarklet can be used to add links directly
+                                                to the page you're currently viewing.  Once you've installed the 
+                                                bookmarklet this is as simple as choosing it from your Bookmarks
+                                                or Favorites menu.
                                             </p>
 
                                             <h2>Installing the Bookmarklet</h2>
+
+                                            <div class="explanatory-callout">
+                                                Bookmarks are called <b>favorites</b> in Internet Explorer, where they're accessed
+                                                through the <i>Favorites</i> menu.
+                                            </div>
 
                                             <p>
 
@@ -522,7 +348,7 @@
 
                                         <!-------------------------------------------------------------->
 
-                                        <div class="page page-unselected" id="page-extension">
+                                        <div class="page {{extension??page-selected::page-unselected}}" id="page-extension">
 
                                             <h2>Firefox Extension</h2>
 
@@ -548,7 +374,7 @@
 
                                         <!-------------------------------------------------------------->
 
-                                        <div class="page page-unselected" id="page-contact">
+                                        <div class="page {{contact??page-selected::page-unselected}}" id="page-contact">
 
                                             <h2>Contact</h2>
 

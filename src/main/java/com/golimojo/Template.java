@@ -132,22 +132,18 @@ public class Template
 
     public static String applySubstitutions(String templateText, Dictionary<String, String> subDict)
     {
-        // Substitutions are of the form "{{variable}}".  We split at "{{" or "}}"
+        // Substitutions are of the form "{{expression}}", where the simplest
+        // expression is simply a named variable.  We split at "{{" or "}}"
         // which gives us an array where odd locations (1, 3, 5, ...) are variable
         // names to be substituted, and even locations are literal text runs which
         // may be empty strings but usually aren't.
         String[] fragments = templateText.split("(\\{\\{)|(\\}\\})");
-    
+
         // Replace each odd location in the array with its substitution.
         for (int i = 1; i < fragments.length; i += 2)
         {
             String key = fragments[i];
-            String value = subDict.get(key);
-            if (value == null)
-            {
-                value = "{{" + key + "}}";
-                System.err.printf("Error -- attempt to substitute unknown variable: '%s'\n", key);
-            }
+            String value = computeSubstitution(key, subDict);
             fragments[i] = value;
         }
     
@@ -196,4 +192,60 @@ public class Template
         
     }
 
+    // ---------------------------------------- Template computeSubstitution
+    
+    private static String computeSubstitution(String expression, Dictionary<String, String> subDict)
+    {
+        // We support a simple conditional construct on the queryString:
+        // {{queryStringValue??text-to-use-on-match::text-to-use-on-mismatch}}.
+        // When the <text-to-use-on-mismatch> is the empty string, the :: may be omitted.
+        int qqIndex = expression.indexOf("??");
+        if (qqIndex >= 0)
+        {
+            String conditionalKey = expression.substring(0, qqIndex);
+            String valueExpression = expression.substring(qqIndex + 2);
+            String thenValue = valueExpression;
+            String elseValue = "";
+            int ccIndex = valueExpression.indexOf("::");
+            if (ccIndex >= 0)
+            {
+                thenValue = valueExpression.substring(0, ccIndex);
+                elseValue = valueExpression.substring(ccIndex + 2);
+            }
+            if (subDict.get("queryString").equals(conditionalKey))
+            {
+                return thenValue;
+            }
+            else
+            {
+                return elseValue;
+            }
+        }
+        
+        // It was a simple substitution, or possibly a syntax error.
+        String value = subDict.get(expression);
+        if (value == null)
+        {
+            // Unknown variable, or possibly a syntax error.
+            value = "{{" + expression + "}}";
+        }
+
+        return value;
+    }
+
+    public static void L1TEST_computeSubstitution()
+    {
+        Dictionary<String, String> subDict = new Hashtable<String, String>();
+        subDict.put("foo", "FOO");
+        subDict.put("bar", "BAR");
+        subDict.put("queryString", "test");
+
+        assert computeSubstitution("foo", subDict).equals("FOO");
+        assert computeSubstitution("bar", subDict).equals("BAR");
+        assert computeSubstitution("baz", subDict).equals("{{baz}}");
+        assert computeSubstitution("test??yes", subDict).equals("yes");
+        assert computeSubstitution("testx??yes", subDict).equals("");
+        assert computeSubstitution("testx??yes::", subDict).equals("");
+        assert computeSubstitution("testx??yes::no", subDict).equals("no");
+    }
 }

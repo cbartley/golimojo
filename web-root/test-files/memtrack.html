@@ -1,0 +1,907 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+
+    <head>
+        <title>MemTrack: Tracking Memory Allocations in C++</title>
+
+        <style type="text/css">
+
+            h1
+            {
+                font-family: sans-serif;
+                font-size: 16pt;
+                font-weight: bold;
+            }
+
+            h2
+            {
+                font-family: sans-serif;
+                font-size: 14pt;
+                font-weight: bold;
+                font-style: italic;
+            }
+
+            h3
+            {
+                font-family: sans-serif;
+                font-size: 13pt;
+                font-weight: bold;
+            }
+
+            ul
+            {
+                margin-left: 1em;
+                margin-top: 0;
+            }
+
+            div.float-left
+            {
+                float: left;
+                margin-left: 0;
+                margin-right: 7pt;
+                margin-top: 5pt;
+                margin-bottom: 5pt;
+            }
+
+            div.float-right
+            {
+                float: right;
+                margin-left: 5pt;
+                margin-right: 0;
+                margin-top: 5pt;
+                margin-bottom: 5pt;
+            }
+
+            div.caption
+            {
+                font-size: 0.9em;
+                font-weight: bold;
+                text-align: center;
+            }
+
+        </style>
+
+    </head>
+    
+    <body>
+
+        <h1>MemTrack: Tracking Memory Allocations in C++</h1>
+        <h2>Introduction</h2>
+
+        <p>This article describes MemTrack, a library which replaces the standard <code>operator new</code> with a special version that records information about each memory allocation.  This information can be analyzed later for debugging purposes or for performance measurement.  The article begins by discussing the use of macros to instrument memory allocation in C and the use of macros combined with "placement <code>operator new</code>" to accomplish the same thing in C++.  Then it describes the alternative approach used in the MemTrack library.  This alternative approach differs from the more conventional approach in two important ways: First, it does not rely on the implicit use of placement <code>operator new</code> syntax and, second, it can capture the <i>type</i> of each memory allocation.</p>
+
+        <h2>Instrumenting Memory Allocations in C</h2>
+
+        <p>The use of macros to instrument memory allocation in C is a well-known technique, and it's worth reviewing.  Two standard C preprocessor macros are the key to this technique: the <code>__FILE__</code> and <code>__LINE__</code> macros. <code>__FILE__</code> expands to a string literal containing the filename of the source file currently being processed, and <code>__LINE__</code> always expands to the line number of the line that the <code>__LINE__</code> macro appears on. </p>
+
+        <p>Typically, <code>__FILE__</code> and <code>__LINE__</code> will be embedded inside another macro, so that they can be applied transparently.  The typical targets for this approach are <code>malloc()</code> and its sibling functions.  For example: </p>
+
+<pre>    #define malloc(size) custom_malloc(size, __FILE__, __LINE__)</pre>
+
+        <p>Ideally, the instrumented memory allocation functions can be transparently substituted for the regular ones throughout an entire project by making changes to a single header file. </p>
+
+        <h2>Instrumenting Memory Allocations in C++</h2>
+
+        <p>A similar approach can be used in C++, but to understand it, it's first necessary to discuss "placement <code>operator new</code>".  C++ makes it possible to define custom versions of <code>operator new</code>, and these custom versions may take extra arguments.  The simplest example is the classic placement <code>operator new</code>:</p>
+
+<pre>    void *operator new(size_t size, void *p) { return p; }</pre>
+
+        <p>This version of <code>operator new</code> can be used to construct a C++ object at an arbitrary place in memory, hence the name "placement <code>operator new</code>".  This capability was thought to be so useful that a stock implementation of placement <code>operator new</code> with these semantics is provided by the standard C++ library.  This <code>operator new</code> can be called like so: </p>
+
+<pre>    Object *object = new(buffer) Object;</pre>
+
+        <p>The first argument to any <code>operator new</code> function is the size of the memory block to allocate.  This argument is always supplied implicitly by the compiler.  If there are any extra arguments, then they are listed in parentheses immediately after the <code>new</code> keyword, using normal function call syntax. </p>
+
+        <p>There's no restriction on the number of parameters a custom implementation of <code>operator new</code> may take, nor is there any restriction on how those parameters may be used.  Nevertheless, the moniker "placement <code>operator new</code>" is used broadly (and confusingly) to refer to all forms of <code>operator new</code> which take extra arguments, even those forms which do not match the classic placement semantics. </p>
+
+        <p>We can use the placement syntax to define a version of <code>operator new</code> equivalent to our hypothetical <code>custom_malloc()</code> function above: </p>
+
+<pre>
+    void *operator new(size_t size, char const *filename, int lineNum) 
+    { 
+        ... 
+    }
+</pre>
+
+        <p>Now that we know how to pass arguments to <code>operator new</code>, and since the preprocessor will not recursively expand macros, we can define a <code>new</code> macro equivalent to the <code>malloc()</code> macro above: </p>
+
+<pre>    #define new    new(__FILE__, __LINE__)</pre>
+
+        <p>As in the case for C, we'd like to be able to transparently switch between the normal memory allocation function and the instrumented one by changing a single include file.  This goal may be more difficult to achieve in C++ than in C, however.  One problem is that the <code>new</code> macro will conflict with any explicit use of placement syntax.  For example, a use of classic placement <code>new</code> syntax will conflict with the <code>new</code> macro: </p>
+
+<pre>    Object *object = new(buffer) Object;</pre>
+
+        <p>will expand to something like: </p>
+
+<pre>    Object *object = new("object.cpp", 131)(buffer) Object;</pre>
+
+        <p>which is clearly in error.  Another problem is that any <i>declaration</i> of a custom <code>operator new</code> will also conflict with the macro. </p>
+
+        <h2>Storing the Extra Information</h2>
+
+        <p>The notion that we can have a custom memory allocator begs the question of just how such an allocator should be implemented.  If we are only interested in recording extra information about each memory allocation then the easiest technique is to simply piggyback on top of the standard allocator.  When the custom allocator is called with a request for memory, it simply asks the standard allocator for the memory, which the custom allocator then returns to the original caller. </p>
+
+        <p>It's easy to store the extra information in the piggyback scheme.  Assume we need to store <i>m</i> bytes of extra data for every allocation.  If the original caller requests <i>n</i> bytes of information, then the custom allocator will simply request <i>n</i> +<i>m</i> bytes of storage from the standard allocator.  The custom allocator will then retain the first <i>m</i> bytes of storage for its own use and return a pointer to the original caller that points <i>m</i> bytes into the new memory block.  Needless to say, this kind of allocator needs to be paired with a de-allocator that is aware of this offset.  The piggyback scheme is the approach used by MemTrack. </p>
+
+        <h2>An Alternative Approach to Instrumenting Memory Allocation in C++</h2>
+        <h3>Overview</h3>
+
+        <p>MemTrack uses an alternative approach to instrumenting memory allocation in C++.  It separates the allocation of a block of memory from the storage of the descriptive information about that memory.  Instead, this information is applied later in a process I refer to as "stamping".  Since the stamping step is embedded inside a <code>new</code> macro, this approach is as easy to use as the placement <code>new</code> approach. </p>
+
+        <p>There's more work involved in making the stamping process work.  Since the <code>new</code> operator does not require parentheses for its type argument, we can't write a <code>new</code> macro that will capture the type argument.  This means that we can't just pass the result of the <code>new</code> expression into a <code>stamp()</code> function which then returns its argument after stamping it.  However, if we make our stamping function an overloaded operator we can accomplish the same thing, and we don't have to capture the type in the macro -- we just have to juxtapose the stamping operator with the <code>new</code> expression, which we can do without capturing the type in the <code>new</code> macro. </p>
+
+        <p>Astute readers will have already noticed that the stamping function must not only be an operator but that it must also be a template function.  This is because the stamping operator must be capable of returning exactly the same type as the <code>new</code> expression.  This is a lot of work simply to avoid the use of placement <code>new</code>.  However, the use of the template introduces a new capability that's simply not available with the placement <code>new</code> approach: we can capture the <i>type</i> of the new expression inside the stamping operator and record it along with the other information we care about.  It's exactly this capability that makes the stamping approach worth exploring. </p>
+
+        <h3>The <code>new</code> Macro</h3>
+
+        <p>The <code>new</code> macro and its component parts are the heart of MemTrack, so let's examine them in detail.  These examples were drawn from the "MemTrack.h" header file, although they've been simplified somewhat for the sake of clarity. </p>
+
+        <p>Let's start with the <code>new</code> macro itself: </p>
+
+<pre>    #define new    MemStamp(__FILE__, __LINE__) * new</pre>
+
+        <p>This will expand the following statement</p>
+
+<pre>    Object *object = new Object;</pre>
+
+        <p>into something like:
+
+<pre>    Object *object = MemStamp("object.cpp", 131) * new Object;</pre>
+
+        <p>The MemStamp temporary combines the filename and line number into a single entity, which then serves as the first argument to <code>operator*</code>.  <code>operator*</code> is then called with both the stamp and the newly allocated object as arguments, and it returns the new object after stamping it. </p>
+
+        <p>The MemStamp class looks like this: </p>
+
+<pre>
+    class MemStamp
+    {
+        public:     // member variables
+            char const * const filename;
+            int const lineNum;
+        public:     // construction/destruction
+            MemStamp(char const *filename, int lineNum)
+                : filename(filename), lineNum(lineNum) { }
+            ~MemStamp() { }
+    };
+</pre>
+
+        <p>The <code>operator*</code> template is quite simple, and the only thing really of note is the call to <code>typeid(T).name()</code> in the call to the internal stamping function. </p>
+
+<pre>
+    template &lt;class T&gt; inline T *operator*(const MemStamp &amp;stamp, T *p)
+    {
+        TrackStamp(p, stamp, typeid(T).name());
+        return p;
+    }
+</pre>
+
+        <p>Since the first argument to <code>operator*</code> is a <code>MemStamp</code> value, it's very unlikely that this definition of <code>operator*</code> will conflict with any ordinary use of the operator. </p>
+
+        <h3>Public MemTrack Functions</h3>
+
+        <p>The previous section describes the <code>new</code> macro that MemTrack uses to automatically and transparently (as much as is possible) instrument source code.  This is only half the story, though.  The other half of the story is the custom allocator, the stamping function, and the mechanism for later retrieving the information that we've stamped on all those memory blocks. </p>
+
+        <p>The public interface to MemTrack consists of two sets of functions.  The first set of functions are the <code>Track*</code> functions: </p>
+
+<pre>   void *TrackMalloc(size_t size);
+    void TrackFree(void *p);
+    void TrackStamp(void *p, const MemStamp &amp;stamp, char const *typeName);
+    void TrackDumpBlocks();
+    void TrackListMemoryUsage();</pre>
+
+        <p>Normally there will be no need to call <code>TrackMalloc()</code> or <code>TrackFree()</code> directly, but they're available if you can think of a good reason to use them.  <code>TrackStamp()</code> is needed for the implementation of the stamping operator, and <code>TrackDumpBlocks()</code> and <code>TrackListMemoryUsage()</code> provide ways to dump information about the currently allocated memory blocks. </p>
+
+        <p>The second set of functions are the overrides for global <code>new</code> and <code>delete</code> operators. </p>
+
+<pre>    void *operator new(size_t size) { ... }
+    void operator delete(void *p) { ... }
+    void *operator new[](size_t size) { ... }
+    void operator delete[](void *p) { ... }</pre>
+
+        <p>There are no prototypes for these functions in "MemTrack.h" since the signatures of these functions are automatically known to the C++ compiler.  However, the override definitions appear in "MemTrack.cpp" and they will override the default versions supplied by the compiler.  These functions basically just call <code>TrackMalloc()</code> and <code>TrackFree()</code>.</p>
+
+
+        <h3>Implementation Notes</h3>
+
+        <p><code>TrackMalloc()</code> uses the piggyback approach described earlier in the article.  The extra information stored for each allocated block of memory is referred to as the prolog, and currently the prolog is broken into two parts, the "block header", and the "signature".  Block headers serve two important functions.  First, they store all the extra information for each memory block, such as the filename and the type name.  Second, they store the forward and backward pointers of the doubly-linked list that links all currently allocated memory blocks together. </p>
+
+        <p>The signature consists of a specific 64 bit pattern that can be used to identify a memory block as one that has been allocated by <code>TrackMalloc()</code> and which can safely be "stamped".  If a pointer is pointing to a block of memory returned from <code>TrackMalloc()</code>, then the 8 bytes before that pointer will consist of the signature.  This approach is rather crude, and it introduces some risks when testing pointers to valid memory blocks allocated by other memory allocators.  The first problem is that there is a chance of a false positive on a signature test which would then result in a memory overwrite error when the memory block is stamped.  The second problem is that the signature test could attempt to read memory not assigned to the process, resulting in a memory access fault.   Neither of these problems should occur when the MemTrack allocator is the only one being used in a program, however. </p>
+
+        <h3>MemTrack in Action</h3>
+
+        <p>I tested MemTrack using FH-reader, a library I wrote several years ago for reading Macromedia FreeHand files.  FH-reader made a good platform for testing the type capture capabilities of MemTrack since it represents FreeHand files in memory using objects of more than 70 different classes. </p>
+
+        <p><code>TrackDumpBlocks()</code> listed 80701 blocks after one test run of the FH-reader test driver.  This quantity of information is a little hard to interpret usefully.  <code>TrackListMemoryUsage()</code> lists total memory usage by type from highest to lowest.  Table 1 is the first 20 items from a test run of FH-reader. </p>
+
+        <h2>Table 1</h2>
+
+<pre>
+-----------------------
+Memory Usage Statistics
+-----------------------
+
+allocated type                        blocks          bytes  
+--------------                        ------          -----  
+struct FHRDocPath::IndexedRec          11031  13.7% 2756600  45.8%
+class FHRDocPath                       10734  13.3%  772848  12.8%
+class FHRDocElemPropLst                13132  16.3%  420224   7.0%
+struct FHRDocVDict::IndexedRec          3595   4.5%  370336   6.2%
+struct FHRDocMDict::IndexedRec         13368  16.6%  208200   3.5%
+class FHRDocObject *                      36   0.0%  172836   2.9%
+struct FHRDocData::IndexedRec            890   1.1%  159880   2.7%
+struct FHRDocLineTable::IndexedRec       408   0.5%  152824   2.5%
+struct FHRDocMList::IndexedRec          2656   3.3%  119168   2.0%
+class FHRDocMList                       1964   2.4%   62848   1.0%
+class FHRDocVMpObj                      2096   2.6%   58688   1.0%
+class FHRDocProcessColor                1259   1.6%   50360   0.8%
+struct FHRDocTextBlok::IndexedRec        680   0.8%   48756   0.8%
+class FHRDocUString                     1800   2.2%   43200   0.7%
+class FHRDocGroup                        684   0.8%   41040   0.7%
+class FHRDocObject * (__cdecl*)(void)     36   0.0%   39928   0.7%
+class FHRDocXform                        516   0.6%   35088   0.6%
+class FHRDocTextColumn                   403   0.5%   33852   0.6%
+class FHRDocTString                      407   0.5%   29304   0.5%
+struct FHRDocUString::IndexedRec        1800   2.2%   27904   0.5%
+</pre>
+
+
+        <h2>Caveats</h2>
+
+        <p>Besides the potential for conflict with the definition of other <code>operator new</code> functions there is another problem worth mentioning.  C++ allows classes to be declared inside functions, but it does not allow templates to be specialized on these classes.  This restriction makes the MemTrack <code>new</code> macro unusable for local classes. </p>
+
+        <p>MemTrack also lacks a lot of features that a fully functional library would provide, such as logic to check for memory overwrites and double frees.  A fully functional library should also be able to make claims about portability that MemTrack currently can't since it has only been tested on one compiler on one platform (Visual C++.Net on Windows 2000).  The signature mechanism has some serious deficiencies, which could make MemTrack unusable for some projects.  Finally, using any library that relies on a global macro to redefine a language keyword is potentially asking for trouble.  However, MemTrack has been used successfully with the FH-reader library, providing a successful demonstration of the memory stamping and type capture techniques described in this article. </p>
+
+        <h2>Room for Improvement</h2>
+
+        <div>There is lots of room for improvement in the MemTrack library.  Here's an incomplete list of ways the library might be improved, in no particular order: </div>
+        <ul>
+            <li>Detection of double frees. </li>
+
+            <li>Detection of memory overwrites</li>
+            <li>A safer alternative to the signature mechanism. </li>
+            <li>Support for the <code>malloc()</code>, <code>calloc()</code>, <code>realloc()</code>, and <code>free()</code> functions. </li>
+
+            <li>Conditional compilation directives should be added so MemTrack can be turned on and off with a single <code>#define</code>.</li>
+            <li>A way to handle the instantiation of local classes. </li>
+            <li>More testing on a variety of platforms, operating systems, and compilers, and testing in a variety of existing projects. </li>
+        </ul>
+
+
+        <h2>Appendix A: MemTrack.h</h2>
+
+        
+<pre>
+
+#ifndef MemTrack_H_
+#define MemTrack_H_
+
+#include &lt;typeinfo&gt;
+
+namespace MemTrack
+{
+    /* ---------------------------------------- class MemStamp */
+
+    class MemStamp
+    {
+        public:        // member variables
+            char const * const filename;
+            int const lineNum;
+        public:        // construction/destruction
+            MemStamp(char const *filename, int lineNum)
+                : filename(filename), lineNum(lineNum) { }
+            ~MemStamp() { }
+    };
+
+    /* ---------------------------------------- memory allocation and stamping prototypes */
+
+    void *TrackMalloc(size_t size);
+    void TrackFree(void *p);
+    void TrackStamp(void *p, const MemStamp &amp;stamp, char const *typeName);
+    void TrackDumpBlocks();
+    void TrackListMemoryUsage();
+
+    /* ---------------------------------------- operator * (MemStamp, ptr) */
+
+    template &lt;class T&gt; inline T *operator*(const MemStamp &amp;stamp, T *p)
+    {
+        TrackStamp(p, stamp, typeid(T).name());
+        return p;
+    }
+
+}    // namespace MemTrack
+
+/* ---------------------------------------- new macro */
+
+#define MEMTRACK_NEW MemTrack::MemStamp(__FILE__, __LINE__) * new
+#define new MEMTRACK_NEW
+
+#endif    // MemTrack_H_
+</pre>
+
+        <h2>Appendix B: MemTrack.cpp</h2>
+
+        
+<pre>
+
+/* ---------------------------------------- includes */
+
+#include &lt;assert.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;algorithm&gt;
+#include &lt;new&gt;
+
+#include "MemTrack.h"
+#undef new    // IMPORTANT!
+
+/* ------------------------------------------------------------ */
+/* -------------------- namespace MemTrack -------------------- */
+/* ------------------------------------------------------------ */
+
+namespace MemTrack
+{
+
+    /* ------------------------------------------------------------ */
+    /* --------------------- class BlockHeader -------------------- */
+    /* ------------------------------------------------------------ */
+
+    class BlockHeader
+    {
+        private:    // static member variables
+            static BlockHeader *ourFirstNode;
+    
+        private:    // member variables
+            BlockHeader *myPrevNode;
+            BlockHeader *myNextNode;
+            size_t myRequestedSize;
+            char const *myFilename;
+            int myLineNum;
+            char const *myTypeName;
+
+        public:     // members
+            BlockHeader(size_t requestedSize);
+            ~BlockHeader();
+            
+            size_t GetRequestedSize() const { return myRequestedSize; }
+            char const *GetFilename() const { return myFilename; }
+            int GetLineNum() const { return myLineNum; }
+            char const *GetTypeName() const { return myTypeName; }
+            
+            void Stamp(char const *filename, int lineNum, char const *typeName);
+            
+            static void AddNode(BlockHeader *node);
+            static void RemoveNode(BlockHeader *node);
+            static size_t CountBlocks();
+            static void GetBlocks(BlockHeader **blockHeaderPP);
+            static bool TypeGreaterThan(BlockHeader *header1, BlockHeader *header2);
+    };
+
+    /* ---------------------------------------- BlockHeader static member variables */
+
+    BlockHeader *BlockHeader::ourFirstNode = NULL;
+
+    /* ---------------------------------------- BlockHeader constructor */
+
+    BlockHeader::BlockHeader(size_t requestedSize)
+    {
+        myPrevNode = NULL;
+        myNextNode = NULL;
+        myRequestedSize = requestedSize;
+        myFilename = "[unknown]";
+        myLineNum = 0;
+        myTypeName = "[unknown]";
+    }
+
+    /* ---------------------------------------- BlockHeader destructor */
+
+    BlockHeader::~BlockHeader()
+    {
+    }
+            
+    /* ---------------------------------------- BlockHeader Stamp */
+
+    void BlockHeader::Stamp(char const *filename, int lineNum, char const *typeName)
+    {
+        myFilename = filename;
+        myLineNum = lineNum;
+        myTypeName = typeName;
+    }
+
+    /* ---------------------------------------- BlockHeader AddNode */
+
+    void BlockHeader::AddNode(BlockHeader *node)
+    {
+        assert(node != NULL);
+        assert(node-&gt;myPrevNode == NULL);
+        assert(node-&gt;myNextNode == NULL);
+
+        // If we have at least one node in the list ...        
+        if (ourFirstNode != NULL)
+        {
+            // ... make the new node the first node's predecessor.
+            assert(ourFirstNode-&gt;myPrevNode == NULL);
+            ourFirstNode-&gt;myPrevNode = node;
+        }
+
+        // Make the first node the new node's succesor.
+        node-&gt;myNextNode = ourFirstNode;
+        
+        // Make the new node the first node.
+        ourFirstNode = node;
+    }
+
+    /* ---------------------------------------- BlockHeader RemoveNode */
+
+    void BlockHeader::RemoveNode(BlockHeader *node)
+    {
+        assert(node != NULL);
+        assert(ourFirstNode != NULL);
+
+        // If target node is the first node in the list...
+        if (ourFirstNode == node)
+        {
+            // ... make the target node's successor the first node.
+            assert(ourFirstNode-&gt;myPrevNode == NULL);
+            ourFirstNode = node-&gt;myNextNode;
+        }
+        
+        // Link target node's predecessor, if any, to its successor.
+        if (node-&gt;myPrevNode != NULL)
+        {
+            node-&gt;myPrevNode-&gt;myNextNode = node-&gt;myNextNode;
+        }
+        
+        // Link target node's successor, if any, to its predecessor.
+        if (node-&gt;myNextNode != NULL)
+        {
+            node-&gt;myNextNode-&gt;myPrevNode = node-&gt;myPrevNode;
+        }
+
+        // Clear target node's previous and next pointers.
+        node-&gt;myPrevNode = NULL;
+        node-&gt;myNextNode = NULL;
+    }
+
+    /* ---------------------------------------- BlockHeader CountBlocks */
+
+    size_t BlockHeader::CountBlocks()
+    {
+        size_t count = 0;
+        BlockHeader *currNode = ourFirstNode;
+        while (currNode != NULL)
+        {
+            count++;
+            currNode = currNode-&gt;myNextNode;
+        }
+        return count;
+    }
+
+    /* ---------------------------------------- BlockHeader GetBlocks */
+
+    void BlockHeader::GetBlocks(BlockHeader **blockHeaderPP)
+    {
+        BlockHeader *currNode = ourFirstNode;
+        while (currNode != NULL)
+        {
+            *blockHeaderPP = currNode;
+            blockHeaderPP++;
+            currNode = currNode-&gt;myNextNode;
+        }
+    }
+
+    /* ---------------------------------------- BlockHeader TypeGreaterThan */
+
+    bool BlockHeader::TypeGreaterThan(BlockHeader *header1, BlockHeader *header2)
+    {
+        return (strcmp(header1-&gt;myTypeName, header2-&gt;myTypeName) &gt; 0);
+    }
+
+    /* ------------------------------------------------------------ */
+    /* ---------------------- class Signature --------------------- */
+    /* ------------------------------------------------------------ */
+
+    class Signature
+    {
+        private:    // constants
+            static const unsigned int SIGNATURE1 = 0xCAFEBABE;
+            static const unsigned int SIGNATURE2 = 0xFACEFACE;
+        
+        private:    // member variables
+            unsigned int mySignature1;
+            unsigned int mySignature2;
+            
+        public:        // construction/destruction
+            Signature() : mySignature1(SIGNATURE1), mySignature2(SIGNATURE2) {};
+            ~Signature() { mySignature1 = 0; mySignature2 = 0; }
+            
+        public:        // static member functions
+            static bool IsValidSignature(const Signature *pProspectiveSignature)
+            {
+                try
+                {
+                    if (pProspectiveSignature-&gt;mySignature1 != SIGNATURE1) return false;
+                    if (pProspectiveSignature-&gt;mySignature2 != SIGNATURE2) return false;
+                    return true;
+                }
+                catch (...)
+                {
+                    return false;
+                }
+            }
+    };
+
+    /* ------------------------------------------------------------ */
+    /* -------------------- address conversion -------------------- */
+    /* ------------------------------------------------------------ */
+
+    /* We divide the memory blocks we allocate into two "chunks", the
+     * "prolog chunk" where we store information about the allocation,
+     * and the "user chunk" which we return to the caller to use.
+     */
+
+    /* ---------------------------------------- alignment */
+
+    const size_t ALIGNMENT = 4;
+
+    /* If "value" (a memory size or offset) falls on an alignment boundary,
+     * then just return it.  Otherwise return the smallest number larger
+     * than "value" that falls on an alignment boundary.
+     */    
+
+    #define PAD_TO_ALIGNMENT_BOUNDARY(value) \
+        ((value) + ((ALIGNMENT - ((value) % ALIGNMENT)) % ALIGNMENT))
+
+    /* ---------------------------------------- chunk structs */
+    
+    /* We declare incomplete structures for each chunk, just to 
+     * provide type safety.
+     */
+
+    struct PrologChunk;
+    struct UserChunk;
+
+    /* ---------------------------------------- chunk sizes and offsets */
+
+    const size_t SIZE_BlockHeader = PAD_TO_ALIGNMENT_BOUNDARY(sizeof(BlockHeader));
+    const size_t SIZE_Signature = PAD_TO_ALIGNMENT_BOUNDARY(sizeof(Signature));
+
+    const size_t OFFSET_BlockHeader = 0;
+    const size_t OFFSET_Signature = OFFSET_BlockHeader + SIZE_BlockHeader;
+    const size_t OFFSET_UserChunk =    OFFSET_Signature + SIZE_Signature;
+    
+    const size_t SIZE_PrologChunk =    OFFSET_UserChunk;
+
+    /* ---------------------------------------- GetUserAddress */
+
+    static UserChunk *GetUserAddress(PrologChunk *pProlog)
+    {
+        char *pchProlog = reinterpret_cast&lt;char *&gt;(pProlog);
+        char *pchUser = pchProlog + OFFSET_UserChunk;
+        UserChunk *pUser = reinterpret_cast&lt;UserChunk *&gt;(pchUser);
+        return pUser;
+    }
+
+    /* ---------------------------------------- GetPrologAddress */
+
+    static PrologChunk *GetPrologAddress(UserChunk *pUser)
+    {
+        char *pchUser = reinterpret_cast&lt;char *&gt;(pUser);
+        char *pchProlog = pchUser - OFFSET_UserChunk;
+        PrologChunk *pProlog = reinterpret_cast&lt;PrologChunk *&gt;(pchProlog);
+        return pProlog;
+    }
+
+    /* ---------------------------------------- GetHeaderAddress */
+
+    static BlockHeader *GetHeaderAddress(PrologChunk *pProlog)
+    {
+        char *pchProlog = reinterpret_cast&lt;char *&gt;(pProlog);
+        char *pchHeader = pchProlog + OFFSET_BlockHeader;
+        BlockHeader *pHeader = reinterpret_cast&lt;BlockHeader *&gt;(pchHeader);
+        return pHeader;
+    }
+
+    /* ---------------------------------------- GetSignatureAddress */
+
+    static Signature *GetSignatureAddress(PrologChunk *pProlog)
+    {
+        char *pchProlog = reinterpret_cast&lt;char *&gt;(pProlog);
+        char *pchSignature = pchProlog + OFFSET_Signature;
+        Signature *pSignature = reinterpret_cast&lt;Signature *&gt;(pchSignature);
+        return pSignature;
+    }
+
+    /* ------------------------------------------------------------ */
+    /* -------------- memory allocation and stamping -------------- */
+    /* ------------------------------------------------------------ */
+
+    /* ---------------------------------------- TrackMalloc */
+    
+    void *TrackMalloc(size_t size)
+    {
+        // Allocate the memory, including space for the prolog.
+        PrologChunk *pProlog = (PrologChunk *)malloc(SIZE_PrologChunk + size);
+        
+        // If the allocation failed, then return NULL.
+        if (pProlog == NULL) return NULL;
+        
+        // Use placement new to construct the block header in place.
+        BlockHeader *pBlockHeader = new (pProlog) BlockHeader(size);
+        
+        // Link the block header into the list of extant block headers.
+        BlockHeader::AddNode(pBlockHeader);
+        
+        // Use placement new to construct the signature in place.
+        Signature *pSignature = new (GetSignatureAddress(pProlog)) Signature;
+        
+        // Get the offset to the user chunk and return it.
+        UserChunk *pUser = GetUserAddress(pProlog);
+        
+        return pUser;
+    }
+
+    /* ---------------------------------------- TrackFree */
+    
+    void TrackFree(void *p)
+    {
+        // It's perfectly valid for "p" to be null; return if it is.
+        if (p == NULL) return;
+    
+        // Get the prolog address for this memory block.
+        UserChunk *pUser = reinterpret_cast&lt;UserChunk *&gt;(p);    
+        PrologChunk *pProlog = GetPrologAddress(pUser);
+        
+        // Check the signature, and if it's invalid, return immediately.
+        Signature *pSignature = GetSignatureAddress(pProlog);
+        if (!Signature::IsValidSignature(pSignature)) return;
+        
+        // Destroy the signature.
+        pSignature-&gt;~Signature();
+        pSignature = NULL;
+
+        // Unlink the block header from the list and destroy it.
+        BlockHeader *pBlockHeader = GetHeaderAddress(pProlog);
+        BlockHeader::RemoveNode(pBlockHeader);
+        pBlockHeader-&gt;~BlockHeader();
+        pBlockHeader = NULL;
+
+        // Free the memory block.    
+        free(pProlog);
+    }
+
+    /* ---------------------------------------- TrackStamp */
+    
+    void TrackStamp(void *p, const MemStamp &amp;stamp, char const *typeName)
+    {
+        // Get the header and signature address for this pointer.
+        UserChunk *pUser = reinterpret_cast&lt;UserChunk *&gt;(p);    
+        PrologChunk *pProlog = GetPrologAddress(pUser);
+        BlockHeader *pHeader = GetHeaderAddress(pProlog);
+        Signature *pSignature = GetSignatureAddress(pProlog);
+        
+        // If the signature is not valid, then return immediately.
+        if (!Signature::IsValidSignature(pSignature)) return;
+        
+        // "Stamp" the information onto the header.
+        pHeader-&gt;Stamp(stamp.filename, stamp.lineNum, typeName);
+    }
+
+    /* ---------------------------------------- TrackDumpBlocks */
+
+    void TrackDumpBlocks()
+    {
+        // Get an array of pointers to all extant blocks.
+        size_t numBlocks = BlockHeader::CountBlocks();
+        BlockHeader **ppBlockHeader = 
+            (BlockHeader **)calloc(numBlocks, sizeof(*ppBlockHeader));
+        BlockHeader::GetBlocks(ppBlockHeader);
+
+        // Dump information about the memory blocks.
+        printf("\n");
+        printf("=====================\n");
+        printf("Current Memory Blocks\n");
+        printf("=====================\n");
+        printf("\n");
+        for (size_t i = 0; i &lt; numBlocks; i++)
+        {
+            BlockHeader *pBlockHeader = ppBlockHeader[i];
+            char const *typeName = pBlockHeader-&gt;GetTypeName();
+            size_t size = pBlockHeader-&gt;GetRequestedSize();
+            char const *fileName = pBlockHeader-&gt;GetFilename();
+            int lineNum = pBlockHeader-&gt;GetLineNum();
+            printf("*** #%-6d %5d bytes %-50s\n", i, size, typeName);
+            printf("... %s:%d\n", fileName, lineNum);
+        }
+        
+        // Clean up.
+        free(ppBlockHeader);
+    }
+
+    /* ---------------------------------------- struct MemDigest */
+    
+    struct MemDigest
+    {
+        char const *typeName;
+        int blockCount;
+        size_t totalSize;
+        
+        static TotalSizeGreaterThan(MemDigest &amp;md1, MemDigest &amp;md2)
+            { return md1.totalSize &gt; md2.totalSize; }
+    };
+
+
+    /* ---------------------------------------- SummarizeMemoryUsageForType */
+
+    static void SummarizeMemoryUsageForType(
+        MemDigest *pMemDigest,
+        BlockHeader **ppBlockHeader, 
+        size_t startPost, 
+        size_t endPost
+    )
+    {
+        pMemDigest-&gt;typeName = ppBlockHeader[startPost]-&gt;GetTypeName();
+        pMemDigest-&gt;blockCount = 0;
+        pMemDigest-&gt;totalSize = 0;
+        for (size_t i = startPost; i &lt; endPost; i++)
+        {
+            pMemDigest-&gt;blockCount++;
+            pMemDigest-&gt;totalSize += ppBlockHeader[i]-&gt;GetRequestedSize();
+            assert(strcmp(ppBlockHeader[i]-&gt;GetTypeName(), pMemDigest-&gt;typeName) == 0);
+        }
+    }
+
+    /* ---------------------------------------- TrackListMemoryUsage */
+
+    void TrackListMemoryUsage()
+    {
+        // If there are no allocated blocks, then return now.
+        size_t numBlocks = BlockHeader::CountBlocks();
+        if (numBlocks == 0) return;
+
+        // Get an array of pointers to all extant blocks.
+        BlockHeader **ppBlockHeader = 
+            (BlockHeader **)calloc(numBlocks, sizeof(*ppBlockHeader));
+        BlockHeader::GetBlocks(ppBlockHeader);
+        
+        // Sort the blocks by type name.
+        std::sort(
+            ppBlockHeader, 
+            ppBlockHeader + numBlocks, 
+            BlockHeader::TypeGreaterThan
+        );
+
+        // Find out how many unique types we have.
+        size_t numUniqueTypes = 1;
+        for (size_t i = 1; i &lt; numBlocks; i++)
+        {
+            char const *prevTypeName = ppBlockHeader[i - 1]-&gt;GetTypeName();
+            char const *currTypeName = ppBlockHeader[i]-&gt;GetTypeName();
+            if (strcmp(prevTypeName, currTypeName) != 0) numUniqueTypes++;
+        }
+
+        // Create an array of "digests" summarizing memory usage by type.
+        size_t startPost = 0;
+        size_t uniqueTypeIndex = 0;
+        MemDigest *pMemDigestArray = 
+            (MemDigest *)calloc(numUniqueTypes, sizeof(*pMemDigestArray));
+        for (size_t i = 1; i &lt;= numBlocks; i++)    // yes, less than or *equal* to
+        {
+            char const *prevTypeName = ppBlockHeader[i - 1]-&gt;GetTypeName();
+            char const *currTypeName = (i &lt; numBlocks) ? ppBlockHeader[i]-&gt;GetTypeName() : "";
+            if (strcmp(prevTypeName, currTypeName) != 0) 
+            {
+                size_t endPost = i;
+                SummarizeMemoryUsageForType(
+                    pMemDigestArray + uniqueTypeIndex,
+                    ppBlockHeader,
+                    startPost,
+                    endPost
+                );
+                startPost = endPost;
+                uniqueTypeIndex++;
+            }
+        }
+        assert(uniqueTypeIndex = numUniqueTypes);
+
+        // Sort the digests by total memory usage.
+        std::sort(
+            pMemDigestArray, 
+            pMemDigestArray + numUniqueTypes, 
+            MemDigest::TotalSizeGreaterThan
+        );
+        
+        // Compute the grand total memory usage.
+        size_t grandTotalNumBlocks = 0;
+        size_t grandTotalSize = 0;
+        for (size_t i = 0; i &lt; numUniqueTypes; i++)
+        {
+            grandTotalNumBlocks += pMemDigestArray[i].blockCount;
+            grandTotalSize += pMemDigestArray[i].totalSize;
+        }
+
+        // Dump the memory usage statistics.
+        printf("\n");
+        printf("-----------------------\n");
+        printf("Memory Usage Statistics\n");
+        printf("-----------------------\n");
+        printf("\n");
+        printf("%-50s%5s  %5s %7s %s \n", "allocated type", "blocks", "", "bytes", "");
+        printf("%-50s%5s  %5s %7s %s \n", "--------------", "------", "", "-----", "");
+
+        for (size_t i = 0; i &lt; numUniqueTypes; i++)
+        {
+            MemDigest *pMD = pMemDigestArray + i;
+            size_t blockCount = pMD-&gt;blockCount;
+            double blockCountPct = 100.0 * blockCount / grandTotalNumBlocks;
+            size_t totalSize = pMD-&gt;totalSize;
+            double totalSizePct = 100.0 * totalSize / grandTotalSize;
+
+            printf(
+                "%-50s %5d %5.1f%% %7d %5.1f%%\n", 
+                pMD-&gt;typeName, 
+                blockCount, 
+                blockCountPct,
+                totalSize,
+                totalSizePct
+            );
+        }
+        printf("%-50s %5s %5s  %7s %s \n", "--------", "-----", "", "-------", "");
+        printf("%-50s %5d %5s  %7d %s \n", "[totals]", grandTotalNumBlocks, "", grandTotalSize, "");
+        
+        // Clean up.
+        free(ppBlockHeader);
+        free(pMemDigestArray);
+    }
+
+}    // namespace MemTrack
+
+/* ------------------------------------------------------------ */
+/* ---------------------- new and delete ---------------------- */
+/* ------------------------------------------------------------ */
+
+/* ---------------------------------------- operator new */
+
+void *operator new(size_t size)
+{
+    void *p = MemTrack::TrackMalloc(size);
+    if (p == NULL) throw std::bad_alloc();
+    return p;
+}
+
+/* ---------------------------------------- operator delete */
+
+void operator delete(void *p)
+{
+    MemTrack::TrackFree(p);
+}
+
+/* ---------------------------------------- operator new[] */
+
+void *operator new[](size_t size)
+{
+    void *p = MemTrack::TrackMalloc(size);
+    if (p == NULL) throw std::bad_alloc();
+    return p;
+}
+
+/* ---------------------------------------- operator delete[] */
+
+void operator delete[](void *p)
+{
+    MemTrack::TrackFree(p);
+}
+
+
+</pre>
+
+
+    
+    </body>
+    
+</html>
+
+
+
+
+

@@ -42,13 +42,13 @@ public class QuickLog
     private RollingList<LogEntry> _rollingLogEntryList = new RollingList<LogEntry>(maxLogSize);
     
     
-    public void logRequest(String clientAddress, String url)
+    public synchronized void logRequest(String clientAddress, String url)
     {
         LogEntry logEntry = new LogEntry(clientAddress, url);
         _rollingLogEntryList.add(logEntry);
     }
     
-    public List<LogEntry> copyToList()
+    public synchronized List<LogEntry> copyToList()
     {
         return _rollingLogEntryList.copyToList();
     }
