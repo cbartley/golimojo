@@ -154,6 +154,31 @@ public class QdmlParser
         {
             return myText;
         }
+        
+        public boolean isStartTagCs(String tagName)
+        {
+            return false;
+        }
+        
+        public boolean isStartTagCi(String tagName)
+        {
+            return false;
+        }
+        
+        public boolean isEndTagCs(String tagName)
+        {
+            return false;
+        }
+        
+        public boolean isEndTagCi(String tagName)
+        {
+            return false;
+        }
+        
+        public boolean isTextNode()
+        {
+            return false;
+        }
     }
 
     // ---------------------------------------- class QdmlTagFragment
@@ -165,7 +190,7 @@ public class QdmlParser
         public QdmlTagFragment(String tagName, String text)
         {
             super(text);
-            myTagName = tagName.toUpperCase();
+            myTagName = tagName;
         }
         
         public String getTagName()
@@ -182,6 +207,16 @@ public class QdmlParser
         {
             super(tagName, text);
         }
+        
+        public boolean isStartTagCs(String tagName)
+        {
+            return getTagName().equals(tagName);
+        }
+        
+        public boolean isStartTagCi(String tagName)
+        {
+            return getTagName().equalsIgnoreCase(tagName);
+        }
     }
 
     // ---------------------------------------- class QdmlEndTagFragment
@@ -191,6 +226,16 @@ public class QdmlParser
         public QdmlEndTagFragment(String tagName, String text)
         {
             super(tagName, text);
+        }
+        
+        public boolean isEndTagCs(String tagName)
+        {
+            return getTagName().equals(tagName);
+        }
+        
+        public boolean isEndTagCi(String tagName)
+        {
+            return getTagName().equalsIgnoreCase(tagName);
         }
     }
 
@@ -211,6 +256,11 @@ public class QdmlParser
         public QdmlTextNodeFragment(String text)
         {
             super(text);
+        }
+        
+        public boolean isTextNode()
+        {
+            return true;
         }
     }
 

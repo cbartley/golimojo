@@ -41,7 +41,7 @@ public class Server {
 
     // ---------------------------------------- Server start
     
-    protected static void start(int port) throws Exception
+    protected static void start(int port, String articleTitlePath) throws Exception
     {
         
         // Create the server
@@ -50,7 +50,6 @@ public class Server {
         String pathToWordFrequencyFile = "resource-root/word-frequency.txt";
         Ranker ranker = new Ranker(pathToWordFrequencyFile);
         
-        String articleTitlePath = "resource-root/article-titles.txt";
         Linker linker = new Linker(ranker, articleTitlePath);
         MissingLinkProxyServlet.setSharedLinker(linker);
 
@@ -77,7 +76,8 @@ public class Server {
     
     public static void main(String[] args) throws Exception
     {
-        start(8085);
+        String articleTitlePath = "resource-root/article-titles-small.txt";
+        start(8085, articleTitlePath);
     }
     
 }

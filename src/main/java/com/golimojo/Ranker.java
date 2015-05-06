@@ -32,6 +32,8 @@ package com.golimojo;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -53,6 +55,7 @@ public class Ranker
         for (String word : wordList)
         {
             double weight = rankWord(word);
+//System.out.printf("*** %1.5f %s \n", weight, word);
             phraseRank *= weight;
         }
         return phraseRank;
@@ -64,7 +67,7 @@ public class Ranker
         if (weightedWord == null) return 0.0;
         return weightedWord.weight;
     }
-    
+
     private static List<CountedWord> readWordFrequencyFile(String pathToWordFrequencyFile) throws Exception
     {
         List <CountedWord> countedWordList = new ArrayList<CountedWord>();
@@ -124,13 +127,14 @@ public class Ranker
     private static Hashtable<String, WeightedWord> createWeightedWordBag(List<WeightedWord> weightedWordList)
     {
         Hashtable<String, WeightedWord> weightedWordBag = new Hashtable<String, WeightedWord>();
+        java.util.Collections.reverse(weightedWordList);
         for (WeightedWord weightedWord : weightedWordList)
         {
             weightedWordBag.put(weightedWord.word.toLowerCase(), weightedWord);
         }
         return weightedWordBag;
     }
-    
+
     private static class CountedWord
     {
         public final String word;

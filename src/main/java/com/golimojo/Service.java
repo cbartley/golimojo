@@ -36,7 +36,8 @@ public class Service extends Server
     
     public static void main(String[] args) throws Exception
     {
-        start(8080);
+        String articleTitlePath = "resource-root/article-titles.txt";
+        start(8080, articleTitlePath);
     }
 
 }

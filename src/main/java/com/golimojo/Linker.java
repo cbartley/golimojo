@@ -30,6 +30,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.golimojo;
 
 import java.io.*;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.net.URLEncoder;
 import java.util.*;
 import java.util.regex.*;
 
@@ -41,21 +49,58 @@ import com.golimojo.QdmlParser.QdmlTextNodeFragment;
 
 public class Linker 
 {
-    private Dictionary<String, String> myArticleTitleBag;
-    
-    public Linker(Ranker ranker, String articleTitlesFilePath) throws Exception
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface Test
     {
-        myArticleTitleBag = readArticleTitles(ranker, articleTitlesFilePath);
+        
     }
     
-    public static String createLinkUrl(String linkMatch)
+    static class Tester 
     {
-        String articleTitle = linkMatch.replaceAll("[ \t\r\n]+", "_");
-        String url = "http://en.wikipedia.org/wiki/" + articleTitle;
-        return url;
+        public Tester(Class metaClass)
+        {
+            List<Method> testMethodList = getTestMethods(metaClass);
+            callMethods(testMethodList);
+        }
+
+        private static List<Method> getTestMethods(Class metaClass)
+        {
+            List<Method> methodList = new ArrayList();
+            Method[] methods = metaClass.getDeclaredMethods();
+            for (Method method : methods)
+            {
+                if (method.isAnnotationPresent(Test.class))
+                {
+                    methodList.add(method);
+                }
+            }
+            return methodList;
+        }
+        
+        private static void callMethods(List<Method> methodList)
+        {
+            Object[] args = new Object[] {};
+            for (Method method : methodList)
+            {
+                try
+                {
+                    method.invoke(null, args);
+                }
+                catch (Throwable t)
+                {
+                    t.printStackTrace();
+                    break;
+                }
+            }
+        }
     }
 
-    public List<QdmlFragment> findLinks(List<QdmlFragment> fragmentList, String url)
+    Tester t = new Tester(Linker.class);
+    
+    // ---------------------------------------- Linker xxxx
+
+    public List<QdmlFragment> addLinksToHtmlDocument(List<QdmlFragment> fragmentList, String baseUrl)
     {
         // Insert BASE element.
         for (int i = 0; i < fragmentList.size(); i++)
@@ -64,19 +109,21 @@ public class Linker
             if (fragment instanceof QdmlStartTagFragment)
             {
                 QdmlStartTagFragment startTag = (QdmlStartTagFragment)fragment;
-                if (startTag.getTagName().equals("HEAD"))
+                if (startTag.isStartTagCi("HEAD"))
                 {
-                    QdmlElementFragment elem = new QdmlElementFragment("<base href='" + url + "'>");
+                    QdmlElementFragment elem = new QdmlElementFragment("<base href='" + baseUrl + "'>");
                     fragmentList.add(i + 1, elem);
                     break;
                 }
             }
         }
-        
-        return findLinks(fragmentList);
-    }
 
-    public List<QdmlFragment> findLinks(List<QdmlFragment> fragmentList)
+        return addLinksToHtmlDocument(fragmentList);
+    }
+    
+    // ---------------------------------------- Linker xxxx
+
+    public List<QdmlFragment> addLinksToHtmlDocument(List<QdmlFragment> fragmentList)
     {   
         boolean inBody = false;
         boolean inStyle = false;
@@ -90,10 +137,10 @@ public class Linker
             
             boolean isTextNode = (fragment instanceof QdmlTextNodeFragment);
             
-            inBody = insideElement(fragment, "BODY", inBody);
-            inStyle = insideElement(fragment, "STYLE", inStyle);
-            inScript = insideElement(fragment, "SCRIPT", inScript);
-            inAnchor = insideElement(fragment, "A", inAnchor);
+            inBody = isInsideElement(fragment, "BODY", inBody);
+            inStyle = isInsideElement(fragment, "STYLE", inStyle);
+            inScript = isInsideElement(fragment, "SCRIPT", inScript);
+            inAnchor = isInsideElement(fragment, "A", inAnchor);
                 
             if (!isTextNode || !inBody || inStyle || inScript || inAnchor)
             {
@@ -102,85 +149,399 @@ public class Linker
             else
             {
                 QdmlTextNodeFragment textNode = (QdmlTextNodeFragment)fragment;
-                findLinks(textNode, fragmentOutList);
+                addLinksToTextNode(textNode, fragmentOutList);
             }
         }
 
         return fragmentOutList;
     }
+    
+    // ---------------------------------------- Linker xxxx
 
-    private boolean insideElement(QdmlFragment fragment, String tagName, boolean insideElementNow)
+    private boolean isInsideElement(QdmlFragment fragment, String tagName, boolean insideElementNow)
     {
         if (fragment instanceof QdmlStartTagFragment)
         {
             QdmlStartTagFragment startTag = (QdmlStartTagFragment)fragment;
-            if (startTag.getTagName().equals(tagName)) return true;
+            if (startTag.isStartTagCi(tagName)) return true;
         }
         if (fragment instanceof QdmlEndTagFragment)
         {
             QdmlEndTagFragment endTag = (QdmlEndTagFragment)fragment;
-            if (endTag.getTagName().equals(tagName)) return false;
+            if (endTag.isEndTagCi(tagName)) return false;
         }
         return insideElementNow;
     }
     
-    private void findLinks(QdmlTextNodeFragment textNode, List<QdmlFragment> fragmentOutList)
+    // ---------------------------------------- Linker xxxx
+    
+    private void addLinksToTextNode(QdmlTextNodeFragment textNode, List<QdmlFragment> fragmentOutList)
     {
         String text = textNode.toString();
-        String[] words = extractWords(text);
-        List<String> phrases = phrases(words, 2, 4);
-        List<String> links = links(myArticleTitleBag, phrases);
-        String patternText = createPatternText(links);
-        if (patternText == null)
+        String linkedText = addLinks((Hashtable<String, String>)myArticleTitleBag, text);
+        fragmentOutList.add(new QdmlTextNodeFragment(linkedText));
+    }
+
+    // ---------------------------------------- Linker xxxx
+    
+    private static String addLinks(Hashtable<String, String> pageBag, String text)
+    {
+        List<TextFragment> fragmentList = splitTextIntoFragments(text);
+        List<TextFragment> receiverList = new ArrayList<TextFragment>();
+        addLinks(pageBag, fragmentList, receiverList);
+        return TextFragment.join(receiverList);
+    }
+
+    // ---------------------------------------- Linker xxxx
+    
+    private static void addLinks(Hashtable<String, String> pageBag, List<TextFragment> fragmentList, List<TextFragment> receiverList)
+    {
+        int index = 0;
+        while (index < fragmentList.size())
         {
-            fragmentOutList.add(textNode);
-            return;
+            int phraseFragmentCount = findLongestPhraseAtPosition(pageBag, fragmentList, index);
+
+            // If we matched a phrase, copy and link it.
+            if (phraseFragmentCount > 0)
+            {
+                copyLinkedPhrase(fragmentList, index, phraseFragmentCount, receiverList);
+                index += phraseFragmentCount;
+            }
+        
+            // Otherwise copy over one fragment and advance to the next one.
+            else
+            {
+                receiverList.add(fragmentList.get(index));
+                index += 1;
+            }
         }
+    }
+
+    // ---------------------------------------- Linker xxxxx
+
+    private static void copyLinkedPhrase(List<TextFragment> fragmentList, int index, int fragmentCount, List<TextFragment> receiverList)
+    {
+        String phraseText = assemblePhrase(fragmentList, index, fragmentCount);
+        String url = buildPhraseUrl(phraseText);
+        String startTagText = "<a style='font-weight:bold; color:red' href='" + url + "'>";
+        String endTagText = "</a>";
+        TextFragment anchorStartTagFragment = new TextFragment(FragmentType.Other, startTagText);
+        TextFragment anchorEndTagFragment = new TextFragment(FragmentType.Other, endTagText);
         
-        Pattern p = Pattern.compile(patternText);
-        Matcher m = p.matcher(text);
-        
-        if (!m.find())
+        receiverList.add(anchorStartTagFragment);
+        receiverList.addAll(fragmentList.subList(index, index + fragmentCount));
+        receiverList.add(anchorEndTagFragment);
+    }
+
+    // ---------------------------------------- Linker buildPhraseUrl
+    
+    private static String buildPhraseUrl(String phraseText)
+    {
+        try
         {
-            fragmentOutList.add(textNode);
-            return;
+            String urlPrefix = "http://en.wikipedia.org/wiki/";
+            String encodedPageName = URLEncoder.encode(phraseText.replace(" ", "_"), "UTF-8");
+            return urlPrefix + encodedPageName;
+        } 
+        catch (UnsupportedEncodingException e)
+        {
+            System.err.println("Could not encode '" + phraseText + "'!");
+            return "about:blank";
+        }
+    }
+
+    // ---------------------------------------- Linker xxxx
+
+    public static @Test void testFindLongestPhraseAtPosition()
+    {
+        Hashtable<String, String> pageBag = new Hashtable<String, String>();
+
+        List<TextFragment> fragmentList = splitTextIntoFragments("one two three four five");
+        assert findLongestPhraseAtPosition(pageBag, fragmentList, 0) == 0;
+
+        pageBag.put("one", "one");
+        assert findLongestPhraseAtPosition(pageBag, fragmentList, 0) == 1;
+        assert findLongestPhraseAtPosition(pageBag, fragmentList, 1) == 0;
+        
+        pageBag.put("two", "two");
+        assert findLongestPhraseAtPosition(pageBag, fragmentList, 0) == 1;
+        assert findLongestPhraseAtPosition(pageBag, fragmentList, 1) == 0;
+        assert findLongestPhraseAtPosition(pageBag, fragmentList, 2) == 1;
+        assert findLongestPhraseAtPosition(pageBag, fragmentList, 3) == 0;
+        
+        pageBag.put("three four", "three four");
+        assert findLongestPhraseAtPosition(pageBag, fragmentList, 4) == 3;
+        
+        pageBag.put("three", "three");
+        assert findLongestPhraseAtPosition(pageBag, fragmentList, 4) == 3;
+        
+        pageBag.put("three four five", "three four five");
+        assert findLongestPhraseAtPosition(pageBag, fragmentList, 4) == 5;
+    }
+
+    private static int findLongestPhraseAtPosition(Hashtable<String, String> pageBag, List<TextFragment> fragmentList, int index)
+    {
+        final int maxWordCount = 4;
+        int maxPhraseLength = findMaxPhraseLengthAtPosition(fragmentList, index, maxWordCount);
+
+        for (int i = maxPhraseLength; i > 0; i -= 2)
+        {
+            String phrase = assemblePhrase(fragmentList, index, i);
+            if (pageBag.get(phrase) != null) return i;
         }
 
-        do  
-        {
-            String url = createLinkUrl(m.group());
-            String replacement = "<a style='color:red;font-weight:bold' href='" + url + "'>" + m.group() + "</a>";
-            StringBuffer sb = new StringBuffer();
-            m.appendReplacement(sb, replacement);
-            QdmlTextNodeFragment subNode = new QdmlTextNodeFragment(sb.toString());
-            fragmentOutList.add(subNode);
-        } while (m.find());
-        
-        StringBuffer sb = new StringBuffer();
-        m.appendTail(sb);
-        QdmlTextNodeFragment subNode = new QdmlTextNodeFragment(sb.toString());
-        fragmentOutList.add(subNode);
+        return 0;
     }
-    
-    public String findLinks(String text, String htmlText)
-    {
-        String[] words = extractWords(text);
-        List<String> phrases = phrases(words, 2, 4);
-        List<String> links = links(myArticleTitleBag, phrases);
-        String patternText = createPatternText(links);
-//      htmlText = htmlText.replaceAll(patternText, "<a href='$1'>$1</a>");
-        
-        Pattern p = Pattern.compile(patternText);
-        Matcher m = p.matcher(htmlText);
-        StringBuffer sbHtmlText = new StringBuffer();
-        while (m.find()) 
+
+    // ---------------------------------------- Linker xxxx
+
+        public static @Test void testFindMaxPhraseLengthAtPosition()
         {
-            String url = createLinkUrl(m.group());
-            String replacement = "<a style='color:red;font-weight:bold' href='" + url + "'>" + m.group() + "</a>";
-            m.appendReplacement(sbHtmlText, replacement);
+            // Some of these results are surprising if you forget to account  for whitespace 
+            // fragments.  Also remember that a two word phrase will have *3* fragments.
+            assert findMaxPhraseLengthAtPosition(splitTextIntoFragments("foo"), 0, 0) == 0;
+            assert findMaxPhraseLengthAtPosition(splitTextIntoFragments("foo"), 0, 0) == 0;
+            assert findMaxPhraseLengthAtPosition(splitTextIntoFragments("foo"), 0, 1) == 1;
+            assert findMaxPhraseLengthAtPosition(splitTextIntoFragments("foo"), 0, 2) == 1;
+            assert findMaxPhraseLengthAtPosition(splitTextIntoFragments(" foo"), 0, 1) == 0;
+            assert findMaxPhraseLengthAtPosition(splitTextIntoFragments("foo bar"), 0, 1) == 1;
+            assert findMaxPhraseLengthAtPosition(splitTextIntoFragments("foo bar"), 0, 2) == 3;
+            assert findMaxPhraseLengthAtPosition(splitTextIntoFragments("foo bar baz"), 1, 1) == 0;
+            assert findMaxPhraseLengthAtPosition(splitTextIntoFragments("foo bar baz"), 1, 2) == 0;
+            assert findMaxPhraseLengthAtPosition(splitTextIntoFragments("foo bar baz"), 2, 1) == 1;
+            assert findMaxPhraseLengthAtPosition(splitTextIntoFragments("foo bar baz"), 2, 2) == 3;
+
+            assert findMaxPhraseLengthAtPosition(splitTextIntoFragments("foo."), 0, 2) == 1;
+            assert findMaxPhraseLengthAtPosition(splitTextIntoFragments("foo bar."), 0, 2) == 3;
         }
-        m.appendTail(sbHtmlText);
-        return sbHtmlText.toString();
+
+    private static int findMaxPhraseLengthAtPosition(List<TextFragment> fragmentList, int index, int maxWordCount)
+    {
+        // Figure out how many fragments might constitute our longest possible phrase.  Note
+        // that "adjacent" word fragments will actually be separated by whitespace fragments.
+        int remainingFragmentCount = fragmentList.size() - index;
+        int maxLookAheadCount = 2 * maxWordCount - 1;
+        int lookAheadCount = Math.min(remainingFragmentCount, maxLookAheadCount);
+        
+        // We might be done already.
+        if (lookAheadCount < 1) return 0;
+        
+        // Is the first fragment a word?
+        if (fragmentList.get(index).getType() != FragmentType.Word) return 0;
+        
+        // Scan the remaining fragments to determine the longest actual phrase.
+        for (int i = 2; i < lookAheadCount; i += 2)
+        {
+            if (fragmentList.get(i - 1).getType() != FragmentType.Whitespace) return i - 1;
+            if (fragmentList.get(i).getType() != FragmentType.Word) return i - 1;
+        }
+        
+        // We matched the longest allowable phrase.
+        return lookAheadCount - ((lookAheadCount + 1) % 2); // yuck
+    }
+
+    // ---------------------------------------- Linker xxxx
+    
+    public static @Test void testAssemblePhrase()
+    {
+        assert assemblePhrase(splitTextIntoFragments(""), 0, 0).equals("");
+        assert assemblePhrase(splitTextIntoFragments(" foo"), 0, 0).equals("");
+        assert assemblePhrase(splitTextIntoFragments(" foo"), 0, 1).equals("");
+        assert assemblePhrase(splitTextIntoFragments(" foo"), 0, 2).equals("foo");
+        assert assemblePhrase(splitTextIntoFragments("foo "), 0, 1).equals("foo");
+        assert assemblePhrase(splitTextIntoFragments("foo "), 0, 2).equals("foo");
+        assert assemblePhrase(splitTextIntoFragments("foo\t\tbar"), 0, 3).equals("foo bar");
+
+        assert assemblePhrase(splitTextIntoFragments("foo bar baz"), 1, 0).equals("");
+        assert assemblePhrase(splitTextIntoFragments("foo bar baz"), 1, 1).equals("");
+        assert assemblePhrase(splitTextIntoFragments("foo bar baz"), 1, 2).equals("bar");
+        assert assemblePhrase(splitTextIntoFragments("foo bar baz"), 1, 3).equals("bar");
+        assert assemblePhrase(splitTextIntoFragments("foo bar baz"), 1, 4).equals("bar baz");
+
+        assert assemblePhrase(splitTextIntoFragments("foo bar baz"), 2, 0).equals("");
+        assert assemblePhrase(splitTextIntoFragments("foo bar baz"), 2, 1).equals("bar");
+        assert assemblePhrase(splitTextIntoFragments("foo bar baz"), 2, 2).equals("bar");
+        assert assemblePhrase(splitTextIntoFragments("foo bar baz"), 2, 3).equals("bar baz");
+    }
+
+    private static String assemblePhrase(List<TextFragment> fragmentList, int index, int fragmentCount)
+    {
+        StringBuffer sbPhrase = new StringBuffer();
+        for (int i = 0; i < fragmentCount; i++)
+        {
+            TextFragment fragment = fragmentList.get(index + i);
+            if (fragment.getType() == FragmentType.Whitespace)
+            {
+                sbPhrase.append(" ");
+            }
+            else
+            {
+                sbPhrase.append(fragment.getText());
+            }
+        }
+        return sbPhrase.toString().trim();
+    }
+
+    // ---------------------------------------- Linker splitTextIntoFragments
+    
+        public static @Test void testSplitTextIntoFragments()
+        {
+            assert splitTextIntoFragments("").size() == 0;
+            assert splitTextIntoFragments("foo").size() == 1;
+            assert splitTextIntoFragments("foo bar").size() == 3;
+            assert splitTextIntoFragments("foo;bar").size() == 3;
+            assert splitTextIntoFragments("foo;;;bar").size() == 3;
+
+            assert splitTextIntoFragments("foo bar").get(0).getText().equals("foo");
+            assert splitTextIntoFragments("foo bar").get(1).getText().equals(" ");
+            assert splitTextIntoFragments("foo bar").get(2).getText().equals("bar");
+        }
+
+    private static List<TextFragment> splitTextIntoFragments(String text)
+    {   
+        int fragmentStartIndex = 0;
+        List<TextFragment> fragmentList = new ArrayList<TextFragment>();
+        for (int i = 0; i < text.length(); i++)
+        {
+            FragmentType prevType = FragmentType.typeOfCharAtAnyIndex(text, i);
+            FragmentType currType = FragmentType.typeOfCharAtAnyIndex(text, i + 1); // out-of-range ==> null
+
+            if (prevType != currType)
+            {
+                String fragmentText = text.substring(fragmentStartIndex, i + 1);
+                TextFragment textFragment = new TextFragment(prevType, fragmentText);
+                fragmentList.add(textFragment);
+                fragmentStartIndex = i + 1;
+            }
+        }
+        return fragmentList;
+    }
+
+    // ---------------------------------------- class TextFragment
+    
+        public static @Test void testTextFragment()
+        {
+            TextFragment foo = new TextFragment(FragmentType.Other, "foo");
+            TextFragment bar = new TextFragment(FragmentType.Other, "bar");
+            
+            assert TextFragment.join(new ArrayList<TextFragment>()).equals("");
+            assert TextFragment.join(Arrays.asList(new TextFragment[] {foo, bar})).equals("foobar");
+        }
+    
+    private static class TextFragment
+    {
+        private final FragmentType _type;
+        private final String _text;
+
+        public TextFragment(FragmentType type, String text)
+        {
+            _type = type;
+            _text = text;
+        }
+        
+        public FragmentType getType()
+        {
+            return _type;
+        }
+        
+        public String getText()
+        {
+            return _text;
+        }
+        
+        public static String join(Collection<TextFragment> fragmentCollection)
+        {
+            StringBuffer sbText = new StringBuffer();
+            for (TextFragment fragment : fragmentCollection)
+            {
+                sbText.append(fragment.getText());
+            }
+            return sbText.toString();
+        }
+    }
+
+    // ---------------------------------------- enum FragmentType
+    
+        public static @Test void testFragmentType()
+        {
+            assert FragmentType.typeOf(' ') == FragmentType.Whitespace;
+            assert FragmentType.typeOf('\t') == FragmentType.Whitespace;
+            assert FragmentType.typeOf('\r') == FragmentType.Whitespace;
+            assert FragmentType.typeOf('\n') == FragmentType.Whitespace;
+
+            assert FragmentType.typeOf('-') == FragmentType.Word;
+            assert FragmentType.typeOf('\'') == FragmentType.Word;
+            assert FragmentType.typeOf('0') == FragmentType.Word;
+            assert FragmentType.typeOf('9') == FragmentType.Word;
+            assert FragmentType.typeOf('A') == FragmentType.Word;
+            assert FragmentType.typeOf('Z') == FragmentType.Word;
+            assert FragmentType.typeOf('a') == FragmentType.Word;
+            assert FragmentType.typeOf('z') == FragmentType.Word;
+
+            assert FragmentType.typeOf(',') == FragmentType.Other;
+            assert FragmentType.typeOf(';') == FragmentType.Other;
+            assert FragmentType.typeOf(':') == FragmentType.Other;
+            assert FragmentType.typeOf('?') == FragmentType.Other;
+            assert FragmentType.typeOf('.') == FragmentType.Other;
+            
+            assert FragmentType.typeOfCharAtAnyIndex("", -2) == null;
+            assert FragmentType.typeOfCharAtAnyIndex("", -1) == null;
+            assert FragmentType.typeOfCharAtAnyIndex("", 0) == null;
+            assert FragmentType.typeOfCharAtAnyIndex("", 1) == null;
+            assert FragmentType.typeOfCharAtAnyIndex(" ", 0) == FragmentType.Whitespace;
+        }
+
+    enum FragmentType 
+    { 
+        Other,
+        Word,
+        Whitespace;
+
+        public static FragmentType typeOf(char ch)
+        {
+            if (isWhitespaceChar((char)ch)) return Whitespace;
+            if (isWordChar((char)ch)) return Word;
+            return Other;
+        }
+        
+        public static FragmentType typeOfCharAtAnyIndex(String text, int index)
+        {
+            if (index < 0) return null;
+            if (index >= text.length()) return null;
+            return typeOf(text.charAt(index));
+        }
+        
+        private static boolean isWhitespaceChar(char ch)
+        {
+            if (ch == ' ') return true;
+            if (ch == '\t') return true;
+            if (ch == '\r') return true;
+            if (ch == '\n') return true;
+            return false;
+        }
+        
+        private static boolean isWordChar(char ch)
+        {
+            if (ch == '-') return true;
+            if (ch == '\'') return true;
+            if ('0' <= ch && ch <= '9') return true;
+            if ('A' <= ch && ch <= 'Z') return true;
+            if ('a' <= ch && ch <= 'z') return true;
+            return false;
+        }
+        
+    };
+    
+    
+    
+    
+    
+    
+    private Dictionary<String, String> myArticleTitleBag;
+    
+    public Linker(Ranker ranker, String articleTitlesFilePath) throws Exception
+    {
+        myArticleTitleBag = readArticleTitles(ranker, articleTitlesFilePath);
     }
 
     private static Dictionary<String, String> readArticleTitles(Ranker ranker, String articleTitlesFilePath) throws Exception
@@ -196,20 +557,24 @@ public class Linker
             int articleTitleCount = 0;
             while (true)
             {
-                    String articleTitle = in.readLine();
-                    if (articleTitle == null) break;
-                    //if (countWords(articleTitle) < 2) continue;
-                    if (!justLetters(articleTitle)) continue;
-                    articleTitle = translateArticleTitle(articleTitle);
-                    double rank = ranker.rankPhrase(articleTitle);
-                    if (rank > 0.0)
-                    {
-//                      System.out.println("*** " + articleTitle);
-//                      System.out.println("... " + rank);
-                    }
-                    if (rank > 0.0) continue;
+                String articleTitleLine = in.readLine();
+                if (articleTitleLine == null) break;
+                String[] articleTitleFields = articleTitleLine.split("\t");
+                String articleTitle = articleTitleFields[articleTitleFields.length - 1];
+                articleTitle = articleTitle.trim();
+                articleTitle = articleTitle.replace('_', ' ');
+                //if (countWords(articleTitle) < 2) continue;
+                //if (!justLetters(articleTitle)) continue;
+                double rank = ranker.rankPhrase(articleTitle);
+                if (rank < 0.0001)
+                {
                     articleTitleCount++;
                     articleTitleBag.put(articleTitle, articleTitle);
+                }
+                else
+                {
+                    System.out.println("--- " + articleTitle);
+                }
             }
             long endTimeMs = new Date().getTime();
             long elapsedTimeMs = endTimeMs - startTimeMs;
@@ -225,160 +590,5 @@ public class Linker
         return articleTitleBag;
 
     }
-
-    private static int countWords(String articleTitle)
-    {
-        int wordCount = 0;
-        for (int i = 0; i < articleTitle.length(); i++)
-        {
-            char ch = articleTitle.charAt(i);
-            if (ch == '_')
-            {
-                wordCount++;
-            }
-        }
-        return wordCount + 1;
-    }
-    
-    private static boolean justLetters(String articleTitle)
-    {
-        for (int i = 0; i < articleTitle.length(); i++)
-        {
-            char ch = articleTitle.charAt(i);
-            if (ch != '_' && !Character.isLetter(ch)) return false; 
-        }
-        return true;
-    }
-    
-    private static String translateArticleTitle(String articleTitle)
-    {
-//      articleTitle = articleTitle.toLowerCase();
-        articleTitle = articleTitle.replace('_', ' ');
-        return articleTitle;
-    }
-    
-    private static String[] extractWords(String text)
-    {
-        Pattern splitPat = Pattern.compile("[^A-Za-z0-9]+");
-        String[] words = splitPat.split(text);
-//      for (int i = 0; i < words.length; i++)
-//      {
-//          words[i] = words[i].toLowerCase();
-//      }
-        return words;
-    }
-    
-    private static boolean isStrongWord(String word)
-    {
-        if (word.length() == 0) return false;
-        
-        char ch = word.charAt(0);
-        if (Character.isLetter(ch) && Character.isUpperCase(ch)) return true;
-        if (Character.isDigit(ch)) return true;
-        
-        return false;       
-    }
-    
-    private static String phraseFromPosition(String[] words, int index, int wordCount)
-    {
-        if (index + wordCount > words.length) return null;
-        if (!isStrongWord(words[index])) return null;
-        if (!isStrongWord(words[index + wordCount - 1])) return null;
-
-        StringBuffer sb = new StringBuffer();
-        for (int i = index; i < index + wordCount; i++)
-        {
-            if (i >= words.length) return null;
-            if (i > index) sb.append(" ");
-            sb.append(words[i]);
-        }
-        return sb.toString();
-    }
-    
-    private static List<String> phrasesFromPosition(String[] words, int index, int minWords, int maxWords)
-    {
-        List<String> phrases = new ArrayList<String>();
-        for (int i = maxWords; i >= minWords; i--)
-        {
-            String phrase = phraseFromPosition(words, index, i);
-            if (phrase != null)
-            {
-                phrases.add(phrase);
-            }
-        }
-        return phrases;
-    }
-    
-    private static List<String> phrases(String[] words, int minWords, int maxWords)
-    {
-        List<String> phrases = new ArrayList<String>();
-        for (int i = 0; i < words.length; i++)
-        {
-            List<String> phrasesFromPosition = phrasesFromPosition(words, i, minWords, maxWords);
-            phrases.addAll(phrasesFromPosition);
-        }
-        return phrases;
-    }
-    
-    private static List<String> links(Dictionary<String, String> articleTitleBag, List<String> phrases)
-    {
-        List<String> links = new ArrayList<String>();
-        for (String phrase : phrases)
-        {
-            if (articleTitleBag.get(phrase/*.toLowerCase()*/) != null)
-            {
-                links.add(phrase);
-            }
-        }
-        return links;
-    }
-
-    private static String join(String[] strings, String separator)
-    {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < strings.length; i++)
-        {
-            sb.append(strings[i]);
-            if (i < strings.length - 1)
-            {
-                sb.append(separator);
-            }
-        }
-        return sb.toString();
-    }
-    
-    private static String createLinkPhrasePatternText(String linkPhrase)
-    {
-        return linkPhrase.replace(" ", "[ \t\r\n]+");
-    }
-
-    private static String createPatternText(List<String> linkPhrases)
-    {
-        if (linkPhrases.size() == 0) return null;
-        String[] patterns = (String[])linkPhrases.toArray(new String[] {});
-        for (int i = 0; i < patterns.length; i++)
-        {
-            patterns[i] = createLinkPhrasePatternText(patterns[i]);
-        }
-        String patternText = "((" + join(patterns, ")|(") + "))";
-        return patternText;
-    }
-
-    
-    
-/*  
-    private static void readLinksFromHttpFile(Dictionary<String, String> articleTitleBag, String urlString) throws Exception
-    {
-        String text = readAndParseHttpFile(urlString);
-        String[] words = extractWords(text);
-        List<String> phrases = phrases(words, 2, 4);
-        List<String> links = links(articleTitleBag, phrases);
-        System.out.println("-----");
-        for (String link : links)
-        {
-            System.out.println(link);
-        }
-    }
-*/
 
 }

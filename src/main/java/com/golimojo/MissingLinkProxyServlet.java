@@ -65,7 +65,7 @@ public class MissingLinkProxyServlet extends HttpServlet
                 List<QdmlFragment> fragmentList = QdmlParser.readAndParseHttpFile(urlArg);
                 if (ourLinker != null)
                 {
-                    fragmentList = ourLinker.findLinks(fragmentList, urlArg);                   
+                    fragmentList = ourLinker.addLinksToHtmlDocument(fragmentList, urlArg);
                 }
                 String htmlTextOut = QdmlParser.join(fragmentList);
                 out.print(htmlTextOut);
