@@ -41,20 +41,20 @@ import javax.servlet.http.HttpServletResponse;
 import com.golimojo.QdmlParser.QdmlFragment;
 
 @SuppressWarnings("serial")
-public class FindLinksAjaxServlet extends GolimojoServlet 
+public class GetPageDataAjaxServlet extends GolimojoServlet 
 {
-    // ---------------------------------------- AddLinksProxyServlet class variables
+    // ---------------------------------------- GetPageDataAjaxServlet class variables
     
     private static Linker our_linker = null;
 
-    // ---------------------------------------- AddLinksProxyServlet setSharedLinker
+    // ---------------------------------------- GetPageDataAjaxServlet setSharedLinker
     
     public static void setSharedLinker(Linker linker)
     {
         our_linker = linker;
     }
     
-    // ---------------------------------------- AddLinksProxyServlet customDoGet
+    // ---------------------------------------- GetPageDataAjaxServlet customDoGet
     
     public void customDoGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException
@@ -88,7 +88,7 @@ public class FindLinksAjaxServlet extends GolimojoServlet
         }
     }
     
-    // ---------------------------------------- AddLinksProxyServlet generatePageTitleXml
+    // ---------------------------------------- GetPageDataAjaxServlet generatePageTitleXml
     
     private static void generatePageTitleXml(PrintWriter writer, List<String> pageTitleList)
     {

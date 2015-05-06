@@ -255,30 +255,6 @@ TextNodeLinker.prototype.createWikipediaLink = function (pageTitle)
     return url;
 }
 
-// ---------------------------------------- TextNodeLinker linkText
-
-TextNodeLinker.prototype.linkText = function (text)
-{
-    var textFragmentList = [];
-    var tokenList = this.phraseFinder.tokenize(text);
-    for (var i = 0; i < tokenList.length; i++)
-    {
-        var token = tokenList[i];
-        if (token instanceof Text)
-        {
-            textFragmentList.push(token.text);
-        }
-        else
-        {
-            var textFragment = "[" + token.text + "]" + "(" + token.phrase + ")";
-            textFragmentList.push(textFragment);
-        }
-    }
-
-    var linkedText = textFragmentList.join("");
-    return linkedText;
-}
-
 // ------------------------------------------------------------
 // -------------------- class PhraseFinder --------------------
 // ------------------------------------------------------------
@@ -372,9 +348,9 @@ function Matcher(tokenTypeList)
     // Build a composite pattern that will recognize text matching any of the *keyed* patterns. 
     var rpKeyedTokens = this.createKeyedCompositeOrPattern(rpTokenList, this.masterKey);
 
-    // Build a pattern which will match extra leading key characters then a keyed pattern.
-    var rpKeyExcessThenKeyedTokens = this.keyCh + "*" + rpKeyedTokens;
-    this.rxKeyExcessThenKeyedTokens = new RegExp(rpKeyExcessThenKeyedTokens, "g");
+    // Build a pattern which will match a keyed pattern then any extra trailing key characters.
+    var rpKeyedTokenThenKeyExcess = rpKeyedTokens + this.keyCh + "*";
+    this.rxKeyedTokenThenKeyExcess = new RegExp(rpKeyedTokenThenKeyExcess, "g");
 
     // Build a pattern that identifies the character right before a transition from a key
     // to a token/non-token run or the transition from a token/non-token run to a key.
@@ -393,32 +369,34 @@ function Matcher(tokenTypeList)
 
 Matcher.prototype.tokenize = function (text)
 {
-    // Insert master keys at the beginning of the text and before and after every token.
-    // ... Every token and every non-token run will be preceded by a master key.  There
-    // ... may be some cases when two master keys are adjacent, and there may be a spurious
-    // ... master key at the end of the text, but those cases will cause minimal difficulty.
-    text = this.masterKey + text.replace(this.rxTokens, this.masterKey + "$1" + this.masterKey);
+    // Insert master keys before and after every token and also before and after the text as a whole.
+    // ... Two adjacent master keys will occur on occasion but they will be treated implicitly as if
+    // ... they were a single master key.  An extraneous master key (or master key pair) will always
+    // ... be present at the very beginning of the list.  After that the text will consist of 
+    // ... alternating text runs and keys.  Each run will be either a single token or a run of text
+    // ... which contains no tokens at all.
+    text = this.masterKey + text.replace(this.rxTokens, this.masterKey + "$1" + this.masterKey) + this.masterKey;
 
     // Replace each master key with a shorter token key which identifies each token-type.
-    // ... Non-token runs will always be preceded by a single master key, and this step
+    // ... Non-token runs will always be followed by a single master key, and this step
     // ... will not change these master keys -- so master keys will identify non-token
     // ... runs and unique (shorter) token keys will identify each token.
-    text = text.replace(this.rxKeyExcessThenKeyedTokens, "$1" /* unique key and token */ );
+    text = text.replace(this.rxKeyedTokenThenKeyExcess, "$1" /* token and unique key */ );
 
     // Insert split characters at boundaries.
     text = text.replace(this.rxTransition, "$1" /* char before transition */ + this.splitCh);
 
     // Split the text into an array.  Even indices (remember we start at zero) will
-    // hold keys, and odd indices will hold tokens/non-token runs.  Note that we may
+    // hold tokens/non-token runs, and odd indices will hold keys.  Note that we may
     // have an extra key at the end, which we can just ignore.
-    var keysAndTokensList = text.split(this.splitCh);
+    var tokensAndKeysList = text.split(this.splitCh);
 
     // Create tokens for each key/text pair and put them in a list.
     var tokenList = [];
-    for (var i = 0; i + 1 < keysAndTokensList.length; i += 2)
+    for (var i = 1; i + 1 < tokensAndKeysList.length; i += 2)
     {
-        var key = keysAndTokensList[i];
-        var tokenText = keysAndTokensList[i + 1];
+        var tokenText = tokensAndKeysList[i];
+        var key = tokensAndKeysList[i + 1];
         var nodeCtor = this.tokenTypeList[key.length - 1];
         var tokenNode = new nodeCtor(tokenText);
         tokenList.push(tokenNode);
@@ -439,8 +417,8 @@ Matcher.prototype.createKeyedCompositeOrPattern = function (rpTokenList, masterK
 
 // ---------------------------------------- Matcher createKeyedTokenPatterns
 // Create and return a new list of regular expression patterns based on
-// the patterns in "rpTokenList".  Each output pattern will match a
-// unique key followed by any string which matches the input pattern.
+// the patterns in "rpTokenList".  Each output pattern will match any string
+// which matches the input pattern and which is followed by a unique key.
 // Keys are sequences of a single key character; they are unique simply
 // by differing in length.  The key for position "i" in the output 
 // list will always be "i + 1" characters long.
@@ -450,7 +428,7 @@ Matcher.prototype.createKeyedTokenPatterns = function (rpTokenList, masterKey)
     for (var i = 0; i < rpTokenList.length; i++)
     {
         var key = this.createKey(masterKey, i + 1);
-        var rpKeyedToken = "(" + key + "(" + rpTokenList[i] + "))";
+        var rpKeyedToken = "((" + rpTokenList[i] + ")" + key + ")";
         rpKeyedTokenList.push(rpKeyedToken);
     }
     return rpKeyedTokenList;

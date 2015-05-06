@@ -70,7 +70,7 @@ public class Server {
         // Create the page linker.
         Linker linker = new Linker(pageDataStore);
         AddLinksProxyServlet.setSharedLinker(linker);
-        FindLinksAjaxServlet.setSharedLinker(linker);
+        GetPageDataAjaxServlet.setSharedLinker(linker);
         
         // Set up the example HTML.
         String exampleBeforeHtml = Linker.getExampleHtml();
@@ -90,10 +90,11 @@ public class Server {
         HttpContext context = server.getContext(host,"/");
 
         ServletHandler servletHandler = new ServletHandler();
-        servletHandler.addServlet("Add Links", "/servlet/add-links", "com.golimojo.AddLinksProxyServlet");
-        servletHandler.addServlet("Find Links", "/servlet/find-links", "com.golimojo.FindLinksAjaxServlet");
-        servletHandler.addServlet("Template", "*.html", "com.golimojo.TemplateServlet");
-        servletHandler.addServlet("Stats", "/servlet/stats", "com.golimojo.StatsServlet");
+        servletHandler.addServlet("Add Links", "/servlet/add-links", AddLinksProxyServlet.class.getName());
+        servletHandler.addServlet("Add Links JavaScript", "/servlet/add-links-javascript", AddLinksJavaScriptProxyServlet.class.getName());
+        servletHandler.addServlet("Get Page Data", "/servlet/get-page-data", GetPageDataAjaxServlet.class.getName());
+        servletHandler.addServlet("Template", "*.html", TemplateServlet.class.getName());
+        servletHandler.addServlet("Stats", "/servlet/stats", StatsServlet.class.getName());
         context.addHandler(servletHandler);
 
         context.setResourceBase("web-root");
