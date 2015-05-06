@@ -48,20 +48,64 @@ public class PageDataStore
     // ---------------------------------------- PageDataStore instance variables
     
     private Hashtable<String, PageData> _pageTitleBag;
-    private int _maxPageRefCount;
     private Ranker _ranker;
+    private StopList _stopList;
     
     // ---------------------------------------- PageDataStore constructor
     
     public PageDataStore(Ranker ranker, String articleTitlesFilePath) throws Exception
     {
-        _pageTitleBag = readPageTitles(ranker, articleTitlesFilePath);
-        _maxPageRefCount = computeMaxRefCount(_pageTitleBag);
+        List<PageData> pageDataList = readPageTitles(articleTitlesFilePath);
+        _pageTitleBag = createPageTitleBag(pageDataList);
+        _stopList = new StopList(pageDataList);
         _ranker = ranker;
     }
 
     // ---------------------------------------- PageDataStore readArticleTitles
     
+        public static void testPresent(PageDataStore pageDataStore, String possiblePageTitle)
+        {
+            if (pageDataStore.findMatchingPageTitle(possiblePageTitle) == null)
+            {
+                System.out.printf("### %s\n", possiblePageTitle);
+            }
+        }
+        
+        public static void testNotPresent(PageDataStore pageDataStore, String possiblePageTitle)
+        {
+            if (pageDataStore.findMatchingPageTitle(possiblePageTitle) != null)
+            {
+                System.out.printf("### [%s]\n", possiblePageTitle);
+            }           
+        }
+
+        public static void L2TEST_testLookup(PageDataStore pageDataStore)
+        {
+            testNotPresent(pageDataStore, "George");
+            testNotPresent(pageDataStore, "David");
+//          testNotPresent(pageDataStore, "Tamara");
+            testNotPresent(pageDataStore, "Wednesday");
+            testNotPresent(pageDataStore, "Thursday");
+            testNotPresent(pageDataStore, "February");
+            
+            testPresent(pageDataStore, "Americans");
+            testPresent(pageDataStore, "Doha");
+            testPresent(pageDataStore, "Iraq");
+            testPresent(pageDataStore, "Washington");
+            testPresent(pageDataStore, "Michigan");
+            testPresent(pageDataStore, "NORAD");
+            testPresent(pageDataStore, "Boston");
+            testPresent(pageDataStore, "Palestinian");
+            testPresent(pageDataStore, "Lebanese");
+            testPresent(pageDataStore, "Hezbollah");
+            testPresent(pageDataStore, "Islamic");
+            testPresent(pageDataStore, "Hamas");
+            testPresent(pageDataStore, "Muslims");
+            testPresent(pageDataStore, "Shia");
+            testPresent(pageDataStore, "Sunni");
+            
+        }
+
     public String findMatchingPageTitle(String possiblePageTitle)
     {
         PageData matchingPageData = _pageTitleBag.get(possiblePageTitle.toLowerCase());
@@ -74,11 +118,9 @@ public class PageDataStore
         int wordsCharCount = results[2];
         int refRank = matchingPageData.getRefRank();
 
-        System.out.printf("*** %-32s %-32s %7dM %7dF %7dR\n", 
-                "[" + possiblePageTitle + "]", "[" + matchingPageTitle + "]", matchStrength, frequencyRank, refRank);
-
-//      if (wordCount != 1) return null;
-
+//      System.out.printf("*** %-32s %-32s %7dM %7dF %7dR\n", 
+//              "[" + possiblePageTitle + "]", "[" + matchingPageTitle + "]", matchStrength, frequencyRank, refRank);
+        
         if (matchStrength < 0) return null;
         if (wordsCharCount < 4) return null;
         
@@ -89,6 +131,8 @@ public class PageDataStore
 
         if (wordCount == 1)
         {
+            if (_stopList.hasWord(possiblePageTitle)) return null;
+            
             if (matchStrength < 1) return null;
 
             if (frequencyRank < 50000)
@@ -225,14 +269,12 @@ public class PageDataStore
             assert !partiallyCaseSensitivePageTitleMatch("the times", "txe times");
         }
 
-    // ---------------------------------------- PageDataStore readPageTitles
+    // ---------------------------------------- PageDataStore createPageTitleBag
 
-    private static Hashtable<String, PageData> readPageTitles(Ranker ranker, String articleTitlesFilePath) throws Exception
+    private static Hashtable<String, PageData> createPageTitleBag(List<PageData> pageDataList) throws Exception
     {
         long startTimeMs = new Date().getTime();
 
-        List<PageData> pageDataList = readPageTitlesIntoList(ranker, articleTitlesFilePath);
-StopList.shuffle(pageDataList);
         computeAndApplyRankings(pageDataList);
         Hashtable<String, PageData> articleTitleBag = new Hashtable<String, PageData>();
         for (PageData pageData : pageDataList)
@@ -252,9 +294,9 @@ StopList.shuffle(pageDataList);
         return articleTitleBag;
     }
 
-    // ---------------------------------------- PageDataStore readPageTitlesIntoList
+    // ---------------------------------------- PageDataStore readPageTitles
 
-    private static List <PageData> readPageTitlesIntoList(Ranker ranker, String articleTitlesFilePath) throws Exception
+    private static List <PageData> readPageTitles(String articleTitlesFilePath) throws Exception
     {
         List<PageData> pageDataList = new ArrayList<PageData>();
         BufferedReader in = new BufferedReader(new FileReader(articleTitlesFilePath));
@@ -310,18 +352,6 @@ StopList.shuffle(pageDataList);
             pageDataList.get(i).setRefRank(i);
         }
         
-    }
-
-    // ---------------------------------------- PageDataStore computeMaxRefCount
-    
-    private static int computeMaxRefCount(Hashtable<String, PageData> pageDataBag)
-    {
-        int maxRefCount = 0;
-        for (PageData pageData : pageDataBag.values())
-        {
-            maxRefCount = Math.max(maxRefCount, pageData.getRefCount());
-        }
-        return maxRefCount;
     }
 
     // ---------------------------------------- class PageData

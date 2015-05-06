@@ -29,11 +29,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ************************************************************/
 package com.golimojo;
 
-import java.io.BufferedInputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
 
 // ------------------------------------------------------------
 // --------------------- class QdmlParser ---------------------
@@ -56,42 +54,9 @@ public class QdmlParser
 {
 
     // ---------------------------------------- instance variables
-    
+
     private ParserState _state = null;
     private FragmentBuilder _fragmentBuilder = new FragmentBuilder();
-
-    // ---------------------------------------- QdmlParser readAndParseHttpFile
-
-    public static List<QdmlFragment> readAndParseHttpFile(String urlString) throws Exception
-    {
-        URL url = new URL(urlString);
-        InputStreamReader in = new InputStreamReader(new BufferedInputStream(url.openStream()), "UTF-8");
-        QdmlParser parser = new QdmlParser();
-        List<QdmlFragment> fragmentList = new ArrayList<QdmlFragment>();
-        while (true)
-        {
-            int chInt = in.read();
-            QdmlFragment fragment = parser.parseCharacter(chInt);
-            if (fragment != null)
-            {
-                fragmentList.add(fragment);
-            }
-            if (chInt == -1) break;
-        }
-        return fragmentList;
-    }
-
-    // ---------------------------------------- QdmlParser join
-
-    public static String join(List<QdmlFragment> fragmentList)
-    {
-        StringBuffer sbHtmlText = new StringBuffer();
-        for (QdmlFragment fragment : fragmentList)
-        {
-            sbHtmlText.append(fragment.toString());
-        }
-        return sbHtmlText.toString();
-    }
 
     // ---------------------------------------- QdmlParser parse
     
@@ -135,23 +100,54 @@ public class QdmlParser
     {
         if (chInt == -1) return _fragmentBuilder.finish();
         _state = ParserState.nextState(_state, (char)chInt);
-        return _fragmentBuilder.update((char)chInt, _state);
+        QdmlFragment fragment = _fragmentBuilder.update((char)chInt, _state);
+        
+        // This is a hack to support SCRIPT elements, which can contain all
+        // sorts of garbage that might look like a tag, but isn't.
+        if (fragment != null && fragment.isStartTagCi("SCRIPT"))
+        {
+            _state = ParserState.TAGSCRIPTTEXT;
+        }
+        
+        return fragment;
+    }
+
+    // ---------------------------------------- QdmlParser join
+
+    public static String join(List<QdmlFragment> fragmentList)
+    {
+        StringBuffer sbHtmlText = new StringBuffer();
+        for (QdmlFragment fragment : fragmentList)
+        {
+            sbHtmlText.append(fragment.toString());
+        }
+        return sbHtmlText.toString();
     }
 
     // ---------------------------------------- class QdmlFragment
 
     public static class QdmlFragment
     {
-        private String myText;
+        private String _text;
         
         public QdmlFragment(String text)
         {
-            myText = text;
+            _text = text;
+        }
+
+        public String getText()
+        {
+            return _text;
+        }
+
+        public void setText(String text)
+        {
+            this._text = text;
         }
         
         public String toString()
         {
-            return myText;
+            return _text;
         }
         
         public boolean isStartTagCs(String tagName)
@@ -348,8 +344,19 @@ public class QdmlParser
                 return tagFragment;
             }
             
+            // We have to handle a SCRIPT end tag specially, since the state machine is also handling it specially.
+            if (state == ParserState.TAGENDENDSCRIPT)
+            {
+                String text = _stringBuffer.toString();
+                _stringBuffer.setLength(0);
+
+                // Note that we're storing the text between the <SCRIPT> and the </SCRIPT> in the
+                // end-tag fragment itself.  This is somewhat yucky, but it shouldn't hurt anything.
+                return new QdmlEndTagFragment("SCRIPT", text);
+            }
+
             // No fragment to return this time.
-            return null;    
+            return null;
         }
 
         public QdmlFragment finish()
@@ -506,7 +513,19 @@ public class QdmlParser
         TAGATTRIBQ2TEXT,
         
         TAGENDSLASH,
-        TAGEND;                 // ...>text, ...><tag
+        TAGEND,                 // ...>text, ...><tag
+        
+        TAGSCRIPTTEXT,
+        TAGENDSCRIPT1,          // (<)/SCRIPT>
+        TAGENDSCRIPT2,          // <(/)SCRIPT>
+        TAGENDSCRIPT3,          // </(S)CRIPT>
+        TAGENDSCRIPT4,          // </S(C)RIPT>
+        TAGENDSCRIPT5,          // </SC(R)IPT>
+        TAGENDSCRIPT6,          // </SCR(I)PT>
+        TAGENDSCRIPT7,          // </SCRI(P)T>
+        TAGENDSCRIPT8,          // </SCRIP(T)>
+        TAGENDENDSCRIPT;        // </SCRIPT(>)
+        ;
         
         public static ParserState nextState(ParserState state, char chNext)
         {
@@ -565,6 +584,7 @@ public class QdmlParser
             // <!--...-(-)>
             else if (state == TAGENDCOMMENT2)
             {
+                if (chNext == '-') return TAGENDCOMMENT2;
                 if (chNext == '>') return TAGENDCOMMENT;
                 return TAGCOMMENTTEXT;
             }
@@ -665,6 +685,90 @@ public class QdmlParser
             
             // <tag><, <tag>...
             else if (state == TAGEND)
+            {
+                if (chNext == '<') return TAGSTART;
+                return null;
+            }
+            
+            // <SCRIPT>.(.).</SCRIPT>, <SCRIPT>.(.)</SCRIPT>
+            else if (state == TAGSCRIPTTEXT)
+            {
+                if (chNext == '<') return TAGENDSCRIPT1;
+                return TAGSCRIPTTEXT;
+            }
+            
+            // (<)/SCRIPT>
+            else if (state == TAGENDSCRIPT1)
+            {
+                if (chNext == '/') return TAGENDSCRIPT2;
+                return TAGSCRIPTTEXT;
+            }
+            
+            // <(/)SCRIPT>
+            else if (state == TAGENDSCRIPT2)
+            {
+                if (chNext == 'S') return TAGENDSCRIPT3;
+                if (chNext == 's') return TAGENDSCRIPT3;
+                return TAGSCRIPTTEXT;
+            }
+            
+            // </(S)CRIPT>
+            else if (state == TAGENDSCRIPT3)
+            {
+                if (chNext == 'C') return TAGENDSCRIPT4;
+                if (chNext == 'c') return TAGENDSCRIPT4;
+                if (chNext == ' ') return TAGENDSCRIPT3;    // allow for whitespace here
+                if (chNext == '\t') return TAGENDSCRIPT3;   // ditto
+                if (chNext == '\r') return TAGENDSCRIPT3;   // ditto
+                if (chNext == '\n') return TAGENDSCRIPT3;   // ditto
+                return TAGSCRIPTTEXT;
+            }
+            
+            // </S(C)RIPT>
+            else if (state == TAGENDSCRIPT4)
+            {
+                if (chNext == 'R') return TAGENDSCRIPT5;
+                if (chNext == 'r') return TAGENDSCRIPT5;
+                return TAGSCRIPTTEXT;
+            }
+            
+            // </SC(R)IPT>
+            else if (state == TAGENDSCRIPT5)
+            {
+                if (chNext == 'I') return TAGENDSCRIPT6;
+                if (chNext == 'i') return TAGENDSCRIPT6;
+                return TAGSCRIPTTEXT;
+            }
+            
+            // </SCR(I)PT>
+            else if (state == TAGENDSCRIPT6)
+            {
+                if (chNext == 'P') return TAGENDSCRIPT7;
+                if (chNext == 'p') return TAGENDSCRIPT7;
+                return TAGSCRIPTTEXT;
+            }
+            
+            // </SCRI(P)T>
+            else if (state == TAGENDSCRIPT7)
+            {
+                if (chNext == 'T') return TAGENDSCRIPT8;
+                if (chNext == 't') return TAGENDSCRIPT8;
+                return TAGSCRIPTTEXT;
+            }
+            
+            // </SCRIP(T)>
+            else if (state == TAGENDSCRIPT8)
+            {
+                if (chNext == '>') return TAGENDENDSCRIPT;
+                if (chNext == ' ') return TAGENDSCRIPT8;    // allow for whitespace here
+                if (chNext == '\t') return TAGENDSCRIPT8;   // ditto
+                if (chNext == '\r') return TAGENDSCRIPT8;   // ditto
+                if (chNext == '\n') return TAGENDSCRIPT8;   // ditto
+                return TAGSCRIPTTEXT;
+            }
+            
+            // </SCRIPT(>)
+            else if (state == TAGENDENDSCRIPT)
             {
                 if (chNext == '<') return TAGSTART;
                 return null;

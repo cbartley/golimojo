@@ -35,6 +35,34 @@
                                 .replace(/"/g, "'");
                 return bookmarklet;
             }
+            
+            function blockClick(event)
+            {
+                // If there's a click message, then show it.
+                var clickMessage = this.getAttribute("custom-click-message");
+                if (clickMessage != null)
+                {
+                    alert(clickMessage);
+                }
+
+                // Cancel the event so that the link is not followed.
+                if (event.preventDefault)
+                {
+                    event.preventDefault();     // for Firefox
+                }
+                return false;                   // for IE
+            }
+
+            function insertBookmarklet(anchorText, clickMessage)
+            {
+                var html = 
+                    '<a onclick="return blockClick.call(this, event) "'
+                        + 'custom-click-message="#clickMessage#" href="#bookmarklet#">#anchorText#</a>'
+                                .replace(/#anchorText#/, anchorText)
+                                    .replace(/#clickMessage#/, clickMessage)
+                                        .replace(/#bookmarklet#/, createBookmarklet());
+                document.write(html);
+            }
 
             // ---------------------------------------- behavior framework
         
@@ -229,10 +257,21 @@
         <table class="tab-table">
         
             <tr>
+                <td>
+                    
+                </td>
+                
+                <td>
+                    <h2>Golimojo</h2>
+                </td>
+
+            </tr>
+            
+            <tr>
                 <td custom-behavior="tab-set" class="tab-bar">
                 
-                    <a custom-behavior="tab" custom-target-id="page-introduction" class="tab tab-selected" href="index.html">Introduction/Overview</a>
-                    <a custom-behavior="tab" custom-target-id="page-examples" class="tab tab-unselected" href="index.html?examples">More Examples</a>
+                    <a custom-behavior="tab" custom-target-id="page-introduction" class="tab tab-unselected" href="index.html">Introduction/Overview</a>
+                    <a custom-behavior="tab" custom-target-id="page-examples" class="tab tab-unselected" href="index.html?examples">Examples</a>
                     <a custom-behavior="tab" custom-target-id="page-try" class="tab tab-unselected" href="index.html?try">Try It Out</a>
                     <a custom-behavior="tab" custom-target-id="page-bookmarklet" class="tab tab-unselected" href="index.html?bookmarklet">Bookmarklet</a>
                     <a custom-behavior="tab" custom-target-id="page-extension" class="tab tab-unselected" href="index.html?extension">Firefox Extension</a>
@@ -246,12 +285,16 @@
 
                     <div class="page page-selected" id="page-introduction">
                     
+                        <h2>Introduction</h2>
+                    
                         <p>
                             <b>Golimojo</b> scans the text on a web page, looking for words and phrases that
                             can be linked to Wikipedia articles of the same name.  When matching words or
                             phrases are found, they are turned into hyperlinks right on the web page.  The 
                             screenshots below illustrate what this looks like.  Click on the <b>Before</b>
                             tab to see the "before" screenshot in its entirety.
+                            The <b><a href="index.html?examples">Examples</a></b> page 
+                            has links to more examples.
                         </p>
 
                         <div custom-behavior="tab-set" class="screenshot-stack">
@@ -260,40 +303,59 @@
                         </div>
 
                     </div>
-                
+
                     <!-------------------------------------------------------------->
                 
                     <div class="page page-unselected" id="page-examples">
-                        Examples
+                    
+                        <h2>Examples</h2>
                         
-                        <ul>
+                        <div>
+                            This page contains a selection of web pages that can be viewed using the Golimojo
+                            proxy service.  Or you can go directly to the <a href="index.html?try">Try It Out</a>
+                            page to try Golimojo on web pages of your own choosing.
+                        </div>
 
+                        <ul class="examples">
+                        
                             <li>
-                                <a href="http://www.washingtonmonthly.com" custom-behavior="proxy-link">Kevin Drum's Blog</a>
+                                <a href="http://www.intel-dump.com/posts/1146979959.shtml" custom-behavior="proxy-link">
+                                Phil Carter's review</a> of Richard Rhodes' <b>The Making of the Atomic Bomb</b> on the Intel Dump blog.
                             </li>
 
                             <li>
-                                <a href="http://www.andrewsullivan.com" custom-behavior="proxy-link">Andrew Sullivan's Blog</a>
+                                <a href="http://www.economist.com/displaystory.cfm?story_id=1337165" custom-behavior="proxy-link">
+                                The clockwork computer</a>: An article in The Economist about the <i>Antikythera mechanism</i>, 
+                                an ancient Greek device for computing astronomical dates.
                             </li>
 
                             <li>
-                                <a href="http://www.boingboing.net" custom-behavior="proxy-link">Boing Boing</a>
+                                <a href="http://www.washingtonpost.com/wp-dyn/content/article/2006/07/21/AR2006072101515.html" custom-behavior="proxy-link">
+                                An Electric Car With Juice</a>: A Washington Post article about the all-electric Tesla Roadster.
+                            </li>
+                        
+                            <li>
+                                <a href="http://seattlepi.nwsource.com/local/260744_kennewick24.html" custom-behavior="proxy-link">
+                                Kennewick Man buried by others, scientist finds</a>: An article in the Seattle Post-Intelligencer
+                                about 9,000 year-old remains discovered on the banks of the Columbia River in 1996.
                             </li>
 
                             <li>
-                                <a href="http://www.schneier.com/blog" custom-behavior="proxy-link">Bruce Schneier's Blog</a>
+                                <a href="http://www.newyorker.com/fact/content/articles/060731fa_fact" custom-behavior="proxy-link">
+                                Can Wikipedia conquer expertise?</a> -- an article in The New Yorker about Wikipedia.
                             </li>
-
+                            
                             <li>
-                                <a href="http://www.juancole.com" custom-behavior="proxy-link">Juan Cole's Blog</a>
+                                <a href="http://www.discover.com/issues/feb-06/features/megadeath-in-mexico/" custom-behavior="proxy-link">
+                                Megadeath in Mexico</a> -- A Discover Magazine article about a theory that epidemics in
+                                post-conquest Mexico might have been hemorrhagic fever rather than smallpox.
                             </li>
-
+                            
                             <li>
-                                <a href="http://slashdot.org" custom-behavior="proxy-link">Slashdot</a>
-                            </li>
-
-                            <li>
-                                <a href="http://www.techcrunch.com" custom-behavior="proxy-link">TechCrunch</a>
+                                <a href="http://www.msnbc.msn.com/id/12502996/" custom-behavior="proxy-link">
+                                Olive branch solves a Bronze Age mystery</a> -- an MSNBC article about dating
+                                several ancient Mediterranean civilizations.
+                            
                             </li>
 
                         </ul>
@@ -322,12 +384,15 @@
                             }
                         </style>
                         
-                        <h3>Try It Out</h3>
+                        <h2>Try It Out</h2>
                         
                         <p>
                             The Golimojo proxy service is the easiest way to use Golimojo to
                             add links to arbitrary web pages.  To use the proxy service, 
                             simply enter a URL into the text box below and hit <b>Go</b>.
+                            Or you can check out the
+                            <a href="index.html?bookmarklet">Golimojo Bookmarklet</a> for
+                            an even more convenient way to use Golimojo.
                         </p>
 
                         <p>
@@ -344,40 +409,64 @@
                 
                     <div class="page page-unselected" id="page-bookmarklet">
                         
-                        <h3>Bookmarklet</h3>
+                        <h2>The Bookmarklet</h2>
             
                         <p>
-                            The Golimojo <b>bookmarklet</b> is the easiest way to invoke
-                            the Golimojo proxy service on a web page that you are currently
-                            looking at.  Adding Golimojo links to any page is simply a
-                            matter of selecting a bookmark from your Bookmarks or Favorites
-                            menu in your web browser.
+                            The Golimojo <b>bookmarklet</b> allows you to invoke the 
+                            Golimojo proxy service directly on the page you are looking at.
+                            You just need to save the bookmarklet as a bookmark or favorite.
+                            Then you can select it from your bookmarks/favorites menu at 
+                            any time, and the page you are currently viewing will be
+                            reloaded through the Golimojo proxy service.
                         </p>
+                        
+                        <h2>Installing the Bookmarklet</h2>
 
                         <p>
-                            Here is the link to the
-                                <script>
-                                    document.write("Golimojo Bookmarklet".link(createBookmarklet()));
-                                </script>.              
-                            <i>No</i>, <i>no</i>, 
-                            don't <i>click</i> on it -- instead, right-click it and use the 
-                            context menu to select <b>Bookmark This Link</b>.
-                        </p>    
-
+                        
+                            Installing the bookmarklet is easy.  
+                            
+                            <ol>
+                                                    
+                                <li>
+                                    Right-click (Ctrl-click on the Macintosh) the bookmarklet link below.
+                                    This will bring up the context menu.
+                                </li>
+                                
+                                <li>
+                                    From the context menu you want to select <b>Bookmark this Link...</b> 
+                                    (Firefox) or <b>Add to Favorites...</b> (Internet Explorer).
+                                </li>
+                                
+                                <li>
+                                    Click <b>Ok</b> in the dialog box.
+                                </li>
+                                
+                            </ol>
+                            
+                        </p>
+                        
+                        <div class="bookmarklet-box">
+                            <script>
+                                insertBookmarklet("Golimojo Bookmarklet Link", "Right-click, please!");
+                            </script>
+                        </div>
+                        
+                        <h2>Using the Bookmarklet</h2>
+                        
                         <p>
-                            OK, now that you've successfully saved the bookmarklet you can go
-                            to another page and then use the bookmarklet to redirect the page
-                            through the Golimojo proxy.
+                        If you open the <b>Bookmarks</b> or <b>Favorites</b> menu in your browser, you
+                        should see the <b>Golimojo Bookmarklet</b>.  To invoke the bookmarklet on
+                        whatever page you are currently viewing just select it from the menu.
                         </p>
 
-                    
                     </div>
                     
                     <!-------------------------------------------------------------->
             
                     <div class="page page-unselected" id="page-extension">
 
-                        <h3>Firefox Extension</h3>
+                        <h2>Firefox Extension</h2>
                         
                         <p>
                             <i>Coming Soon.</i>

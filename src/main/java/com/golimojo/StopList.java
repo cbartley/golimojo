@@ -45,9 +45,49 @@ import com.golimojo.PageDataStore.PageData;
 public class StopList
 {
 
-    // ---------------------------------------- StopList shuffle
+    // ---------------------------------------- StopList instance variables
     
-    public static void shuffle(List<PageData> pageDataList)
+    private HashSet<String> _stopWordBag;
+
+    // ---------------------------------------- StopList constructor
+    
+    public StopList(List<PageData> pageDataList)
+    {
+        List<String> stopWordList = identifyStopWords(pageDataList);
+        _stopWordBag = new HashSet<String>(stopWordList);
+
+        _stopWordBag.add("Sunday");
+        _stopWordBag.add("Monday");
+        _stopWordBag.add("Tuesday");
+        _stopWordBag.add("Wednesday");
+        _stopWordBag.add("Thursday");
+        _stopWordBag.add("Friday");
+        _stopWordBag.add("Saturday");
+
+        _stopWordBag.add("January");
+        _stopWordBag.add("February");
+        _stopWordBag.add("March");
+        _stopWordBag.add("April");
+        _stopWordBag.add("May");
+        _stopWordBag.add("June");
+        _stopWordBag.add("July");
+        _stopWordBag.add("August");
+        _stopWordBag.add("September");
+        _stopWordBag.add("October");
+        _stopWordBag.add("November");
+        _stopWordBag.add("December");
+    }
+
+    // ---------------------------------------- StopList hasWord
+    
+    public boolean hasWord(String word)
+    {
+        return _stopWordBag.contains(word);
+    }
+
+    // ---------------------------------------- StopList identifyStopWords
+    
+    private static List<String> identifyStopWords(List<PageData> pageDataList)
     {
         final int topCount = 200;
         final int firstNameIndex = 0;
@@ -76,16 +116,20 @@ public class StopList
         topOrderedLastNameList = extractTopOrderedUniqueItems(possibleLastNameList, lastNameIndex);
         topOrderedLastNameList = topOrderedLastNameList.subList(0, topCount);
 
-        for (String name : topOrderedFirstNameList)
-        {
-            System.out.printf("*** %s\n", name);
-        }
+//      for (String name : topOrderedFirstNameList)
+//      {
+//          System.out.printf("*** %s\n", name);
+//      }
         
-        for (String name : topOrderedLastNameList)
-        {
-            System.out.printf("... %s\n", name);
-        }
-
+//      for (String name : topOrderedLastNameList)
+//      {
+//          System.out.printf("... %s\n", name);
+//      }
+        
+        List<String> stopWordList = new ArrayList<String>();
+        stopWordList.addAll(topOrderedFirstNameList);
+        stopWordList.addAll(topOrderedLastNameList);
+        return stopWordList;
     }
 
     // ---------------------------------------- StopList extractPossibleNames

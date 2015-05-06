@@ -42,6 +42,8 @@ import java.util.List;
 
 public class Tester 
 {
+    private List <TestSuite> _testSuiteList = new ArrayList<TestSuite>();
+    
     public Tester(String testPrefix)
     {       
         try
@@ -50,12 +52,21 @@ public class Tester
             List<Class> classList = loadClasses(classNameList);
             for (Class metaClass : classList)
             {
-                new TestSuite(metaClass, testPrefix);
+                TestSuite testSuite = new TestSuite(metaClass, testPrefix);
+                _testSuiteList.add(testSuite);
             }
         } catch (IOException e)
         {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        }
+    }
+    
+    public void runTests(Object... args)
+    {
+        for (TestSuite testSuite : _testSuiteList)
+        {
+            testSuite.runTests(args);
         }
     }
 
@@ -146,13 +157,22 @@ public class Tester
 
 class TestSuite
 {
+    private Class _metaClass;
+    private String _testPrefix;
+    
     public TestSuite(Class metaClass, String testPrefix)
     {
-        List<Method> testMethodList = getTestMethods(metaClass, testPrefix);
+        _metaClass = metaClass;
+        _testPrefix = testPrefix;
+    }
+    
+    public void runTests(Object... args)
+    {
+        List<Method> testMethodList = getTestMethods(_metaClass, _testPrefix);
         if (testMethodList.size() > 0)
         {
-            System.out.println("Testing: " + metaClass);
-            callMethods(testMethodList);
+            System.out.println("Testing: " + _metaClass);
+            callMethods(testMethodList, args);
             System.out.println();
         }
     }
@@ -173,9 +193,8 @@ class TestSuite
         return methodList;
     }
 
-    private static void callMethods(List<Method> methodList)
+    private static void callMethods(List<Method> methodList, Object... args)
     {
-        Object[] args = new Object[] {};
         for (Method method : methodList)
         {
             try

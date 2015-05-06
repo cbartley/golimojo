@@ -42,18 +42,18 @@ import com.golimojo.TextFragment.FragmentType;
 
 public class Linker 
 {
-    
+
     // ---------------------------------------- Linker instance variables
     
     private PageDataStore _pageDataStore;
     
     // ---------------------------------------- Linker constructor
     
-    public Linker(Ranker ranker, String articleTitlesFilePath) throws Exception
+    public Linker(PageDataStore pageDataStore) throws Exception
     {
-        _pageDataStore = new PageDataStore(ranker, articleTitlesFilePath);
+        _pageDataStore = pageDataStore;
     }
-    
+
     // ---------------------------------------- Linker addLinksToHtmlDocument
 
     public List<QdmlFragment> addLinksToHtmlDocument(List<QdmlFragment> fragmentList, String baseUrl)
@@ -97,7 +97,7 @@ public class Linker
             inStyle = isInsideElement(fragment, "STYLE", inStyle);
             inScript = isInsideElement(fragment, "SCRIPT", inScript);
             inAnchor = isInsideElement(fragment, "A", inAnchor);
-                
+            
             if (!isTextNode || !inBody || inStyle || inScript || inAnchor)
             {
                 fragmentOutList.add(fragment);
@@ -196,7 +196,7 @@ public class Linker
     private static void copyLinkedPhrase(List<TextFragment> fragmentList, int index, int fragmentCount, String pageTitle, List<TextFragment> receiverList)
     {
         String url = buildWikipediaUrl(pageTitle);
-        String startTagText = "<a style='font-weight:bold; color:red' href='" + url + "'>";
+        String startTagText = "<a style='font-weight:bold; color:red' href='" + url + "' target='_top'>";
         String endTagText = "</a>";
         TextFragment anchorStartTagFragment = new TextFragment(FragmentType.Other, startTagText);
         TextFragment anchorEndTagFragment = new TextFragment(FragmentType.Other, endTagText);

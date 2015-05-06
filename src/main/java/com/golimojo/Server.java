@@ -43,17 +43,25 @@ public class Server {
     
     protected static void start(int port, String articleTitlePath) throws Exception
     {
-        
-        // Create the server
-        HttpServer server = new HttpServer();
-        
+        // Create the word ranker.
         String pathToWordFrequencyFile = "resource-root/word-frequency.txt";
         Ranker ranker = new Ranker(pathToWordFrequencyFile);
         
-        Linker linker = new Linker(ranker, articleTitlePath);
+        // Create the page data store.
+        PageDataStore pageDataStore = new PageDataStore(ranker, articleTitlePath);
+    
+        // Create the page linker.
+        Linker linker = new Linker(pageDataStore);
         MissingLinkProxyServlet.setSharedLinker(linker);
 
-        // Default is no virtual host
+        // Run level 2 tests.
+        Tester tester = new Tester("L2TEST");
+        tester.runTests(pageDataStore);
+
+        // Create the server.
+        HttpServer server = new HttpServer();
+
+        // Default is no virtual host.
         String host=null;
         HttpContext context = server.getContext(host,"/");
         
@@ -78,9 +86,10 @@ public class Server {
     public static void main(String[] args) throws Exception
     {
         // Run the unit tests.
-        new Tester("L1TEST");
+        Tester tester = new Tester("L1TEST");
+        tester.runTests();
 
-        String articleTitlePath = "resource-root/article-titles-small.txt";
+        String articleTitlePath = "resource-root/article-titles-medium.txt";
         start(8085, articleTitlePath);
     }
     
