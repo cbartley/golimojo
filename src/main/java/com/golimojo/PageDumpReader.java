@@ -69,7 +69,7 @@ public class PageDumpReader
         String pathToPageDumpFile = pathToLargePageDumpFile;
         Hashtable<String, PageData> pageDataBag = readPageDumpForPageData(pathToPageDumpFile);
         dumpPageData(pageDataBag, "temp/page-data-dump.txt", 100 * 1000);
-        dumpPageData(pageDataBag, "temp/page-data-dump-large.txt", 1000 * 1000);
+        dumpPageData(pageDataBag, "temp/page-data-dump-large.txt", 2 * 1000 * 1000);
 
         pageDataBag = null;
         

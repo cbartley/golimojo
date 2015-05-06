@@ -50,6 +50,7 @@ public class Server extends ShellTools
     public static void main(String[] args) throws Exception
     {
         boolean doFastStartForTesting = true;
+//doFastStartForTesting = false;
         System.out.printf("*** %s start.\n", doFastStartForTesting ? "Fast" : "Slow/Normal");
 
         // Run the unit tests.
