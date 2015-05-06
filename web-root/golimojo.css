@@ -219,3 +219,12 @@ div.try-it-out-form
     border: solid lightgrey 1px;
     background-color: cornsilk;
 }
+
+a.golimojo-wikipedia-link:link
+, a.golimojo-wikipedia-link:visited
+, a.golimojo-wikipedia-link:hover
+, a.golimojo-wikipedia-link:active
+{
+    color: red;
+    text-decoration: underline;
+}

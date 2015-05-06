@@ -36,8 +36,14 @@ public class Service extends Server
     
     public static void main(String[] args) throws Exception
     {
+        int port = 8080;
+        if (System.getProperty("os.name").equals("Linux"))
+        {
+            port = 80;
+        }
+
         String articleTitlePath = "resource-root/article-titles-medium.txt";
-        start(8080, articleTitlePath);
+        start(port, articleTitlePath);
     }
 
 }
