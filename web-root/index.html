@@ -123,6 +123,7 @@
                                         <a class="tab {{try??tab-selected::tab-unselected}}" href="index.html?try">Try It Out</a>
                                         <a class="tab {{bookmarklet??tab-selected::tab-unselected}}" href="index.html?bookmarklet">Bookmarklet</a>
                                         <a class="tab {{extension??tab-selected::tab-unselected}}" href="index.html?extension">Firefox Extension</a>
+                                        <a class="tab {{privacy??tab-selected::tab-unselected}}" href="index.html?privacy">Privacy Policy</a>
                                         <a class="tab {{contact??tab-selected::tab-unselected}}" href="index.html?contact">Contact</a>
 
                                     </td>
@@ -193,8 +194,8 @@
                                                 </li>
 
                                                 <li>
-                                                    <a href="http://{{serverName}}:{{serverPort}}/proxy.html?www.economist.com/displaystory.cfm?story_id=1337165">
-                                                    The clockwork computer</a>: An article in The Economist about the <i>Antikythera mechanism</i>, 
+                                                    <a href="http://{{serverName}}:{{serverPort}}/proxy.html?www.nature.com/news/2006/061127/full/444534a.html">
+                                                    In search of lost time</a>: An article in Nature about the <i>Antikythera mechanism</i>, 
                                                     an ancient Greek device for computing astronomical dates.
                                                 </li>
 
@@ -383,6 +384,66 @@
                                             <div class="bookmarklet-box">
                                                 <a href="extension/golimojo.xpi">Golimojo Firefox Extension</a>
                                             </div>
+
+                                            <div class="next">
+                                                <a href="index.html?privacy">Next - Privacy Policy &gt;&gt;</a>
+                                            </div>
+
+                                        </div>
+::
+{{privacy??
+                                        <!-------------------------------------------------------------->
+
+                                        <div class="page" id="page-privacy">
+        
+                                        <h2>Privacy Policy</h2>
+
+                                        <p>
+                                            <div style="font-weight:bold">
+                                                What kind of information does Golimojo collect?
+                                            </div>
+                                            <div>
+                                                When you use the Golimojo service to add links to a web page, either through the "Try It Out" page, the bookmarklet, or the Firefox extension, two pieces of information are sent to the Golimojo server: the URL of the page to which links will be added, and the IP-address of the user's Internet connection.
+                                            </div>
+                                        </p>
+
+                                        <p>
+                                            <div style="font-weight:bold">
+                                                How will your information be used?
+                                            </div>
+                                            <div>
+                                                This information may be used internally to evaluate the performance and effectiveness of the Golimojo service. However, this information will not be distributed to third parties except possibly in aggregate form such that no individual information can be extracted.
+                                            </div>
+                                        </p>
+
+                                        <p>
+                                            <div style="font-weight:bold">
+                                                How do you know when Golimojo is collecting information?
+                                            </div>
+                                            <div>
+                                                The "Try It Out" page and the bookmarklet both require an explicit user action on every page that the user wishes to add links to. However, the Firefox extension, when active, will add links automatically to pages the user is viewing without explicit user request. In order to protect the user's privacy the extension has several built-in restrictions.
+                                            </div>
+                                        </p>
+
+                                        <ul>
+                                            <li>
+                                                The extension <i>only</i> communicates with the server when when the Golimojo sidebar is visible.
+                                            </li>
+
+                                            <li>
+                                                The extension <i>always</i> ignores secure web pages (web pages with "https:" URLs).
+                                            </li>
+
+                                            <li>
+                                                When communicating with the Golimojo server the extension only sends the web page address (the URL), never the page content. Consequently the server can only access content that is already publicly accessible on the Internet.
+                                            </li>
+
+                                            <li>
+                                                The extension never, under any circumstances, accesses the cookies associated with web pages that the user is visiting.
+                                            </li>
+
+                                        </ul>                                                   
+                                       
 
                                         </div>
 ::
