@@ -31,6 +31,10 @@ package com.golimojo;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 // ------------------------------------------------------------
 // --------------------- class ShellTools ---------------------
@@ -38,15 +42,22 @@ import java.io.InputStream;
 
 public class ShellTools
 {
-    // ---------------------------------------- ShellTools system
+    // ---------------------------------------- ShellTools system #1
 
     public static int system(String cmdLineTemplate, Substitution... arguments)
+    {
+        return system(cmdLineTemplate, null, arguments);
+    }
+
+    // ---------------------------------------- ShellTools system #2
+
+    public static int system(String cmdLineTemplate, String[] extraEnvVariables, Substitution... arguments)
     {
         String cmdLine = substitute(cmdLineTemplate, arguments);
         System.out.println("[" + cmdLine + "]");
         try
         {
-            Process process = Runtime.getRuntime().exec(cmdLine);
+            Process process = Runtime.getRuntime().exec(cmdLine, createEnviroment(extraEnvVariables));
             InputStream inputStreamFromProcessOutput = process.getInputStream();
             InputStream inputStreamFromProcessErrorOutput = process.getErrorStream();
             
@@ -123,6 +134,39 @@ public class ShellTools
         {
             return template.replace("{" + myName + "}", myValue);
         }
+    }
+
+    // ---------------------------------------- ShellTools createEnviroment
+
+    private static String[] createEnviroment(String[] extraEnvVariables)
+    {
+        if (extraEnvVariables == null) return null;
+        
+        // Use a process builder to get the current environment.
+        ProcessBuilder processBuilder = new ProcessBuilder("");
+        Map<String, String> environment = processBuilder.environment();
+        
+        // Add the extra environment variables to the environment.
+        for (String envVariable : extraEnvVariables)
+        {
+            int indexEqualSign = envVariable.indexOf('=');
+            assert indexEqualSign > 0;
+            String key = envVariable.substring(0, indexEqualSign);
+            String value = envVariable.substring(indexEqualSign + 1);
+            environment.put(key, value);
+        }
+
+        // Translate the environment to array of assignments form.
+        List<Entry<String, String>> entryList = new ArrayList<Entry<String, String>>(environment.entrySet());
+        String[] envVariables = new String[entryList.size()];
+        for (int i = 0; i < entryList.size(); i++)
+        {
+            Entry<String, String> entry = entryList.get(i);
+            envVariables[i] = entry.getKey() + "=" + entry.getValue();
+        }
+        
+        // Return the enviroment in array of assignments form.
+        return envVariables;
     }
 
 }

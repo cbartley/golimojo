@@ -29,91 +29,36 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ************************************************************/
 package com.golimojo;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-
 // ------------------------------------------------------------
-// --------------------- class XpiServlet ---------------------
+// -------- class FirefoxExtensionConfigurationFactory --------
 // ------------------------------------------------------------
 
-@SuppressWarnings("serial")
-public class XpiServlet extends HttpServlet
+class FirefoxExtensionConfigurationFactory
 {
-
-    // ---------------------------------------- XpiServlet doGet
-    
-    public final void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException
-    {
-        // Set the standard content type and character encoding.
-        response.setContentType("application/octet-stream");
-        
-        // Turn of caching.
-        response.setDateHeader("Expires", 0);
-        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, post-check=0, pre-check=0");
-        response.setHeader("Pragma", "no-cache");
-
-        // Create the Firefox extension.
-        String serverName = request.getServerName();
-        int serverPort = request.getServerPort();
-        String pathToXpiFile = XpiConfigurationFactory.lazyCreateXpi(serverName, serverPort);
-
-        BufferedInputStream is = new BufferedInputStream(new FileInputStream(pathToXpiFile));
-        try
-        {
-            BufferedOutputStream os = new BufferedOutputStream(response.getOutputStream());
-            try
-            {
-                while (true)
-                {
-                    int octetInt = is.read();
-                    if (octetInt == -1) break;
-                    os.write(octetInt);
-                }
-            }
-            finally
-            {
-                os.close();
-            }       
-        }
-        finally
-        {
-            is.close();
-        }
-    }
-}
-
-// ------------------------------------------------------------
-// --------------- class XpiConfigurationFactory --------------
-// ------------------------------------------------------------
-
-class XpiConfigurationFactory
-{
-    // ---------------------------------------- XpiConfigurationFactory class variables
+    // ---------------------------------------- FirefoxExtensionConfigurationFactory class variables
 
     private static String our_extensionName = "golimojo";
     private static String our_pathToExtensionFolder = "web-root/extension";
     private static Set<String> our_cacheSet = new HashSet<String>();
 
-    // ---------------------------------------- XpiConfigurationFactory lazyCreateXpi
-    // This method creates an XPI (Firefox extension package) on the first call for
-    // each unique configuration.  All subsequent calls with that same configuration
-    // simply re-use the same XPI.  We do it this way because there is no way to know
-    // for sure what server name and port are going to be used until we get the first
-    // request.  In fact several different server names and ports might be used by
-    // a single service.  This way we can handle whatever configurations without 
-    // arbitrary limitations.  Also note that this function is synchronized, so if
-    // multiple requests come in close together, then the first request will cause 
-    // the XPI to be built and the subsequent requests will wait until the build is
-    // complete.
+    // ---------------------------------------- FirefoxExtensionConfigurationFactory lazyCreateXpi
+    /**
+     *  This method creates an XPI (Firefox extension package) on the first call for
+     *  each unique configuration.  All subsequent calls with that same configuration
+     *  simply re-use the same XPI.  We do it this way because there is no way to know
+     *  for sure what server name and port are going to be used until we get the first
+     *  request.  In fact several different server names and ports might be used by
+     *  a single service.  This way we can handle whatever configurations without 
+     *  arbitrary limitations.  Also note that this function is synchronized, so if
+     *  multiple requests come in close together, then the first request will cause 
+     *  the XPI to be built and the subsequent requests will wait until the build is
+     *  complete.
+     */
     public synchronized static String lazyCreateXpi(String serverName, int serverPort)
         throws IOException
     {
@@ -124,7 +69,8 @@ class XpiConfigurationFactory
         // If we haven't built this configuration yet, then build it and update the cache.
         if (!our_cacheSet.contains(uniqueXpiPathName))
         {
-            ExtensionBuilder.createFirefoxExtension(our_pathToExtensionFolder, uniqueXpiName, serverName, serverPort);
+            FirefoxExtensionBuilder.createFirefoxExtension( our_pathToExtensionFolder, uniqueXpiName, 
+                                                        our_extensionName, serverName, serverPort );
             our_cacheSet.add(uniqueXpiPathName);
         }
 
@@ -132,27 +78,36 @@ class XpiConfigurationFactory
         return uniqueXpiPathName;
     }
 
-    // ---------------------------------------- XpiConfigurationFactory lazyCreateXpi
+    // ---------------------------------------- FirefoxExtensionConfigurationFactory lazyCreateXpi
 
     private static String createUniqueName(String name, String serverName, int serverPort)
     {
         return name + "_" + serverName + "_" + serverPort;
     }
 
-    // ---------------------------------------- XpiConfigurationFactory test code
+    // ---------------------------------------- FirefoxExtensionConfigurationFactory test code
     
-    public static void L1TEST_XpiConfigurationFactory() throws IOException
+    // These tests are sufficiently slow that we don't want to run them every 
+    // time, so we use the L1B prefix to differentiate them from the regular
+    // L1 tests.
+    
+    public static void L1BTEST_FirefoxExtensionConfigurationFactory() throws IOException
     {
+        // Verify that basic construction and caching work.
         String pathToXpiFile1 = lazyCreateXpi("test", 999001);
         assert our_cacheSet.contains(pathToXpiFile1);
         assert new File(pathToXpiFile1).exists();
         
-        // This test isn't completely deterministic.
+        // Verify that a second request for the same configuration
+        // utitlizes the cache.  Note that this test isn't 100%
+        // deterministic, but it's probably good enough for now.
         long startTime = System.currentTimeMillis();
         lazyCreateXpi("test", 999001);
         long elapsedTime = System.currentTimeMillis() - startTime;
         assert elapsedTime <= 2;
-        
+
+        // Verify that changing the server name or the port also
+        // changes the configuration.
         String pathToXpiFile2 = lazyCreateXpi("test", 999002);
         assert new File(pathToXpiFile2).exists();
         assert pathToXpiFile2 != pathToXpiFile1;

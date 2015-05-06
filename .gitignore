@@ -4,4 +4,5 @@ temp/*
 
 *.jar
 *.xpi
+*.zip
 /web-root/extension/chrome/content/config.js

@@ -29,11 +29,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ************************************************************/
 package com.golimojo;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.BitSet;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
@@ -47,6 +44,7 @@ public class PageDataStore
     
     // ---------------------------------------- PageDataStore instance variables
     
+    private CrudeFragmentPhrasePrefixHashSet _pageTitlePrefixSet;
     private Hashtable<String, PageData> _pageTitleBag;
     private Ranker _ranker;
     private StopList _stopList;
@@ -55,13 +53,79 @@ public class PageDataStore
     
     public PageDataStore(Ranker ranker, String articleTitlesFilePath) throws Exception
     {
-        List<PageData> pageDataList = readPageTitles(articleTitlesFilePath);
+        List<PageData> pageDataList = PageData.readPageTitles(articleTitlesFilePath);
+        _stopList = new StopList(pageDataList);
+        _ranker = ranker;
+
+        List<PageData> pageDataList2 = new ArrayList<PageData>();
+        for (PageData pageData : pageDataList)
+        {
+            if (isHighQualityPage(pageData))
+            {
+                pageDataList2.add(pageData);
+            }
+        }
+        pageDataList = pageDataList2;
+
+        _pageTitlePrefixSet = createPageTitlePrefixSet(pageDataList);
         _pageTitleBag = createPageTitleBag(pageDataList);
         _stopList = new StopList(pageDataList);
         _ranker = ranker;
     }
 
-    // ---------------------------------------- PageDataStore readArticleTitles
+    // ---------------------------------------- PageDataStore findMatchingPageTitleAtPosition
+
+    public PageTitleMatch findMatchingPageTitleAtPosition(List<TextFragment> fragmentList, int startIndex)
+    {
+        int maxMatchCount = findLongestPossibleMatchingPageTitleAtPosition(fragmentList, startIndex);
+        for (int count = maxMatchCount; count > 0; count--)
+        {
+            String phrase = TextFragment.subJoin(fragmentList, startIndex, count);
+            String pageTitle = findMatchingPageTitle(phrase);
+            if (pageTitle != null)
+            {
+                return new PageTitleMatch(pageTitle, count);
+            }
+        }
+        return null;
+    }
+
+    // ---------------------------------------- PageDataStore class PageTitleMatch
+
+    public static class PageTitleMatch
+    {
+        String _pageTitle;
+        int _fragmentMatchCount;
+        
+        public PageTitleMatch(String pageTitle, int fragmentMatchCount)
+        {
+            _pageTitle = pageTitle;
+            _fragmentMatchCount = fragmentMatchCount;
+        }
+
+        String getPageTitle()       { return _pageTitle; }
+        int getFragmentMatchCount() { return _fragmentMatchCount; }
+    }
+
+    // ---------------------------------------- PageDataStore findLongestPossibleMatchingPageTitleAtPosition
+    
+    private int findLongestPossibleMatchingPageTitleAtPosition(List<TextFragment> fragmentList, int startIndex)
+    {
+        int maxCount = fragmentList.size() - startIndex;
+        if (maxCount == 0) return 0;
+        final TextFragment.FragmentType Whitespace = TextFragment.FragmentType.Whitespace;
+        if (fragmentList.get(startIndex).getType() == Whitespace) return 0;
+        for (int count = 1; count <= maxCount; count++)
+        {
+            int endIndex = startIndex + count;
+            if (fragmentList.get(endIndex - 1).getType() == Whitespace) continue;
+            if (_pageTitlePrefixSet.contains(fragmentList, startIndex, endIndex)) continue;
+            return count - 1;   // we went one too far
+        }
+        return maxCount;    // we matched all the way to the end
+    }
+
+    // ---------------------------------------- PageDataStore findMatchingPageTitle
     
         public static void testPresent(PageDataStore pageDataStore, String possiblePageTitle)
         {
@@ -70,7 +134,7 @@ public class PageDataStore
                 System.out.printf("### %s\n", possiblePageTitle);
             }
         }
-        
+
         public static void testNotPresent(PageDataStore pageDataStore, String possiblePageTitle)
         {
             if (pageDataStore.findMatchingPageTitle(possiblePageTitle) != null)
@@ -110,62 +174,80 @@ public class PageDataStore
     {
         PageData matchingPageData = _pageTitleBag.get(possiblePageTitle.toLowerCase());
         if (matchingPageData == null) return null;
+        
         String matchingPageTitle = matchingPageData.getTitle();
-        int matchStrength = caseSensitiveMatch(possiblePageTitle, matchingPageTitle);
-        Integer[] results = _ranker.phraseWeightAndWordCount(possiblePageTitle);
+        int matchStrength = caseSensitiveMatch(possiblePageTitle, matchingPageTitle);   
+        if (matchStrength < 0) return null;
+        
+        int wordCount = matchingPageData.getWordCount();
+        if (possiblePageTitle.startsWith("the "))
+        {
+            wordCount--;
+        }
+        
+        if (wordCount == 1)
+        {
+            if (matchStrength < 1) return null;
+        }
+
+        return matchingPageTitle;
+    }
+
+    // ---------------------------------------- PageDataStore isHighQualityPage
+    
+    private boolean isHighQualityPage(PageData pageData)
+    {
+        String pageTitle = pageData.getTitle();
+        
+        Integer[] results = _ranker.phraseWeightAndWordCount(pageTitle);
         int frequencyRank = results[0];
         int wordCount = results[1];
         int wordsCharCount = results[2];
-        int refRank = matchingPageData.getRefRank();
+        int refRank = pageData.getRefRank();
 
 //      System.out.printf("*** %-32s %-32s %7dM %7dF %7dR\n", 
 //              "[" + possiblePageTitle + "]", "[" + matchingPageTitle + "]", matchStrength, frequencyRank, refRank);
+
+        if (wordsCharCount < 4) return false;
         
-        if (matchStrength < 0) return null;
-        if (wordsCharCount < 4) return null;
-        
-        if (possiblePageTitle.startsWith("the "))
+        if (pageTitle.startsWith("The "))
         {
             wordCount = wordCount - 1;
         }
 
         if (wordCount == 1)
         {
-            if (_stopList.hasWord(possiblePageTitle)) return null;
-            
-            if (matchStrength < 1) return null;
+            if (_stopList.hasWord(pageTitle)) return false;
 
             if (frequencyRank < 50000)
             {
-                if (5 * refRank < frequencyRank) return matchingPageTitle;
-                return null;
+                if (5 * refRank < frequencyRank) return true;
+                return false;
             }
 
-            if (refRank < 5 * frequencyRank) return matchingPageTitle;
+            if (refRank < 5 * frequencyRank) return true;
 
-            return null;
+            return false;
         }
         
         if (wordCount == 2)
         {
-            if (refRank < 10 * frequencyRank) return matchingPageTitle;
+            if (refRank < 10 * frequencyRank) return true;
 
-            return null;
+            return false;
         }
         
         if (wordCount > 2)
         {
-            if (refRank < 10 * frequencyRank) return matchingPageTitle;
+            if (refRank < 10 * frequencyRank) return true;
 
-            return null;
+            return false;
         }
-        
-        
-        
-        return null;
+
+        return false;
     }
 
-    // ---------------------------------------- PageDataStore xxxx
+    // ---------------------------------------- PageDataStore caseSensitiveMatch
     
     private static int caseSensitiveMatch(String matchee, String reference)
     {
@@ -269,13 +351,24 @@ public class PageDataStore
             assert !partiallyCaseSensitivePageTitleMatch("the times", "txe times");
         }
 
+    // ---------------------------------------- PageDataStore createPageTitlePrefixSet
+        
+    private static CrudeFragmentPhrasePrefixHashSet createPageTitlePrefixSet(List<PageData> pageDataList)
+    {
+        List<String> pageTitleList = new ArrayList<String>();
+        for (PageData pageData : pageDataList)
+        {
+            String pageTitle = pageData.getTitle();
+            pageTitleList.add(pageTitle);
+        }
+        return new CrudeFragmentPhrasePrefixHashSet(pageTitleList);
+    }
+
     // ---------------------------------------- PageDataStore createPageTitleBag
 
     private static Hashtable<String, PageData> createPageTitleBag(List<PageData> pageDataList) throws Exception
     {
         long startTimeMs = new Date().getTime();
-
-        computeAndApplyRankings(pageDataList);
         Hashtable<String, PageData> articleTitleBag = new Hashtable<String, PageData>();
         for (PageData pageData : pageDataList)
         {
@@ -294,100 +387,190 @@ public class PageDataStore
         return articleTitleBag;
     }
 
-    // ---------------------------------------- PageDataStore readPageTitles
+}
 
-    private static List <PageData> readPageTitles(String articleTitlesFilePath) throws Exception
+
+
+
+/* ------------------------------------------------------------ */
+/* ---------- class CrudeFragmentPhrasePrefixHashSet ---------- */
+/* ------------------------------------------------------------ */
+
+class CrudeFragmentPhrasePrefixHashSet
+{
+    // ---------------------------------------- CrudeFragmentPhrasePrefixHashSet instance variables
+    
+    private CrudeIntegerHashSet _crudeHashSet;
+
+    // ---------------------------------------- CrudeFragmentPhrasePrefixHashSet constructor
+    
+    public CrudeFragmentPhrasePrefixHashSet(List<String> phraseList)
     {
-        List<PageData> pageDataList = new ArrayList<PageData>();
-        BufferedReader in = new BufferedReader(new FileReader(articleTitlesFilePath));
-        try
-        {
-
-            int articleTitleCount = 0;
-            while (true)
-            {
-                String articleTitleLine = in.readLine();
-                if (articleTitleLine == null) break;
-                articleTitleLine = articleTitleLine.replace("*** ", "");
-                String[] articleTitleFields = articleTitleLine.split("\t");
-                if (articleTitleFields.length < 2) continue;
-                int articleRefCount = Integer.parseInt(articleTitleFields[0]);
-                String articleTitle = articleTitleFields[1];
-                articleTitle = articleTitle.trim();
-                articleTitle = articleTitle.replace('_', ' ');
-                PageData pageData = new PageData(articleTitle, articleRefCount);
-                pageDataList.add(pageData);
-                articleTitleCount++;
-            }
-        }
-        finally
-        {
-            in.close();
-        }
-        
-        return pageDataList;
-
+        // Allocate a crude integer hash set that we are confident will be considerably
+        // larger than our total number of prefixes.  We need a lot more clear bits 
+        // than set bits in order to get good performance.
+        int slotCount = totalLength(phraseList) * 10;
+        _crudeHashSet = new CrudeIntegerHashSet(slotCount);
+        storePrefixesForPhrases(_crudeHashSet, phraseList);
     }
 
-    // ---------------------------------------- PageDataStore xxxxx
+    // ---------------------------------------- CrudeFragmentPhrasePrefixHashSet contains
     
-    private static void computeAndApplyRankings(List<PageData> pageDataList)
+    public boolean contains(List<TextFragment> fragmentList, int startIndex, int endIndex)
     {
-        Comparator<PageData> refCountComparator = new Comparator<PageData>()
-        {
-            public int compare(PageData pd1, PageData pd2)
-            {
-                // Sort first by refcount descending.
-                int refCountComp = -(pd1.getRefCount() - pd2.getRefCount());
-                if (refCountComp != 0) return refCountComp;
-                int titleComp = pd1.getTitle().compareTo(pd2.getTitle());
-                return titleComp;
-            }
-        };
-
-        Collections.sort((List<PageData>)pageDataList, refCountComparator);
-        
-        for (int i = 0; i < pageDataList.size(); i++)
-        {
-            pageDataList.get(i).setRefRank(i);
-        }
-        
+        int hashCode = TextFragment.computeHashCode(fragmentList, startIndex, endIndex);
+        return _crudeHashSet.contains(hashCode);
     }
 
-    // ---------------------------------------- class PageData
-    
-    public static class PageData
+    public static void L1TEST_contains()
     {
-        private String _title;
-        private int _refCount;
-        private int _refRank;
+        String phrase = "foo bar";
+        List<TextFragment> fragmentList = TextFragment.splitTextIntoFragments(phrase);
+        List<String> phraseList = new ArrayList<String>();
+        phraseList.add(phrase);
+        CrudeFragmentPhrasePrefixHashSet set = new CrudeFragmentPhrasePrefixHashSet(phraseList);
+        assert set.contains(fragmentList, 0, 1);
+        assert set.contains(fragmentList, 0, 2);
+        assert set.contains(fragmentList, 0, 3);
         
-        public PageData(String title, int refCount)
-        {
-            _title = title;
-            _refCount = refCount;
-            _refRank = -1;
-        }
+        List<TextFragment> fragmentList2 = TextFragment.splitTextIntoFragments("foo baz");
+        assert set.contains(fragmentList2, 0, 1);
+        assert set.contains(fragmentList2, 0, 2);
+        assert !set.contains(fragmentList2, 0, 3);
+    }
 
-        public String getTitle()
+    // ---------------------------------------- CrudeFragmentPhrasePrefixHashSet totalLength
+    
+    private static int totalLength(List<String> phraseList)
+    {
+        int totalLength = 0;
+        for (String phrase : phraseList)
         {
-            return _title;
+            totalLength += phrase.length();
         }
+        return totalLength;
+    }
 
-        public int getRefCount()
-        {
-            return _refCount;
-        }
+    public static void L1TEST_totalLength()
+    {
+        List<String> phraseList = new ArrayList<String>();
+        phraseList.add("123");
+        assert totalLength(phraseList) == 3;
+        phraseList.add("456");
+        assert totalLength(phraseList) == 6;
+    }
 
-        public int getRefRank()
+    // ---------------------------------------- CrudeFragmentPhrasePrefixHashSet storePrefixesForPhrases
+    
+    private static void storePrefixesForPhrases(CrudeIntegerHashSet crudeHashSet, List<String> phraseList)
+    {
+        for (String phrase : phraseList)
         {
-            return _refRank;
+            storePrefixesForPhrase(crudeHashSet, phrase);
         }
+    }
 
-        public void setRefRank(int rank)
+    // ---------------------------------------- CrudeFragmentPhrasePrefixHashSet storePrefixesForPhrase
+    
+    private static void storePrefixesForPhrase(CrudeIntegerHashSet crudeHashSet, String phrase)
+    {
+        List<TextFragment> fragmentList = TextFragment.splitTextIntoFragments(phrase);
+        for (int i = 0; i < fragmentList.size(); i++)
         {
-            _refRank = rank;
+            int hashCode = TextFragment.computeHashCode(fragmentList, 0, i + 1);
+            crudeHashSet.add(hashCode);         
         }
+    }
+    
+    public static void L1TEST_storePrefixesForPhrase()
+    {
+        String phrase = "foo bar";
+        List<TextFragment> fragmentList = TextFragment.splitTextIntoFragments("foo bar");
+        CrudeIntegerHashSet set = new CrudeIntegerHashSet(1000);
+        storePrefixesForPhrase(set, phrase);
+        assert !set.contains(0);
+        assert set.contains(TextFragment.computeHashCode(fragmentList, 0, 1));
+        assert set.contains(TextFragment.computeHashCode(fragmentList, 0, 2));
+        assert set.contains(TextFragment.computeHashCode(fragmentList, 0, 3));
     }
 
 }
+
+/* ------------------------------------------------------------ */
+/* ----------------- class CrudeIntegerHashSet ---------------- */
+/* ------------------------------------------------------------ */
+/**
+ *  A CrudeIntegerHashSet will always return true if it contains a particular
+ *  value.  However, in some circumstances it will also return true for 
+ *  values it does not contain.  In order to minimize these circumstances,
+ *  the "slotCount" used to create the object should be carefully chosen
+ *  to always be much larger than the total number of keys that will
+ *  ever be stored in a particular object.  It's called "crude" for a reason.
+ */
+
+class CrudeIntegerHashSet
+{
+    // ---------------------------------------- CrudeIntegerHashSet instance variables
+    
+    private BitSet _bitSet;
+
+    // ---------------------------------------- CrudeIntegerHashSet constructor
+    
+    public CrudeIntegerHashSet(int slotCount)
+    {
+        _bitSet = new BitSet(slotCount);
+    }
+
+    // ---------------------------------------- CrudeIntegerHashSet add
+    
+    public void add(int key)
+    {
+        int slotAddress = computeSlotAddress(key);
+        _bitSet.set(slotAddress);
+    }
+
+    // ---------------------------------------- CrudeIntegerHashSet contains
+    
+    public boolean contains(int key)
+    {
+        int slotAddress = computeSlotAddress(key);
+        return _bitSet.get(slotAddress);
+    }
+
+    // ---------------------------------------- CrudeIntegerHashSet computeSlotAddress
+    
+    private int computeSlotAddress(int key)
+    {
+        int slotAddress = Math.abs(key) % _bitSet.size();
+        return slotAddress;
+    }
+
+    // ---------------------------------------- CrudeIntegerHashSet test code
+    
+    public static void L1TEST_CrudeIntegerHashSet()
+    {
+        CrudeIntegerHashSet set = new CrudeIntegerHashSet(4);
+        assert !set.contains(0);
+        assert !set.contains(1);
+        assert !set.contains(2);
+        assert !set.contains(3);
+        
+        set.add(0);
+        assert set.contains(0);
+        assert !set.contains(1);
+        assert !set.contains(2);
+        assert !set.contains(3);
+        
+        set.add(2);
+        assert set.contains(0);
+        assert !set.contains(1);
+        assert set.contains(2);
+        assert !set.contains(3);
+        
+        set.add(set._bitSet.size() + 1);
+        assert set.contains(set._bitSet.size() + 1);
+        assert set.contains(1);
+    }
+    
+}
+

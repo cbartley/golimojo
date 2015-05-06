@@ -115,6 +115,7 @@ public class StatsServlet extends HtmlGenServlet
 // ------------------- class HtmlGenServlet -------------------
 // ------------------------------------------------------------
 
+@SuppressWarnings("serial")
 class HtmlGenServlet extends GolimojoServlet
 {
     public static HtmlElementNode HTML(Object... childNodes)

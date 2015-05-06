@@ -48,12 +48,34 @@ public class Server extends ShellTools
     
     public static void main(String[] args) throws Exception
     {
+        boolean doFastStartForTesting = true;
+        System.out.printf("*** %s start.\n", doFastStartForTesting ? "Fast" : "Slow/Normal");
+
         // Run the unit tests.
         Tester tester = new Tester("L1TEST");
         tester.runTests();
 
+        // Choose between fast and slow (normal) modes.
         String articleTitlePath = "resource-root/article-titles-small.txt";
+        if (!doFastStartForTesting)
+        {
+            articleTitlePath = "resource-root/article-titles-medium.txt";
+            Tester tester2 = new Tester("L1BTEST");
+            tester2.runTests();
+        }
+
+        // Start the web server.
         start(8085, articleTitlePath);
+    
+        // Auto-install the extension, then auto-launch the browser.  Also enable
+        // the shutdown servlet so the server can be shutdown from the browser.
+        ShutdownServlet.setAcceptShutdownRequest(true);
+        String[] extraEnvVariables = new String[] {"MOZ_NO_REMOTE=1"};
+        String pathToXpi = FirefoxExtensionConfigurationFactory.lazyCreateXpi("localhost", 8085);
+//      system("cmd /c start /wait Firefox -Profile test-files/FirefoxTestProfile -install-global-extension {pathToXpi}", extraEnvVariables, sub("pathToXpi", pathToXpi));
+//      system("cmd /c start /wait Firefox -Profile test-files/FirefoxTestProfile http://www.google.com http://localhost:8085/javascript/tablog.html", extraEnvVariables);
+        system("/Applications/Firefox.app/Contents/MacOS/firefox -CreateProfile Golimojo");
+        system("/Applications/Firefox.app/Contents/MacOS/firefox --jsconsole -P Golimojo {pathToXpi} http://www.jsc.nasa.gov/Bios/htmlbios/aldrin-b.html", sub("pathToXpi", pathToXpi));
     }
 
     // ---------------------------------------- Server start
@@ -100,7 +122,8 @@ public class Server extends ShellTools
         servletHandler.addServlet("Get Page Data", "/servlet/get-page-data", GetPageDataAjaxServlet.class.getName());
         servletHandler.addServlet("Template", "*.html", TemplateServlet.class.getName());
         servletHandler.addServlet("Stats", "/servlet/stats", StatsServlet.class.getName());
-servletHandler.addServlet("XPI", "/extension/golimojo.xpi", XpiServlet.class.getName());
+        servletHandler.addServlet("XPI", "/extension/golimojo.xpi", GolimojoXpiServlet.class.getName());
+        servletHandler.addServlet("Shutdown", "/servlet/shutdown", ShutdownServlet.class.getName());
         context.addHandler(servletHandler);
 
         context.setResourceBase("web-root");

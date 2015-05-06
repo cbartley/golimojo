@@ -34,12 +34,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // ---------------------------------------- Linker constructor
 
-function Linker(rootElem, pageTitleList)
+function Linker(targetDoc, pageTitleList)
 {
+    this.insertStyleSheet(targetDoc);
     this.treatAsLeafNodeNameList = ["A", "SCRIPT", "STYLE"];
-    this.textNodeIterator = new TextNodeIterator(rootElem, this.treatAsLeafNodeNameList);
+    this.textNodeIterator = new TextNodeIterator(targetDoc.body, this.treatAsLeafNodeNameList);
     this.nextTextNode = this.textNodeIterator.next();
     this.textNodeLinker = new TextNodeLinker(pageTitleList);
+    this.doLinking = false;
     this.startDelayMs = 10;
     this.delayMs = 50;
 }
@@ -53,7 +55,39 @@ Linker.prototype.startLinking = function ()
         return this.doSomeLinking(this.stopTimerFlag);
     }
 
-    this.runOnTimer(this, timerFun, this.startDelayMs, this.delayMs);
+    if (!this.doLinking)
+    {
+        this.doLinking = true;
+        this.runOnTimer(this, timerFun, this.startDelayMs, this.delayMs);
+    }
+}
+
+// ---------------------------------------- Linker stopLinking
+
+Linker.prototype.stopLinking = function ()
+{
+    this.doLinking = false;
+}
+
+// ---------------------------------------- Linker insertStyleSheet
+
+Linker.prototype.insertStyleSheet = function (targetDoc)
+{
+    // Figure out where to insert the style sheet.
+    var styleParent = targetDoc.body;
+    var elemList = targetDoc.getElementsByTagName("HEAD");
+    if (elemList.length > 0)
+    {
+        styleParent = elemList[0];
+    }
+
+    // Define the style sheet.
+    var styleText = "a.golimojo-wikipedia-link { color: red; font-weight: bold }";
+    
+    // Create a style element for the style sheet and insert it.
+    var style = targetDoc.createElement("STYLE");
+    style.textContent = styleText;
+    styleParent.appendChild(style);
 }
 
 // ---------------------------------------- Linker runOnTimer
@@ -67,6 +101,7 @@ Linker.prototype.runOnTimer = function (receiver, timerFun, startDelayMs, delayM
 
     function onTimer()
     {
+        if (!this.doLinking) return;
         var flag = timerFun.call(receiver);
         if (flag == stopTimerFlag) return;
         setTimeout(onTimerCallback, delayMs);
@@ -196,6 +231,9 @@ function TextNodeLinker(pageTitleList)
 
 TextNodeLinker.prototype.linkTextNode = function (textNode)
 {
+//Log.print("*** " + textNode.ownerDocument);
+//Log.print("... " + textNode.parentNode);
+//Log.print("... " + textNode.textContent);
     var tokenList = this.pageTitleStore.parseTextIntoTokens(textNode.textContent);
     var cutList = this.findPageTitleCuts(tokenList);
     var nodeList = this.createNodesFromCutList(textNode.ownerDocument, tokenList, cutList);
@@ -384,7 +422,7 @@ PageTitleStore.prototype.matchTokensAt = function (tokenList, index)
         phraseText = phraseText + token.toCanonicalString();
         if (this.pageTitlePrefixBag[phraseText] == null) break;
         var pageTitle = this.pageTitleBag[phraseText];
-        if (pageTitle != null)
+        if (pageTitle != null && typeof(pageTitle) == "string")
         {
             var matchCount = i + 1 - index;
             longestMatchPair = [pageTitle, matchCount];

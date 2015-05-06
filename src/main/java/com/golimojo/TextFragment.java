@@ -36,11 +36,11 @@ import java.util.List;
 
 public class TextFragment
 {
-    
     // ---------------------------------------- instance variables
 
     private final FragmentType _type;
     private final String _text;
+    private final int _hashCode;
 
     // ---------------------------------------- TextFragment constructor
 
@@ -48,6 +48,7 @@ public class TextFragment
     {
         _type = type;
         _text = text;
+        _hashCode = toString().hashCode();
     }
 
     // ---------------------------------------- TextFragment getType
@@ -64,6 +65,21 @@ public class TextFragment
         return _text;
     }
 
+    // ---------------------------------------- TextFragment hashCode
+    
+    public int hashCode()
+    {
+        return _hashCode;
+    }
+
+    // ---------------------------------------- TextFragment toString
+    
+    public String toString()
+    {
+        if (_type == FragmentType.Whitespace) return " ";
+        return _text.toLowerCase();
+    }
+
     // ---------------------------------------- TextFragment join
     
     public static String join(Collection<TextFragment> fragmentCollection)
@@ -75,15 +91,15 @@ public class TextFragment
         }
         return sbText.toString();
     }
+    
+    public static void L1TEST_join()
+    {
+        TextFragment foo = new TextFragment(FragmentType.Other, "foo");
+        TextFragment bar = new TextFragment(FragmentType.Other, "bar");
         
-        public static void L1TEST_join()
-        {
-            TextFragment foo = new TextFragment(FragmentType.Other, "foo");
-            TextFragment bar = new TextFragment(FragmentType.Other, "bar");
-            
-            assert TextFragment.join(new ArrayList<TextFragment>()).equals("");
-            assert TextFragment.join(Arrays.asList(new TextFragment[] {foo, bar})).equals("foobar");
-        }
+        assert TextFragment.join(new ArrayList<TextFragment>()).equals("");
+        assert TextFragment.join(Arrays.asList(new TextFragment[] {foo, bar})).equals("foobar");
+    }
 
     // ---------------------------------------- TextFragment  subJoin
 
@@ -106,36 +122,36 @@ public class TextFragment
         return sbPhrase.toString();
     }
 
-        public static void L1TEST_assemblePhrase()
-        {
-            assert subJoin(TextFragment.splitTextIntoFragments(""), 0, 0).equals("");
-            assert subJoin(TextFragment.splitTextIntoFragments(""), 0, 1).equals("");
-            assert subJoin(TextFragment.splitTextIntoFragments(" "), 0, 1).equals(" ");
-            assert subJoin(TextFragment.splitTextIntoFragments(" "), 0, 2).equals(" ");
-            assert subJoin(TextFragment.splitTextIntoFragments("  "), 0, 2).equals(" ");
-            assert subJoin(TextFragment.splitTextIntoFragments("   "), 0, 3).equals(" ");
+    public static void L1TEST_assemblePhrase()
+    {
+        assert subJoin(TextFragment.splitTextIntoFragments(""), 0, 0).equals("");
+        assert subJoin(TextFragment.splitTextIntoFragments(""), 0, 1).equals("");
+        assert subJoin(TextFragment.splitTextIntoFragments(" "), 0, 1).equals(" ");
+        assert subJoin(TextFragment.splitTextIntoFragments(" "), 0, 2).equals(" ");
+        assert subJoin(TextFragment.splitTextIntoFragments("  "), 0, 2).equals(" ");
+        assert subJoin(TextFragment.splitTextIntoFragments("   "), 0, 3).equals(" ");
 
-            assert subJoin(TextFragment.splitTextIntoFragments(" foo"), 0, 0).equals("");
-            assert subJoin(TextFragment.splitTextIntoFragments(" foo"), 0, 1).equals(" ");
-            assert subJoin(TextFragment.splitTextIntoFragments(" foo"), 0, 2).equals(" foo");
-            assert subJoin(TextFragment.splitTextIntoFragments("foo "), 0, 1).equals("foo");
-            assert subJoin(TextFragment.splitTextIntoFragments("foo "), 0, 2).equals("foo ");
-            assert subJoin(TextFragment.splitTextIntoFragments("foo  "), 0, 2).equals("foo ");
-            assert subJoin(TextFragment.splitTextIntoFragments("foo\t\tbar"), 0, 3).equals("foo bar");
+        assert subJoin(TextFragment.splitTextIntoFragments(" foo"), 0, 0).equals("");
+        assert subJoin(TextFragment.splitTextIntoFragments(" foo"), 0, 1).equals(" ");
+        assert subJoin(TextFragment.splitTextIntoFragments(" foo"), 0, 2).equals(" foo");
+        assert subJoin(TextFragment.splitTextIntoFragments("foo "), 0, 1).equals("foo");
+        assert subJoin(TextFragment.splitTextIntoFragments("foo "), 0, 2).equals("foo ");
+        assert subJoin(TextFragment.splitTextIntoFragments("foo  "), 0, 2).equals("foo ");
+        assert subJoin(TextFragment.splitTextIntoFragments("foo\t\tbar"), 0, 3).equals("foo bar");
 
-            assert subJoin(TextFragment.splitTextIntoFragments("foo bar baz"), 1, 0).equals("");
-            assert subJoin(TextFragment.splitTextIntoFragments("foo bar baz"), 1, 1).equals(" ");
-            assert subJoin(TextFragment.splitTextIntoFragments("foo bar baz"), 1, 2).equals(" bar");
-            assert subJoin(TextFragment.splitTextIntoFragments("foo bar baz"), 1, 3).equals(" bar ");
-            assert subJoin(TextFragment.splitTextIntoFragments("foo bar baz"), 1, 4).equals(" bar baz");
+        assert subJoin(TextFragment.splitTextIntoFragments("foo bar baz"), 1, 0).equals("");
+        assert subJoin(TextFragment.splitTextIntoFragments("foo bar baz"), 1, 1).equals(" ");
+        assert subJoin(TextFragment.splitTextIntoFragments("foo bar baz"), 1, 2).equals(" bar");
+        assert subJoin(TextFragment.splitTextIntoFragments("foo bar baz"), 1, 3).equals(" bar ");
+        assert subJoin(TextFragment.splitTextIntoFragments("foo bar baz"), 1, 4).equals(" bar baz");
 
-            assert subJoin(TextFragment.splitTextIntoFragments("foo bar baz"), 2, 0).equals("");
-            assert subJoin(TextFragment.splitTextIntoFragments("foo bar baz"), 2, 1).equals("bar");
-            assert subJoin(TextFragment.splitTextIntoFragments("foo bar baz"), 2, 2).equals("bar ");
-            assert subJoin(TextFragment.splitTextIntoFragments("foo bar baz"), 2, 3).equals("bar baz");
+        assert subJoin(TextFragment.splitTextIntoFragments("foo bar baz"), 2, 0).equals("");
+        assert subJoin(TextFragment.splitTextIntoFragments("foo bar baz"), 2, 1).equals("bar");
+        assert subJoin(TextFragment.splitTextIntoFragments("foo bar baz"), 2, 2).equals("bar ");
+        assert subJoin(TextFragment.splitTextIntoFragments("foo bar baz"), 2, 3).equals("bar baz");
 
-            assert subJoin(TextFragment.splitTextIntoFragments("foo/bar"), 0, 3).equals("foo/bar");
-        }
+        assert subJoin(TextFragment.splitTextIntoFragments("foo/bar"), 0, 3).equals("foo/bar");
+    }
 
     // ---------------------------------------- TextFragment splitTextIntoFragments
 
@@ -158,19 +174,48 @@ public class TextFragment
         }
         return fragmentList;
     }
-        
-        public static void L1TEST_SplitTextIntoFragments()
-        {
-            assert splitTextIntoFragments("").size() == 0;
-            assert splitTextIntoFragments("foo").size() == 1;
-            assert splitTextIntoFragments("foo bar").size() == 3;
-            assert splitTextIntoFragments("foo;bar").size() == 3;
-            assert splitTextIntoFragments("foo;;;bar").size() == 3;
     
-            assert splitTextIntoFragments("foo bar").get(0).getText().equals("foo");
-            assert splitTextIntoFragments("foo bar").get(1).getText().equals(" ");
-            assert splitTextIntoFragments("foo bar").get(2).getText().equals("bar");
+    public static void L1TEST_SplitTextIntoFragments()
+    {
+        assert splitTextIntoFragments("").size() == 0;
+        assert splitTextIntoFragments("foo").size() == 1;
+        assert splitTextIntoFragments("foo bar").size() == 3;
+        assert splitTextIntoFragments("foo;bar").size() == 3;
+        assert splitTextIntoFragments("foo;;;bar").size() == 3;
+
+        assert splitTextIntoFragments("foo bar").get(0).getText().equals("foo");
+        assert splitTextIntoFragments("foo bar").get(1).getText().equals(" ");
+        assert splitTextIntoFragments("foo bar").get(2).getText().equals("bar");
+    }
+
+    // ---------------------------------------- TextFragment computeHashCode
+    
+    public static int computeHashCode(List<TextFragment> fragmentList, int startIndex, int endIndex)
+    {
+        int runningHashCode = 0;
+        endIndex = Math.min(endIndex, fragmentList.size());
+        for (int i = startIndex; i < endIndex; i++)
+        {
+            TextFragment fragment = fragmentList.get(i);
+            runningHashCode = runningHashCode ^ fragment.hashCode();
         }
+        return runningHashCode;
+    }
+
+    public static void L1TEST_computeHashCode()
+    {
+        List<TextFragment> fragmentList = TextFragment.splitTextIntoFragments("foo bar");
+        assert(fragmentList.size() == 3);
+        assert computeHashCode(fragmentList, 0, 0) == 0;
+        assert computeHashCode(fragmentList, 0, 1) != computeHashCode(fragmentList, 0, 0);
+        assert computeHashCode(fragmentList, 0, 2) != computeHashCode(fragmentList, 0, 1);
+        assert computeHashCode(fragmentList, 0, 3) != computeHashCode(fragmentList, 0, 2);
+        assert computeHashCode(fragmentList, 0, 4) == computeHashCode(fragmentList, 0, 3);
+        
+        List<TextFragment> fragmentList2 = TextFragment.splitTextIntoFragments("zzz foo bar");
+        assert computeHashCode(fragmentList2, 2, 3) == computeHashCode(fragmentList, 0, 1);
+
+    }
 
     //   ---------------------------------------- enum FragmentType
 

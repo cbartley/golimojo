@@ -37,70 +37,51 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 function Driver(targetWin)
 {
     this.targetWin = targetWin;
+    this.linker = null;
 }
 
 // ---------------------------------------- Driver start
 
 Driver.prototype.start = function ()
 {
-    var driver = this;
-    var targetDoc = null;
-    var pageTitleList = null;
-    
-    function tryToStart()
+Log.print("### start");
+    var onPageShowCallback = Tools.createCallback(this.onPageShow, this);
+    var onPageHideCallback = Tools.createCallback(this.onPageHide, this);
+    this.targetWin.addEventListener("pageshow", onPageShowCallback, false);
+    this.targetWin.addEventListener("pagehide", onPageHideCallback, false);
+
+    function onPageDataReceived(pageData)
     {
-        if (targetDoc == null) return;
-        if (pageTitleList == null) return;
-        driver.startLinking(targetDoc, pageTitleList);
+        var pageTitleList = pageData.pageTitleList;
+        this.startLinking(this.targetWin.document, pageTitleList);
     }
 
-    function documentCallback()
-    {
-        targetDoc = driver.targetWin.document;
-        tryToStart();
-    }
+    var ajaxCall = new AjaxGetPageDataCall(this.targetWin.location.href);
+    ajaxCall.send(Tools.createCallback(onPageDataReceived, this));
+}
 
-    function pageDataCallback(pageData)
-    {
-        pageTitleList = pageData.pageTitleList;
-        tryToStart();
-    }
+// ---------------------------------------- Driver onPageShow
 
-//  driver.targetWin.document.addEventListener("DOMContentLoaded", documentCallback, false);
-documentCallback();
+Driver.prototype.onPageShow = function ()
+{
+Log.print("### pageshow");
+    this.linker.startLinking();
+}
 
-    var ajaxCall = new AjaxGetPageDataCall(driver.targetWin.location.href);
-    ajaxCall.send(pageDataCallback);
+// ---------------------------------------- Driver onPageHide
+
+Driver.prototype.onPageHide = function ()
+{
+Log.print("### pagehide");
+    this.linker.stopLinking();
 }
 
 // ---------------------------------------- Driver startLinking
 
 Driver.prototype.startLinking = function (targetDoc, pageTitleList)
 {
-    this.insertStyleSheet(targetDoc);
-    var linker = new Linker(targetDoc.body, pageTitleList);
-    linker.startLinking();
-}
-
-// ---------------------------------------- Driver insertStyleSheet
-
-Driver.prototype.insertStyleSheet = function (targetDoc)
-{
-    // Figure out where to insert the style sheet.
-    var styleParent = targetDoc.body;
-    var elemList = targetDoc.getElementsByTagName("HEAD");
-    if (elemList.length > 0)
-    {
-        styleParent = elemList[0];
-    }
-
-    // Define the style sheet.
-    var styleText = "a.golimojo-wikipedia-link { color: red; font-weight: bold }";
-    
-    // Create a style element for the style sheet and insert it.
-    var style = targetDoc.createElement("STYLE");
-    style.textContent = styleText;
-    styleParent.appendChild(style);
+    this.linker = new Linker(targetDoc, pageTitleList);
+    this.linker.startLinking();
 }
 
 // ------------------------------------------------------------
@@ -322,25 +303,61 @@ Test.assert = function (testResult, optionalContext, optionalValue)
 // ---------------------- initialization ----------------------
 // ------------------------------------------------------------
 
-var Observer =
+function initialize()
 {
-    init: function ()
+    // Declare a function to handle the end-document-load event.
+    function onEndDocumentLoad(windowWrapper)
     {
-        with (Components.classes["@mozilla.org/observer-service;1"])
-        {
-            with (getService(Components.interfaces["nsIObserverService"]))
-            {
-                addObserver(this, "EndDocumentLoad", false);
-            }
-        }
-    },
-
-    observe: function (win)
-    {
-        var driver = new Driver(win.wrappedJSObject);
-        driver.start();
+        var win = windowWrapper.wrappedJSObject;
+        if (win.location.protocol != "http:") return;
+        if (win.golimojoDriver != null) return;
+        win.golimojoDriver = new Driver(win);
+        win.golimojoDriver.start();
     }
+
+    // Create an observer object and bind the callback function to it.
+    var observer = {};
+    observer.observe = Tools.createCallback(onEndDocumentLoad, observer);
+
+    // Register the observer.
+    with (Components.classes["@mozilla.org/observer-service;1"])
+    {
+        with (getService(Components.interfaces["nsIObserverService"]))
+        {
+            addObserver(observer, "EndDocumentLoad", false);
+        }
+    }
+
+                    var xobserver = 
+                    {
+                        observe: function (obj, eventName)
+                        {
+                            Log.print("### " + eventName);
+                            try
+                            {
+                                if (obj != null && eventName == "chrome-webnavigation-create")
+                                {
+                                    var docShell = obj.QueryInterface(Components.interfaces.nsIDocShell);
+                                    Log.print("*** " + docShell);
+
+                                }
+                            }
+                            catch (e)
+                            {
+                                Log.print("### " + e);
+                            }
+                        }
+                    };
+
+                    // Register the observer.
+                    with (Components.classes["@mozilla.org/observer-service;1"])
+                    {
+                        with (getService(Components.interfaces["nsIObserverService"]))
+                        {
+                            addObserver(xobserver, "*", false);
+                        }
+                    }
 
 }
 
-Observer.init();
+initialize();

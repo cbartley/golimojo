@@ -44,13 +44,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.mortbay.html.Page;
-
-import com.golimojo.QdmlParser.QdmlEndTagFragment;
 import com.golimojo.QdmlParser.QdmlFragment;
-import com.golimojo.QdmlParser.QdmlStartTagFragment;
-import com.golimojo.QdmlParser.QdmlTagFragment;
-import com.golimojo.QdmlParser.QdmlTextNodeFragment;
 import com.golimojo.TextFragment.FragmentType;
 
 public class PageDumpReader
@@ -61,10 +55,11 @@ public class PageDumpReader
     /**
      * @param args
      */
+    @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Exception
     {
         String pathToSmallPageDumpFile = "temp/truncated-enwiki-pages-articles.xml";
-        String pathToLargePageDumpFile = "temp/enwiki-pages-articles.xml";
+//      String pathToLargePageDumpFile = "temp/enwiki-pages-articles.xml";
         Object[] results = readPageDump(pathToSmallPageDumpFile);
 //      Object[] results = readPageDump(pathToLargePageDumpFile);
         Hashtable<String, PageData> pageDataBag = (Hashtable<String, PageData>)results[0];

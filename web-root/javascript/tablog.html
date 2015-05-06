@@ -60,6 +60,28 @@
         {
             window.golimojoTabLog = new GolimojoTabLog();
         }
+        
+        window.onunload = function ()
+        {
+            function createAjaxRequest()
+            {
+                if (window.XMLHttpRequest != null) return new XMLHttpRequest();
+                if (window.ActiveXObject != null) return new ActiveXObject("Microsoft.XMLHTTP");
+                throw new Error("XMLHttpRequest is not supported!");
+            }
+
+            function handleReadyStateChange()
+            {
+                alert("yo");
+            }
+
+            // Request server shutdown in case we're running a local quick-turnaround test configuration.
+            var request = createAjaxRequest();
+            request.onreadystatechange = handleReadyStateChange;
+            var url = "http://#host#/servlet/shutdown".replace(/#host#/g, document.location.host);
+            request.open("GET", url, false);
+            request.send("");
+        }
 
     </script>
     

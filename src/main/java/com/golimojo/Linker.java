@@ -168,14 +168,20 @@ public class Linker
     private void findLinksInText(String text, List<String> pageTitleReceiverList)
     {
         List<TextFragment> fragmentList = TextFragment.splitTextIntoFragments(text);
-        for (int i = 0; i < fragmentList.size(); i++)
+        int index = 0;
+        int endIndex = fragmentList.size();
+        while (index < endIndex)
         {
-            int phraseFragmentCount = findLongestPhraseAtPosition(_pageDataStore, fragmentList, i);
-            if (phraseFragmentCount > 0)
+            PageDataStore.PageTitleMatch pageTitleMatch = 
+                _pageDataStore.findMatchingPageTitleAtPosition(fragmentList, index);
+            if (pageTitleMatch != null)
             {
-                String phraseText = TextFragment.subJoin(fragmentList, i, phraseFragmentCount);
-                String pageTitle = _pageDataStore.findMatchingPageTitle(phraseText);
-                pageTitleReceiverList.add(pageTitle);
+                pageTitleReceiverList.add(pageTitleMatch.getPageTitle());
+                index += pageTitleMatch.getFragmentMatchCount();
+            }
+            else
+            {
+                index += 1;
             }
         }
     }
@@ -256,42 +262,24 @@ public class Linker
     private static void addLinksToFragmentList(PageDataStore pageDataStore, List<TextFragment> fragmentList, List<TextFragment> receiverList)
     {
         int index = 0;
-        while (index < fragmentList.size())
+        int endIndex = fragmentList.size();
+        while (index < endIndex)
         {
-            int phraseFragmentCount = findLongestPhraseAtPosition(pageDataStore, fragmentList, index);
-
-            // If we matched a phrase, copy and link it.
-            if (phraseFragmentCount > 0)
+            PageDataStore.PageTitleMatch pageTitleMatch = 
+                pageDataStore.findMatchingPageTitleAtPosition(fragmentList, index);
+            if (pageTitleMatch != null)
             {
-                String phraseText = TextFragment.subJoin(fragmentList, index, phraseFragmentCount);
-                String pageTitle = pageDataStore.findMatchingPageTitle(phraseText);
-                copyLinkedPhrase(fragmentList, index, phraseFragmentCount, pageTitle, receiverList);
-                index += phraseFragmentCount;
+                String pageTitle = pageTitleMatch.getPageTitle();
+                int fragmentMatchCount = pageTitleMatch.getFragmentMatchCount();
+                copyLinkedPhrase(fragmentList, index, fragmentMatchCount, pageTitle, receiverList);
+                index += fragmentMatchCount;
             }
-        
-            // Otherwise copy over one fragment and advance to the next one.
             else
             {
                 receiverList.add(fragmentList.get(index));
                 index += 1;
             }
         }
-    }
-
-    // ---------------------------------------- Linker findLongestPhraseAtPosition
-
-    private static int findLongestPhraseAtPosition(PageDataStore pageDataStore, List<TextFragment> fragmentList, int index)
-    {
-        int maxFragmentCount = 7;
-        int minFragmentCount = 1;
-        maxFragmentCount = Math.min(maxFragmentCount, fragmentList.size() - index);
-        for (int i = maxFragmentCount; i >= minFragmentCount; i--)
-        {
-            String phrase = TextFragment.subJoin(fragmentList, index, i);
-            if (pageDataStore.findMatchingPageTitle(phrase) != null) return i;
-        }
-
-        return 0;
     }
 
     // ---------------------------------------- Linker copyLinkedPhrase
