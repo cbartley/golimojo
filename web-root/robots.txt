@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /extension/
+Disallow: /javascript/
+Disallow: /test-files/
+Disallow: /proxy.html

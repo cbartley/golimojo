@@ -159,6 +159,14 @@ a:hover
     text-decoration: underline;
 }
 
+.next
+{
+    margin-top: 20px;
+    border-top: dotted gray 1px;
+    padding-top: 10px;
+    text-align: right;
+}
+
 ul.examples li
 {
     margin-bottom: 0.5em;
