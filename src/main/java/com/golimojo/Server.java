@@ -100,7 +100,7 @@ public class Server extends ShellTools {
         if (onWindows())
             return "cmd /c start /wait Firefox";
         if (onOSX())
-            return "open -a Firefox --new --args";
+            return "open -a Firefox-4 --new --args";
         reportErrorAndQuit("I don't know how to launch Firefox on this platform!");
         return null;
     }

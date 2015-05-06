@@ -7,7 +7,7 @@
     
         <em:id>golimojo@golimojo.com</em:id>
         <em:name>Golimojo Wikipedia Extension</em:name>
-        <em:version>1.002</em:version>
+        <em:version>1.003</em:version>
         <em:description>Automatically add links to Wikipedia articles</em:description>
         <em:creator>Golimojo</em:creator>
         <!-- optional items -->
