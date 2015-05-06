@@ -33,15 +33,19 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
-import com.golimojo.Parser.*;
+import com.golimojo.QdmlParser.QdmlEndTagFragment;
+import com.golimojo.QdmlParser.QdmlFragment;
+import com.golimojo.QdmlParser.QdmlStartTagFragment;
+import com.golimojo.QdmlParser.QdmlElementFragment;
+import com.golimojo.QdmlParser.QdmlTextNodeFragment;
 
 public class Linker 
 {
     private Dictionary<String, String> myArticleTitleBag;
     
-    public Linker(String articleTitlesFilePath) throws Exception
+    public Linker(Ranker ranker, String articleTitlesFilePath) throws Exception
     {
-        myArticleTitleBag = readArticleTitles(articleTitlesFilePath);
+        myArticleTitleBag = readArticleTitles(ranker, articleTitlesFilePath);
     }
     
     public static String createLinkUrl(String linkMatch)
@@ -51,18 +55,18 @@ public class Linker
         return url;
     }
 
-    public List<HtmlFragment> findLinks(List<HtmlFragment> fragmentList, String url)
+    public List<QdmlFragment> findLinks(List<QdmlFragment> fragmentList, String url)
     {
         // Insert BASE element.
         for (int i = 0; i < fragmentList.size(); i++)
         {
-            HtmlFragment fragment = fragmentList.get(i);
-            if (fragment instanceof StartTag)
+            QdmlFragment fragment = fragmentList.get(i);
+            if (fragment instanceof QdmlStartTagFragment)
             {
-                StartTag startTag = (StartTag)fragment;
+                QdmlStartTagFragment startTag = (QdmlStartTagFragment)fragment;
                 if (startTag.getTagName().equals("HEAD"))
                 {
-                    Element elem = new Element("<base href='" + url + "'>");
+                    QdmlElementFragment elem = new QdmlElementFragment("<base href='" + url + "'>");
                     fragmentList.add(i + 1, elem);
                     break;
                 }
@@ -72,19 +76,19 @@ public class Linker
         return findLinks(fragmentList);
     }
 
-    public List<HtmlFragment> findLinks(List<HtmlFragment> fragmentList)
+    public List<QdmlFragment> findLinks(List<QdmlFragment> fragmentList)
     {   
         boolean inBody = false;
         boolean inStyle = false;
         boolean inScript = false;
         boolean inAnchor = false;
         
-        List<HtmlFragment> fragmentOutList = new ArrayList<HtmlFragment>();
+        List<QdmlFragment> fragmentOutList = new ArrayList<QdmlFragment>();
         for (int i = 0; i < fragmentList.size(); i++)
         {
-            HtmlFragment fragment = fragmentList.get(i);
+            QdmlFragment fragment = fragmentList.get(i);
             
-            boolean isTextNode = (fragment instanceof TextNode);
+            boolean isTextNode = (fragment instanceof QdmlTextNodeFragment);
             
             inBody = insideElement(fragment, "BODY", inBody);
             inStyle = insideElement(fragment, "STYLE", inStyle);
@@ -97,7 +101,7 @@ public class Linker
             }
             else
             {
-                TextNode textNode = (TextNode)fragment;
+                QdmlTextNodeFragment textNode = (QdmlTextNodeFragment)fragment;
                 findLinks(textNode, fragmentOutList);
             }
         }
@@ -105,22 +109,22 @@ public class Linker
         return fragmentOutList;
     }
 
-    private boolean insideElement(HtmlFragment fragment, String tagName, boolean insideElementNow)
+    private boolean insideElement(QdmlFragment fragment, String tagName, boolean insideElementNow)
     {
-        if (fragment instanceof StartTag)
+        if (fragment instanceof QdmlStartTagFragment)
         {
-            StartTag startTag = (StartTag)fragment;
+            QdmlStartTagFragment startTag = (QdmlStartTagFragment)fragment;
             if (startTag.getTagName().equals(tagName)) return true;
         }
-        if (fragment instanceof EndTag)
+        if (fragment instanceof QdmlEndTagFragment)
         {
-            EndTag endTag = (EndTag)fragment;
+            QdmlEndTagFragment endTag = (QdmlEndTagFragment)fragment;
             if (endTag.getTagName().equals(tagName)) return false;
         }
         return insideElementNow;
     }
     
-    private void findLinks(TextNode textNode, List<HtmlFragment> fragmentOutList)
+    private void findLinks(QdmlTextNodeFragment textNode, List<QdmlFragment> fragmentOutList)
     {
         String text = textNode.toString();
         String[] words = extractWords(text);
@@ -148,13 +152,13 @@ public class Linker
             String replacement = "<a style='color:red;font-weight:bold' href='" + url + "'>" + m.group() + "</a>";
             StringBuffer sb = new StringBuffer();
             m.appendReplacement(sb, replacement);
-            TextNode subNode = new TextNode(sb.toString());
+            QdmlTextNodeFragment subNode = new QdmlTextNodeFragment(sb.toString());
             fragmentOutList.add(subNode);
         } while (m.find());
         
         StringBuffer sb = new StringBuffer();
         m.appendTail(sb);
-        TextNode subNode = new TextNode(sb.toString());
+        QdmlTextNodeFragment subNode = new QdmlTextNodeFragment(sb.toString());
         fragmentOutList.add(subNode);
     }
     
@@ -179,7 +183,7 @@ public class Linker
         return sbHtmlText.toString();
     }
 
-    private static Dictionary<String, String> readArticleTitles(String articleTitlesFilePath) throws Exception
+    private static Dictionary<String, String> readArticleTitles(Ranker ranker, String articleTitlesFilePath) throws Exception
     {
         BufferedReader in = new BufferedReader(new FileReader(articleTitlesFilePath));
 
@@ -194,10 +198,17 @@ public class Linker
             {
                     String articleTitle = in.readLine();
                     if (articleTitle == null) break;
-                    if (countWords(articleTitle) < 2) continue;
+                    //if (countWords(articleTitle) < 2) continue;
                     if (!justLetters(articleTitle)) continue;
-                    articleTitleCount++;
                     articleTitle = translateArticleTitle(articleTitle);
+                    double rank = ranker.rankPhrase(articleTitle);
+                    if (rank > 0.0)
+                    {
+//                      System.out.println("*** " + articleTitle);
+//                      System.out.println("... " + rank);
+                    }
+                    if (rank > 0.0) continue;
+                    articleTitleCount++;
                     articleTitleBag.put(articleTitle, articleTitle);
             }
             long endTimeMs = new Date().getTime();

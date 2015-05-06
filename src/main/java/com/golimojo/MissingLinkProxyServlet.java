@@ -34,6 +34,8 @@ import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+import com.golimojo.QdmlParser.QdmlFragment;
+
 @SuppressWarnings("serial")
 public class MissingLinkProxyServlet extends HttpServlet 
 {
@@ -60,13 +62,12 @@ public class MissingLinkProxyServlet extends HttpServlet
         
         try
         {
-                String htmlText = Parser.readHttpFile(urlArg);
-                List<HtmlFragment> fragmentList = Parser.parse(htmlText);
+                List<QdmlFragment> fragmentList = QdmlParser.readAndParseHttpFile(urlArg);
                 if (ourLinker != null)
                 {
                     fragmentList = ourLinker.findLinks(fragmentList, urlArg);                   
                 }
-                String htmlTextOut = Parser.join(fragmentList);
+                String htmlTextOut = QdmlParser.join(fragmentList);
                 out.print(htmlTextOut);
         }
         catch (Exception e)

@@ -47,8 +47,11 @@ public class Server {
         // Create the server
         HttpServer server = new HttpServer();
         
+        String pathToWordFrequencyFile = "resource-root/word-frequency.txt";
+        Ranker ranker = new Ranker(pathToWordFrequencyFile);
+        
         String articleTitlePath = "resource-root/article-titles.txt";
-        Linker linker = new Linker(articleTitlePath);
+        Linker linker = new Linker(ranker, articleTitlePath);
         MissingLinkProxyServlet.setSharedLinker(linker);
 
         // Default is no virtual host
