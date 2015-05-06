@@ -309,4 +309,5 @@ public class Template
         assert computeSubstitution("testx??yes::", subDict).equals("");
         assert computeSubstitution("testx??yes::no", subDict).equals("no");
     }
+    
 }

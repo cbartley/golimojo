@@ -93,7 +93,7 @@
                                     </td>
                                     
                                     <td class="right">
-                                        Golimojo
+                                        <a href="http://{{serverName}}:{{serverPort}}/index.html">Golimojo</a>
                                     </td>
                                     
                                 </tr>
@@ -138,9 +138,9 @@
 
                                             <p>
                                                 <b>Golimojo</b> scans the text on a web page, looking for words and phrases that
-                                                can be linked to Wikipedia articles of the same name.  When matching words or
-                                                phrases are found, they are turned into hyperlinks right on the web page.  The 
-                                                examples below illustrate what this looks like.
+                                                can be linked to <i>Wikipedia</i> articles.  When matching words or phrases are found,
+                                                they are turned into hyperlinks right on the web page.  The examples below
+                                                illustrate what this looks like.
                                             </p>
                                             
                                             <h3>Before</h3>
@@ -170,14 +170,12 @@
                                             <h3>Learn More</h3>
                                             
                                             <div>
-                                                The <a href="index.html?examples">Examples</a> page uses the Golimojo proxy 
-                                                service to display some pre-selected web pages with added links.  Or you can 
-                                                go directly  to the  <a href="index.html?try">Try It Out</a> page to try 
-                                                Golimojo out on pages of your own choosing.
+                                                The <a href="index.html?examples">Examples</a> page uses Golimojo 
+                                                to add links to some pre-selected web pages.
                                             </div>
                                             
                                         </div>
-}}
+::
 {{examples??
                                         <!-------------------------------------------------------------->
 
@@ -235,12 +233,19 @@
                                                 </li>
 
                                             </ul>
+                                            
+                                            <h2>Give Me More</h2>
+                                            
+                                            <div>
+                                                The <a href="index.html?try">Try It Out</a> page allows you to enter any URL you want
+                                                into a form, and Golimojo will add links to the page at that URL and display it.
+                                            </div>
 
 
 
 
                                         </div>
-}}
+::
 {{try??
                                         <!-------------------------------------------------------------->
 
@@ -264,24 +269,28 @@
                                             <h2>Try It Out</h2>
 
                                             <p>
-                                                The Golimojo proxy service is the easiest way to use Golimojo to
-                                                add links to arbitrary web pages.  To use the proxy service, 
-                                                simply enter a URL into the text box below and hit <b>Go</b>.
-                                                Or you can check out the
-                                                <a href="index.html?bookmarklet">Golimojo Bookmarklet</a> for
-                                                an even more convenient way to use Golimojo.
+                                                Golimojo will work with most web pages.  To try it out, simply
+                                                enter a URL in the form below and hit <b>Go</b>.  Golimojo will
+                                                add links to the page at that URL and then display it.
                                             </p>
 
-                                            <p>
+                                            <div class="try-it-out-form">
                                                 <form action="javascript:proxyUrl(document.getElementById('url-input').value)">
                                                     <label class="url-label">URL:</label> 
                                                     <input id="url-input" type="text">
                                                     <button type="submit">Go</button>
                                                 </form>
+                                            </div>
+                                            
+                                            <h2>Other Ways to Use Golimojo</h2>
+                                            
+                                            <p>
+                                                Check out the <a href="index.html?bookmarklet">Golimojo Bookmarklet</a> 
+                                                for an even easier way to use Golimojo.
                                             </p>
 
                                         </div>
-}}
+::
 {{bookmarklet??
                                         <!-------------------------------------------------------------->
 
@@ -290,9 +299,9 @@
                                             <h2>The Bookmarklet</h2>
 
                                             <div class="explanatory-callout">
-                                                A <b>bookmarklet</b> is a special kind of bookmark.  Normal bookmarks take you to another page
-                                                when they are selected.  Bookmarklets simply make changes to the page you are viewing, rather
-                                                than taking you to a new one.
+                                                A <b>bookmarklet</b> is a special kind of bookmark.  Normal bookmarks take you to
+                                                another page when they are selected.  Bookmarklets simply make changes to the page
+                                                you are currently viewing, rather than taking you to a new one.
                                             </div>
 
                                             <p>
@@ -316,8 +325,8 @@
                                                 <ol>
 
                                                     <li>
-                                                        Right-click (Ctrl-click on the Macintosh) the bookmarklet link below.
-                                                        This will bring up the context menu.
+                                                        Right-click (Ctrl-click on the Macintosh) the bookmarklet link in the box
+                                                        below. This will bring up the context menu.
                                                     </li>
 
                                                     <li>
@@ -335,7 +344,7 @@
 
                                             <div class="bookmarklet-box">
                                                 <script>
-                                                    insertBookmarklet("Golimojo Bookmarklet Link", "Right-click, please!");
+                                                    insertBookmarklet("Golimojo Bookmarklet", "Right-click, please!");
                                                 </script>
                                             </div>
 
@@ -344,11 +353,20 @@
                                             <p>
                                             If you open the <b>Bookmarks</b> or <b>Favorites</b> menu in your browser, you
                                             should see the <b>Golimojo Bookmarklet</b>.  To invoke the bookmarklet on
-                                            whatever page you are currently viewing just select it from the menu.
+                                            whatever page you are currently viewing just select it from the menu.  You
+                                            may want to try it out on this page, although the results may not be very 
+                                            interesting.
                                             </p>
+                                            
+                                            <h2>Are There Any Other Ways to Use Golimojo?</h2>
+                                            
+                                            Yes.  If you are using Mozilla Firefox as your web browser, you may want to 
+                                            check out the <a href="index.html?extension">Golimojo Firefox Extension</a>.
+                                            Because the extension works directly inside the browser it has fewer 
+                                            limitations than the bookmarklet.
 
                                         </div>
-}}
+::
 {{extension??
                                         <!-------------------------------------------------------------->
 
@@ -375,7 +393,7 @@
                                             </div>
 
                                         </div>
-}}
+::
 {{contact??
                                         <!-------------------------------------------------------------->
 
@@ -396,6 +414,17 @@
                                             </p>
 
                                         </div>
+:: ###redirect http://{{serverName}}:{{serverPort}}/index.html###
+}}
+
+}}
+
+}}
+
+}}
+
+}}
+
 }}
                                     </td>
                                     

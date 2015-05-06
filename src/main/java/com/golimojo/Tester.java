@@ -49,10 +49,6 @@ public class Tester
         try
         {
             List<String> classNameList = listAllClasses();
-for (String className : classNameList)
-{
-    System.out.printf("*** %s\n", className);
-}
             List<Class> classList = loadClasses(classNameList);
             for (Class metaClass : classList)
             {
@@ -77,11 +73,9 @@ for (String className : classNameList)
     private static List<String> listAllClasses() throws IOException
     {
         String classPath = System.getProperty("java.class.path");
-System.out.printf("@@@ %s\n", classPath);
         List<String> classNameList = new ArrayList<String>();
         for (String classPathComponent : classPath.split(File.pathSeparator))
         {
-System.out.printf("### %s\n", classPathComponent);
             if (!classPathComponent.toLowerCase().endsWith(".jar"))
             {
                 listClasses(classPathComponent, classNameList);

@@ -33,6 +33,8 @@ import java.io.*;
 import java.net.URLDecoder;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -73,6 +75,15 @@ public class TemplateServlet extends GolimojoServlet
             subDict.put("exampleBeforeHtml", our_exampleBeforeHtml);
             subDict.put("exampleAfterHtml", our_exampleAfterHtml);
             String finalText = Template.applySubstitutions(templateText, subDict);
+            
+            // If there's an embedded redirect command, then do the redirect now.
+            String url = checkForRedirectUrl(finalText);
+            if (url != null)
+            {
+                response.sendRedirect(url);
+                return;
+            }
+            
             out.print(finalText);
         }
         finally
@@ -95,6 +106,18 @@ public class TemplateServlet extends GolimojoServlet
         our_exampleAfterHtml = exampleAfterHtml;        
     }
     
+    // ---------------------------------------- TemplateServlet checkForRedirectUrl
     
+    private static String checkForRedirectUrl(String pageText)
+    {
+        Pattern p = Pattern.compile("###[ \t]*redirect[ \t]*(.*?)###");
+        Matcher m = p.matcher(pageText);
+        if (m.find() && m.groupCount() == 1) 
+        {
+            String url = m.group(1).trim();
+            return url;
+        }
+        return null;
+    }
 
 }

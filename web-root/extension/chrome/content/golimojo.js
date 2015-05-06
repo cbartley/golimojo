@@ -38,7 +38,6 @@ function Starter()
 {
     this.sidebarMonitor = new SidebarMonitor("viewGolimojoSidebar");
     Tools.registerObserver(this, "StartDocumentLoad");
-    Tools.registerObserver(this, "TestTestTest");
 }
 
 // ---------------------------------------- Starter observe
@@ -66,19 +65,18 @@ Starter.prototype.isFirstRunForNewExtension = function ()
 
 Starter.prototype.showWelcomeScreen = function ()
 {
+    // Always show the sidebar on first start.
+    this.sidebarMonitor.openSidebar();
+
     // Skip the welcome screen if we're obviously running a test configuration.
-    if (serverName == "localhost")
-    {
-        Log.print("Skipping new extension welcome screen since we're running against localhost.");
-        return;
-    }
+    if (serverName == "localhost") return;
 
     // Load the welcome screen into the first tab.
     var tabWindowList = Tools.getTabWindows();
     if (tabWindowList.length > 0)
     {
         var tabWindow = tabWindowList[0];
-        tabWindow.location.href = "http://" + serverName + ":" + serverPort + "/welcome.html";
+        tabWindow.location.href = "http://" + serverName + ":" + serverPort + "/extension-welcome.html";
     }
 }
 
@@ -95,6 +93,13 @@ function SidebarMonitor(sidebarCommandName)
     this.driver = new Driver();
     Tools.registerObserver(this, "chrome-webnavigation-create");
     Tools.registerObserver(this, "chrome-webnavigation-destroy");
+}
+
+// ---------------------------------------- SidebarMonitor openSidebar
+
+SidebarMonitor.prototype.openSidebar = function ()
+{
+    if (!this.isSidebarOpen) toggleSidebar(this.sidebarCommandName);
 }
 
 // ---------------------------------------- SidebarMonitor observe

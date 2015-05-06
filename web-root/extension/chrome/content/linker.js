@@ -102,8 +102,19 @@ Linker.prototype.insertStyleSheet = function (targetDoc)
     }
 
     // Define the style sheet.
-    var styleText = "a.golimojo-wikipedia-link { color: red; font-weight: bold }";
-styleText = "a.golimojo-wikipedia-link { color: inherit; text-decoration: none; border-bottom: dashed red 1px }";
+    var styleText =
+    [
+        "a.golimojo-wikipedia-link:link, a.golimojo-wikipedia-link:visited,",
+        "   a.golimojo-wikipedia-link:hover, a.golimojo-wikipedia-link:active",
+        "{",
+        "   color: inherit;",
+        "   text-decoration: none;",
+        "   border-bottom: dashed red 1px;",
+        "}",
+        ""
+    ].join("\n");
+    
+    
     
     // Create a style element for the style sheet and insert it.
     var style = targetDoc.createElement("STYLE");

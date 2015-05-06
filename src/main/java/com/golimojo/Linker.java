@@ -112,8 +112,10 @@ public class Linker
                 QdmlStartTagFragment startTag = (QdmlStartTagFragment)fragment;
                 if (startTag.isStartTagCi("HEAD"))
                 {
-                    QdmlElementFragment elem = new QdmlElementFragment("<base href='" + baseUrl + "'>");
+                    QdmlElementFragment elem = new QdmlElementFragment("<base href='" + baseUrl + "'>\n");
                     fragmentList.add(i + 1, elem);
+                    QdmlFragment styleElem = createGolimojoStyleElement();
+                    fragmentList.add(i + 2, styleElem);                 
                     break;
                 }
             }
@@ -161,6 +163,81 @@ public class Linker
             findLinksInText(text, pageTitleReceiverList);
         }
         
+    }
+
+    // ---------------------------------------- Linker createGolimojoStyleElement
+
+    private static QdmlFragment createGolimojoStyleElement()
+    {
+        String[] fragments = new String[]
+        {
+            "<style>",
+            createStyles(),
+            "</style>",
+        };
+        String styleText = join(fragments, "\n");
+        return new QdmlElementFragment(styleText);
+    }
+
+    // ---------------------------------------- Linker createStyles
+
+    private static String createStyles()
+    {
+        String[] fragments = new String[]
+        {
+            createStyle("", "red", "underline", "none"),
+            createStyle(".black", "black", "underline", "none"),
+            createStyle(".blue", "blue", "underline", "none"),
+            createStyle(".red", "red", "underline", "none"),
+            createStyle(".green", "green", "underline", "none"),
+            createStyle(".yellow", "yellow", "underline", "none"),
+            ""
+        };
+        
+        return join(fragments, "\n");
+    }
+
+    // ---------------------------------------- Linker createStyle
+
+    private static String createStyle(String keySelector, String color, String textDecoration, String borderStyle)
+    {
+        String[] lineList = new String[]
+        {
+            "   #key-selector# a.golimojo-wikipedia-link:link",
+            "   , #key-selector# a.golimojo-wikipedia-link:visited",
+            "   , #key-selector# a.golimojo-wikipedia-link:hover",
+            "   , #key-selector# a.golimojo-wikipedia-link:active",
+            "   {",
+            "       color: #color#;",
+            "       text-decoration: #text-decoration#;",
+            "       border-bottom: #border-style#;",
+            "   }",
+            ""
+        };
+        
+        String text = join(lineList, "\n");
+        text = text.replace("#key-selector#", keySelector);
+        text = text.replace("#color#", color);
+        text = text.replace("#text-decoration#", textDecoration);
+        text = text.replace("#border-style#", borderStyle);
+
+        return text;
+    }
+
+    // ---------------------------------------- Linker join
+
+    private static String join(String[] strings, String jointText)
+    {
+        StringBuffer sbJoin = new StringBuffer();
+        for (String string : strings)
+        {
+            if (sbJoin.length() > 0)
+            {
+                sbJoin.append(jointText);
+            }
+            sbJoin.append(string);
+        }
+        return sbJoin.toString();
     }
 
     // ---------------------------------------- Linker findLinksInText
@@ -287,7 +364,7 @@ public class Linker
     private static void copyLinkedPhrase(List<TextFragment> fragmentList, int index, int fragmentCount, String pageTitle, List<TextFragment> receiverList)
     {
         String url = buildWikipediaUrl(pageTitle);
-        String startTagText = "<a style='font-weight:bold; color:red' href='" + url + "' target='_top'>";
+        String startTagText = "<a class='golimojo-wikipedia-link' href='" + url + "' target='_top'>";
         String endTagText = "</a>";
         TextFragment anchorStartTagFragment = new TextFragment(FragmentType.Other, startTagText);
         TextFragment anchorEndTagFragment = new TextFragment(FragmentType.Other, endTagText);

@@ -167,16 +167,29 @@ public class PageFilter
     private static HashSet<String> createStopWordSet(Hashtable<String, PageData> pageDataBag)
     {
         List<PageData> pageDataList = createRefCountOrderedPageDataList(pageDataBag);
-        List<String> stopWordList = identifyStopWords(pageDataList);
+    
+        // Identify "hard" stop words.  Almost all of these 
+        // words are common first and last names.
+        List<String> stopWordList200 = identifyStopWords(pageDataList, 200);
+        makeLowerCase(stopWordList200);
+        HashSet<String> stopWordSet200 = new HashSet<String>(stopWordList200);
+        
+        // Identify softer stop words.  Some of these we'll want to keep
+        // as stop words and some we'll want to pass -- note heuristics.
+        List<String> stopWordList = identifyStopWords(pageDataList, 2000);
         makeLowerCase(stopWordList);
         HashSet<String> stopWordSet = new HashSet<String>(stopWordList);
         for (String stopWord : stopWordList)
         {
+//if (stopWordSet200.contains(stopWord)) System.out.printf("+++ %s\n", stopWord);
+            if (stopWordSet200.contains(stopWord)) continue;
             PageData pageData = pageDataBag.get(stopWord);
-            if (pageData != null && pageData.getRefRank() < 10000)
-            {
-                stopWordSet.remove(stopWord);
-            }
+//if (pageData == null) System.out.printf("+++ %s\n", stopWord);
+            if (pageData == null) continue;
+//if (pageData.getRefRank() > 10000) System.out.printf("+++ %s\n", stopWord);
+            if (pageData.getRefRank() > 10000) continue;
+//System.out.printf("--- %s\n", stopWord);
+            stopWordSet.remove(stopWord);
         }
 
         stopWordSet.add("sunday");
@@ -240,9 +253,8 @@ public class PageFilter
 
     // ---------------------------------------- PageFilter identifyStopWords
     
-    private static List<String> identifyStopWords(List<PageData> pageDataList)
+    private static List<String> identifyStopWords(List<PageData> pageDataList, int topCount)
     {
-        final int topCount = 2000;
         final int firstNameIndex = 0;
         final int lastNameIndex = 1;
 
@@ -282,7 +294,7 @@ public class PageFilter
         List<String> stopWordList = new ArrayList<String>();
         stopWordList.addAll(topOrderedFirstNameList);
         stopWordList.addAll(topOrderedLastNameList);
-for (String stopWord : stopWordList) System.out.printf("$$$ %s\n", stopWord);
+//for (String stopWord : stopWordList) System.out.printf("$$$ %s\n", stopWord);
         return stopWordList;
     }
 

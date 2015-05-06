@@ -61,6 +61,12 @@ table.banner-layout td.right
     text-align: right;
 }
 
+table.banner-layout a
+{
+    text-decoration: none;
+    color: inherit;
+}
+
 table.content-layout
 {
     width: 100%;
@@ -124,29 +130,6 @@ a.tab-unselected:hover
     margin: 1em;
 }
 
-.screenshot-stack
-{
-    position: relative;
-    width: 660px;
-    height: 500px;
-}
-
-.screenshot-before
-{
-    position: absolute;
-    left:0;
-    top:0;
-    z-index: 0;
-}
-
-.screenshot-after
-{
-    left: 50;
-    top: 75;
-    position: absolute;
-    z-index: 100;
-}
-
 h2
 {
     font-size: 14pt;
@@ -184,11 +167,12 @@ ul.examples li
 .bookmarklet-box
 {
     margin-bottom: 0.5em;
-    width: 75%;
+    width: 50%;
     border: solid darkgray 1px;
     background-color: cornsilk;
     padding: 1em;
     font-size: 14pt;
+    text-align: center;
 }
 
 .example
@@ -224,4 +208,14 @@ ul.examples li
     padding: 3px;
     font-family: sans-serif;
     font-size: 0.8em;
+}
+
+div.try-it-out-form
+{
+    width: 90%;
+    padding-top:9pt;
+    padding-bottom: 0pt;
+    padding-left: 5pt;
+    border: solid lightgrey 1px;
+    background-color: cornsilk;
 }

@@ -51,6 +51,7 @@
             {
                 border: solid darkgray 1px;
                 background-color: lightgrey;
+                vertical-align: top;
             }
             
             .content-area
@@ -72,7 +73,7 @@
                 margin-bottom: 1px;
             }
             
-            .topbar-title a
+            .topbar-title .page-url
             {
                 color: darkblue;
                 font-family: monospace;
@@ -85,14 +86,310 @@
                 font-style: italic;
             }
 
+            /* ------------------------------------------------------------ */
+
+            .group
+            {
+                margin: 2pt;
+                border: solid black 1px;
+                padding: 2pt;
+            }
+            
+            .group-title
+            {
+                margin-bottom: 1pt;
+                padding-left: 3pt;
+                padding-top: 1pt;
+                padding-bottom: 2pt;
+                color: white;
+                background-color: #305080;
+                font-family: sans-serif;
+                font-weight: bold;
+                font-size: 10pt;
+            }
+        
+            table.menu-item, table.menu-item-selected
+            {
+                border-collapse: collapse;
+            }
+        
+            .menu-item, .menu-item-selected
+            {
+                border-top: solid silver 1px;
+                cursor:default;
+            }
+        
+            .menu-item
+            {
+                background-color: lightgrey;
+            }
+        
+            .menu-item-selected
+            {
+                background-color: gray;
+            }
+        
+            .color-swatch-border
+            {
+                margin-top: 1pt;
+                border: solid black 1px;
+            }
+        
+            .color-swatch
+            {
+                width:11px;
+                height:12px;
+                font-size: 0.5em;
+            }
+            
+            .label
+            {
+                padding-left: 5px;
+                width: 100%;
+                font-family: sans-serif;
+                font-size: 9pt;
+                font-weight: bold;
+            }
+            
+            .default-color
+            {
+                background-color: black;
+            }
+            
+            .black
+            {
+                background-color: black;
+            }
+            
+            .blue
+            {
+                background-color: blue;
+            }
+            
+            .red
+            {
+                background-color: red;
+            }
+            
+            .green
+            {
+                background-color: green;
+            }
+            
+            .yellow
+            {
+                background-color: yellow;
+            }
+            
+            .selected
+            {
+                background-color: gray;
+            }
+
         </style>
         
         <script>
+            
+            // ------------------------------------------------------------
+            // -------------------- behavior framework --------------------
+            // ------------------------------------------------------------
 
-            var gxPageType = "SystemPage";      
+            // ---------------------------------------- dumpError
+        
+            function dumpError(e)
+            {
+                var lineList = [];
+                for (var id in e)
+                {
+                    var value = e[id];
+                    if (typeof(value) == "string")
+                    {
+                        var line = "[" + id + "]\t==> " + value;
+                        lineList.push(line);
+                    }
+                }
+                return lineList.join("\n");
+            }
+
+            // ---------------------------------------- typeCheck
+            
+            function typeCheck(obj, constructor)
+            {
+                if (obj == null) throw new Error("typeCheck: object was null!");
+                if (obj.constructor != constructor) throw new Error("typeCheck: type mismatch");
+                return obj;
+            }
+
+            // ---------------------------------------- createThunk
+
+            function createThunk(fun, receiver, thunkName)
+            {
+                function thunk()
+                {
+                    try
+                    {
+                        return fun.apply(receiver, arguments);
+                    }
+                    catch (e)
+                    {
+                        alert(thunkName + " thunk error: " + dumpError(e));
+                        throw e;
+                    }
+                }
+                
+                return thunk;
+            }
+
+            // ---------------------------------------- attachEventHandlers
+
+            function attachEventHandlers(elem, behavior)
+            {
+                for (var id in behavior)
+                {
+                    if (id.substring(0, 2) == "on")
+                    {
+                        elem[id] = createThunk(behavior[id], behavior, id);
+                    }
+                }
+            }
+
+            // ---------------------------------------- attachBehavior
+
+            function attachBehavior(elem, behaviorBag, parentBehavior)
+            {
+                var behaviorName = elem.getAttribute("custom-behavior");
+                if (behaviorName == null) return null;
+                var behaviorConstructor = behaviorBag[behaviorName];
+                if (behaviorConstructor == null) return null;
+                var behavior = new behaviorConstructor(elem, parentBehavior);
+                attachEventHandlers(elem, behavior);
+                return behavior;
+            }           
+
+            // ---------------------------------------- recursiveAttachBehaviors
+            
+            function recursiveAttachBehaviors(rootElem, behaviorBag, parentBehavior)
+            {
+                var behavior = attachBehavior(rootElem, behaviorBag, parentBehavior);
+                if (behavior != null)
+                {
+                    parentBehavior = behavior;
+                }
+                
+                var childNodes = rootElem.childNodes;
+                for (var i = 0; i < childNodes.length; i++)
+                {
+                    var childNode = childNodes[i];
+                    if (childNode.nodeType == 1)
+                    {
+                        recursiveAttachBehaviors(childNode, behaviorBag, parentBehavior);
+                    }
+                
+                }
+            }
+            
+            // ------------------------------------------------------------
+            // ---------------------- class RadioMenu ---------------------
+            // ------------------------------------------------------------
+
+            // ---------------------------------------- RadioMenu constructor
+
+            function RadioMenu(elem, parentBehavior)
+            {
+                this.menuItemList = [];
+                var value = elem.getAttribute("custom-value");
+                this.selectValue(value);
+            }
+
+            // ---------------------------------------- RadioMenu registerMenuItem
+
+            RadioMenu.prototype.registerMenuItem = function (menuItem)
+            {
+                this.menuItemList.push(menuItem);
+            }
+
+            // ---------------------------------------- RadioMenu selectValue
+            
+            RadioMenu.prototype.selectValue = function (value)
+            {
+                this.value = value;
+                for (var i = 0; i < this.menuItemList.length; i++)
+                {
+                    var currMenuItem = this.menuItemList[i];
+                    if (currMenuItem.value == value)
+                    {
+                        currMenuItem.lookSelected();
+                    }
+                    else
+                    {
+                        currMenuItem.lookUnselected();
+                    }
+                }
+                this.updateContentStyle();
+            }
+
+            // ---------------------------------------- RadioMenu updateContentStyle
+            
+            RadioMenu.prototype.updateContentStyle = function ()
+            {
+                var contentFrame = document.getElementById("content-frame");
+                var contentWindow = contentFrame.contentWindow;
+                var contentDocument = contentWindow.document;
+                var theHtmlElement = contentDocument.documentElement;
+                theHtmlElement.className = this.value;
+            }
+
+            // ------------------------------------------------------------
+            // -------------------- class RadioMenuItem -------------------
+            // ------------------------------------------------------------
+
+            // ---------------------------------------- RadioMenuItem constructor
+
+            function RadioMenuItem(elem, parentBehavior)
+            {
+                this.elem = elem;
+                this.value = elem.getAttribute("custom-value");
+                this.radioMenu = typeCheck(parentBehavior, RadioMenu);
+                this.radioMenu.registerMenuItem(this);
+            }
+
+            // ---------------------------------------- RadioMenuItem lookSelected
+
+            RadioMenuItem.prototype.lookSelected = function()
+            {
+                this.elem.className = "menu-item-selected";
+            }
+
+            // ---------------------------------------- RadioMenuItem lookUnselected
+
+            RadioMenuItem.prototype.lookUnselected = function()
+            {
+                this.elem.className = "menu-item";
+            }
+
+            // ---------------------------------------- RadioMenuItem onclick
+
+            RadioMenuItem.prototype.onclick = function ()
+            {
+                this.radioMenu.selectValue(this.value);
+            }
+
+            // ------------------------------------------------------------
+            // ---------------------- initialization ----------------------
+            // ------------------------------------------------------------
+
+            var gxPageType = "SystemPage";
+
+            // ---------------------------------------- window onload
+
+            window.onload = function ()
+            {
+                var behaviorBag = {"radio-menu": RadioMenu, "radio-menu-item": RadioMenuItem};
+                recursiveAttachBehaviors(document.body, behaviorBag);
+            }
 
         </script>
-        
+
     </head>
 
     <body>
@@ -110,11 +407,11 @@
                     <td class="topbar">
                         <div class="topbar-content">
                             <div class="topbar-title">
-                                Golimojo Add Links Proxy of 
-                                <a href="http://{{queryString}}">http://{{queryStringUnescaped}}</a>
+                                <a href="http://{{serverName}}:{{serverPort}}/index.html">Golimojo</a> proxy of 
+                                <a class="page-url" href="http://{{queryString}}">http://{{queryStringUnescaped}}</a>
                             </div>
                             <div class="topbar-subtitle">
-                                Note that forms and other interativity may not work correctly on this proxied page.
+                                Since this page has been proxied forms and other interactivity may not work correctly.
                             </div>
                         </div>
                     </td>
@@ -122,13 +419,149 @@
                 </tr>
             
                 <tr>
+
+                    <!------------------------------------------------------------>
                 
                     <td class="sidebar">
-                        &nbsp;
+
+                        <div class="group">
+                        
+                            <div class="group-title">
+                                Link Color
+                            </div>
+
+                            <div custom-behavior="radio-menu" custom-value="red">
+
+                                <table class="menu-item" custom-behavior="radio-menu-item" custom-value="black">
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td>
+                                                <div class="color-swatch-border">
+                                                    <div class="color-swatch black">
+
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <td class="label">
+                                                black
+                                            </td>
+
+                                        </tr>
+
+                                    <tbody>
+
+                                </table>
+
+                                <table class="menu-item" custom-behavior="radio-menu-item" custom-value="blue">
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td>
+                                                <div class="color-swatch-border">
+                                                    <div class="color-swatch blue">
+
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <td class="label">
+                                                blue
+                                            </td>
+
+                                        </tr>
+
+                                    <tbody>
+
+                                </table>
+
+                                <table class="menu-item-selected" custom-behavior="radio-menu-item" custom-value="red">
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td>
+                                                <div class="color-swatch-border">
+                                                    <div class="color-swatch red">
+
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <td class="label">
+                                                red
+                                            </td>
+
+                                        </tr>
+
+                                    <tbody>
+
+                                </table>
+
+                                <table class="menu-item" custom-behavior="radio-menu-item" custom-value="green">
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td>
+                                                <div class="color-swatch-border">
+                                                    <div class="color-swatch green">
+
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <td class="label">
+                                                green
+                                            </td>
+
+                                        </tr>
+
+                                    <tbody>
+
+                                </table>
+
+                                <table class="menu-item" custom-behavior="radio-menu-item" custom-value="yellow">
+
+                                    <tbody>
+
+                                        <tr>
+
+                                            <td>
+                                                <div class="color-swatch-border">
+                                                    <div class="color-swatch yellow">
+
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <td class="label">
+                                                yellow
+                                            </td>
+
+                                        </tr>
+
+                                    <tbody>
+
+                                </table>
+
+                            </div>
+
+                        <div>
+
                     </td>
+
+                    <!------------------------------------------------------------>
                     
                     <td class="content-area">
-                        <iframe class="content-frame" src="http://{{serverName}}:{{serverPort}}/servlet/add-links?{{queryString}}">
+                        <iframe id="content-frame" class="content-frame" src="http://{{serverName}}:{{serverPort}}/servlet/add-links?{{queryString}}">
                     </td>
                     
                 </tr>
