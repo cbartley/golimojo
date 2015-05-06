@@ -37,7 +37,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 function Linker(targetDoc, pageTitleList)
 {
     this.targetDoc = targetDoc;
-    this.insertStyleSheet(targetDoc);
     this.treatAsLeafNodeNameList = ["A", "SCRIPT", "STYLE"];
     this.textNodeIterator = new TextNodeIterator(targetDoc.body, this.treatAsLeafNodeNameList);
     this.nextTextNode = this.textNodeIterator.next();
@@ -51,6 +50,7 @@ function Linker(targetDoc, pageTitleList)
 
 Linker.prototype.engage = function ()
 {
+    Styler.styler.insertStyleSheet(this.targetDoc);
     this.startLinking();
 }
 
@@ -83,44 +83,6 @@ Linker.prototype.startLinking = function ()
 Linker.prototype.stopLinking = function ()
 {
     this.doLinking = false;
-}
-
-// ---------------------------------------- Linker insertStyleSheet
-
-Linker.prototype.insertStyleSheet = function (targetDoc)
-{
-    // If the stylesheet is already present, just return immediately.
-    var styleSheetId = "golimojo-stylesheet";
-    if (targetDoc.getElementById(styleSheetId) != null) return;
-
-    // Figure out where to insert the style sheet.
-    var styleParent = targetDoc.body;
-    var elemList = targetDoc.getElementsByTagName("HEAD");
-    if (elemList.length > 0)
-    {
-        styleParent = elemList[0];
-    }
-
-    // Define the style sheet.
-    var styleText =
-    [
-        "a.golimojo-wikipedia-link:link, a.golimojo-wikipedia-link:visited,",
-        "   a.golimojo-wikipedia-link:hover, a.golimojo-wikipedia-link:active",
-        "{",
-        "   color: inherit;",
-        "   text-decoration: none;",
-        "   border-bottom: dashed red 1px;",
-        "}",
-        ""
-    ].join("\n");
-    
-    
-    
-    // Create a style element for the style sheet and insert it.
-    var style = targetDoc.createElement("STYLE");
-    style.id = styleSheetId;
-    style.textContent = styleText;
-    styleParent.appendChild(style);
 }
 
 // ---------------------------------------- Linker runOnTimer
@@ -173,6 +135,103 @@ Linker.prototype.doSomeLimitedLinking = function (doneFlag)
     this.textNodeLinker.linkTextNode(textNode, this.linkList);
     if (this.nextTextNode == null) return doneFlag;
     return null;
+}
+
+// ------------------------------------------------------------
+// ----------------------- class Styler -----------------------
+// ------------------------------------------------------------
+
+// ---------------------------------------- Styler class variables
+
+Styler.styler = new Styler();
+
+// ---------------------------------------- Styler constructor
+
+function Styler()
+{
+    this.linkStyle = null;
+    this.linkColor = null;
+}
+
+// ---------------------------------------- Styler updateStyles
+
+Styler.prototype.updateStyles = function (windowList, linkStyle, linkColor)
+{
+    this.linkStyle = linkStyle;
+    this.linkColor = linkColor;
+    for (var i = 0; i < windowList.length; i++)
+    {
+        var targetDoc = windowList[i].document;
+        Styler.styler.insertStyleSheet(targetDoc);
+    }       
+}
+
+// ---------------------------------------- Styler insertStyleSheet
+
+Styler.prototype.insertStyleSheet = function (targetDoc)
+{
+    if (this.linkStyle == null || this.linkColor == null) return;
+
+    // Remove the old stylesheet, if any.   
+    var styleSheetId = "golimojo-stylesheet";
+    var styleSheetElement = targetDoc.getElementById(styleSheetId);
+    if (styleSheetElement != null)
+    {
+        styleSheetElement.parentNode.removeChild(styleSheetElement);
+    }
+
+    // Create a new style sheet element.
+    var styleText = this.createStyleSheetText(this.linkStyle, this.linkColor);
+    styleSheetElement = targetDoc.createElement("STYLE");
+    styleSheetElement.id = styleSheetId;
+    styleSheetElement.textContent = styleText;
+
+    // Figure out where to insert the stylesheet.
+    var styleParent = targetDoc.body;
+    var elemList = targetDoc.getElementsByTagName("HEAD");
+    if (elemList.length > 0)
+    {
+        styleParent = elemList[0];
+    }
+    
+    // Insert it.
+    styleParent.appendChild(styleSheetElement);
+}
+
+// ---------------------------------------- Styler insertStyleSheet
+
+Styler.prototype.createStyleSheetText = function (linkStyle, linkColor)
+{
+    // Build the style template as a list of lines.
+    var styleTextLines = [];
+    styleTextLines.push("a.golimojo-wikipedia-link:link, ");
+    styleTextLines.push("a.golimojo-wikipedia-link:visited,");
+    styleTextLines.push("a.golimojo-wikipedia-link:hover,");
+    styleTextLines.push("a.golimojo-wikipedia-link:active");
+    styleTextLines.push("{");
+    if (linkStyle == "strong")
+    {
+        styleTextLines.push("   font-weight: bold;");
+    }
+    if (linkStyle != "low-profile")
+    {
+        styleTextLines.push("   color: #color#;");
+        styleTextLines.push("   text-decoration: underline;");
+    }
+    if (linkStyle == "low-profile")
+    {
+        styleTextLines.push("   color: inherit;");
+        styleTextLines.push("   text-decoration: none;");
+        styleTextLines.push("   border-bottom: dashed #color# 1px;");
+    }
+    styleTextLines.push("}");
+    
+    // Concatentate the lines and substitute in the link color.
+    var styleText = styleTextLines.join("\n");
+    styleText = styleText.replace(/#color#/g, linkColor);
+
+    // Return the style text.   
+    return styleText;
 }
 
 // ------------------------------------------------------------

@@ -91,8 +91,9 @@ function SidebarMonitor(sidebarCommandName)
     this.sidebarCommandName = sidebarCommandName;
     this.isSidebarOpen = this.checkIsSidebarOpen();
     this.driver = new Driver();
-    Tools.registerObserver(this, "chrome-webnavigation-create");
-    Tools.registerObserver(this, "chrome-webnavigation-destroy");
+    Tools.registerObserver(this, "golimojo-sidebar-opened");
+    Tools.registerObserver(this, "golimojo-sidebar-closed");
+    Tools.registerObserver(this, "golimojo-sidebar-select");
 }
 
 // ---------------------------------------- SidebarMonitor openSidebar
@@ -104,19 +105,29 @@ SidebarMonitor.prototype.openSidebar = function ()
 
 // ---------------------------------------- SidebarMonitor observe
 
-SidebarMonitor.prototype.observe = function ()
+SidebarMonitor.prototype.observe = function (sidebarWindow, eventName)
 {
-    var isSidebarOpen = this.checkIsSidebarOpen();
-    if (isSidebarOpen == this.isSidebarOpen) return;
+    // If the event belonged to a sidebar in another window, then ignore it.
+    if (sidebarWindow.top != window) return;
 
-    this.isSidebarOpen = isSidebarOpen;
-    if (isSidebarOpen)
-    {   
+    if (eventName == "golimojo-sidebar-opened")
+    {
+        sidebarWindow.sidebar.initialize(Tools);
         this.driver.engage();
     }
-    else
+
+    else if (eventName == "golimojo-sidebar-closed")
     {
         this.driver.disengage();
+    }
+
+    else if (eventName == "golimojo-sidebar-select")
+    {
+        Log.print("golimojo-sidebar-select " + sidebarWindow.sidebar.linkStyle + " " + sidebarWindow.sidebar.linkColor);
+        
+        var linkStyle = sidebarWindow.sidebar.linkStyle;
+        var linkColor = sidebarWindow.sidebar.linkColor;
+        Styler.styler.updateStyles(Tools.getTabWindows(), linkStyle, linkColor);
     }
 }
 
@@ -354,276 +365,6 @@ PageData.prototype.getPageTitlesFromXml = function (xmlRootNode)
 }
 
 // ------------------------------------------------------------
-// ------------------------- class Log ------------------------
-// ------------------------------------------------------------
-
-// ---------------------------------------- Log constructor
-
-function Log()
-{
-}
-
-// ---------------------------------------- static Log print
-
-Log.print = function (msg)
-{
-    var msgText = Log.stringify(msg);
-    var tabLog = Log.getTabLog();
-    if (tabLog != null)
-    {
-        tabLog.logMessage(msgText);
-    }
-}
-
-// ---------------------------------------- static Log printHtml
-
-Log.printHtml = function (msgHtml)
-{
-    var tabLog = Log.getTabLog();
-    if (tabLog != null)
-    {
-        tabLog.logHtmlMessage(msgHtml);
-    }
-}
-
-// ---------------------------------------- static Log getTabLog
-
-Log.getTabLog = function (tabLog)
-{
-    var tabWindowList = Tools.getTabWindows();
-    for (var i = 0; i < tabWindowList.length; i++)
-    {
-        var tabWindow = tabWindowList[i];
-        var tabLog = tabWindow.golimojoTabLog;
-        if (tabLog != null) return tabLog;
-    }
-    return null;
-}
-
-// ---------------------------------------- static Log stringify
-
-Log.stringify = function (msg)
-{
-    if (msg instanceof Error) return Log.inspectObject(msg);
-    return "" + msg;
-}
-
-// ---------------------------------------- static Log inspectObject
-
-Log.inspectObject = function (obj)
-{
-    var filler = "........................................";
-    function fixedWidth(s, width)
-    {
-        var widthFiller = filler.substring(0, width);
-        return s + widthFiller.substring(s.length);
-    }
-
-    var idList = [];
-    var maxIdLen = 0;
-    for (var id in obj)
-    {
-        maxIdLen = Math.max(id.length, maxIdLen);
-        idList.push(id);
-    }
-
-    var lineList = [];
-    for (var id in obj)
-    {
-        var value = obj[id];
-        var line = fixedWidth(id, maxIdLen) + " ==> " + value;
-        lineList.push(line);
-    }
-    return lineList.join("\n");
-}
-
-// ---------------------------------------- static Log interrogate
-
-Log.interrogate = function (obj)
-{
-
-    try
-    {
-        function supportsInterface(obj, interface)
-        {
-            try
-            {
-                obj.QueryInterface(interface);
-                return true;
-            }
-            catch (e)
-            {
-                return false;
-            }
-        }
-
-        for (var id in Components.interfaces)
-        {
-            var interface = Components.interfaces[id];
-            if (supportsInterface(obj, interface))
-            {
-                Log.print("--- " + id);
-            }
-        }
-    }
-    catch (e)
-    {
-        Log.print(e);
-    }
-
-}
-
-// ---------------------------------------- static Log traverseTree
-
-Log.traverseTree = function (node)
-{
-    Log.print("+++ " + node);
-    for (var i = 0; i < node.childCount; i++)
-    {
-        var child = node.childAt(i);
-        Log.traverseTree(child);
-    }
-
-
-}
-
-// ------------------------------------------------------------
-// ------------------------ class Tools -----------------------
-// ------------------------------------------------------------
-
-// ---------------------------------------- Tools constructor
-
-function Tools()
-{
-}
-
-// ---------------------------------------- static Tools createCallback
-
-Tools.createCallback = function (fun, receiver)
-{
-    function callback()
-    {
-        try
-        {
-            return fun.apply(receiver, arguments);
-        }
-        catch (e)
-        {
-            Log.print(e);
-            return null;
-        }
-    }
-
-    return callback;
-}
-
-// ---------------------------------------- static Tools registerObserver
-
-Tools.registerObserver = function (observer, eventName)
-{
-    // Make sure the observe method is properly wrapped as a callback.
-    if (!observer.observe.callbacked)
-    {
-        observer.observe = Tools.createCallback(observer.observe, observer);
-        observer.observe.callbacked = true;
-    }
-
-    // Register the observer.
-    with (Components.classes["@mozilla.org/observer-service;1"])
-    {
-        with (getService(Components.interfaces["nsIObserverService"]))
-        {
-            addObserver(observer, eventName, false);
-        }
-    }
-}
-
-// ---------------------------------------- static Tools unregisterObserver
-
-Tools.unregisterObserver = function (observer, eventName)
-{
-    with (Components.classes["@mozilla.org/observer-service;1"])
-    {
-        with (getService(Components.interfaces["nsIObserverService"]))
-        {
-            removeObserver(observer, eventName, false);
-        }
-    }
-}
-
-// ---------------------------------------- static Tools getTabWindows
-
-Tools.getTabWindows = function ()
-{
-    var tabWindowList = [];
-    var tabBrowser = window.getBrowser();
-    var browserList = tabBrowser.browsers;
-    for (var i = 0; i < browserList.length; i++)
-    {
-        var browser = browserList[i];
-        var contentWindow = browser.contentWindow.wrappedJSObject;
-        tabWindowList.push(contentWindow);
-    }
-    return tabWindowList;
-}
-
-// ---------------------------------------- static Tools getPreference
-
-Tools.getPreference = function (prefName)
-{
-    var prefsSubBranch = Tools.getPreferenceBranch();
-    if (!prefsSubBranch.prefHasUserValue(prefName)) return null;
-    return prefsSubBranch.getCharPref(prefName);
-}
-
-// ---------------------------------------- static Tools getPreference
-
-Tools.setPreference = function (prefName, value)
-{
-    var prefsSubBranch = Tools.getPreferenceBranch();
-    prefsSubBranch.setCharPref(prefName, value);
-}
-
-// ---------------------------------------- static Tools getPreferenceBranch
-
-Tools.getPreferenceBranch = function ()
-{
-    var prefsSubBranchName = "extensions.golimojo.";
-    var prefsService = Components.classes["@mozilla.org/preferences-service;1"];
-    var prefsBranch = prefsService.getService(Components.interfaces.nsIPrefBranch);
-    var prefsSubBranch = prefsBranch.getBranch(prefsSubBranchName);
-    return prefsSubBranch;
-}
-
-// ------------------------------------------------------------
-// ------------------------ class Test ------------------------
-// ------------------------------------------------------------
-
-// ---------------------------------------- Test constructor
-
-function Test()
-{
-}
-
-/* ---------------------------------------- static Test assert */
-
-Test.assert = function (testResult, optionalContext, optionalValue)
-{
-    if (testResult) return;
-    var msg = "Error: Assertion Failed!\n";
-    if (optionalContext != null) 
-    {
-        msg += "[context] " + optionalContext + "\n";
-    }
-    if (optionalValue != null)
-    {
-        msg += "[value]   " + optionalValue + "\n";
-    }
-    alert(msg);
-    throw msg;
-}
-
-// ------------------------------------------------------------
 // ---------------------- initialization ----------------------
 // ------------------------------------------------------------
 
@@ -635,36 +376,3 @@ catch (e)
 {
     Log.print(e);
 }
-
-/*
-function initialize()
-{
-    // Declare a function to handle the end-document-load event.
-    function onEndDocumentLoad(windowWrapper)
-    {
-        var win = windowWrapper.wrappedJSObject;
-        if (win.location.protocol != "http:") return;
-        if (win.gxPageType == "SystemPage") return;
-        if (win.golimojoDriver != null) return;
-        win.golimojoDriver = new WindowDriver(win);
-        win.golimojoDriver.start();
-    }
-
-    // Create an observer object and bind the callback function to it.
-    var observer = {};
-    observer.observe = Tools.createCallback(onEndDocumentLoad, observer);
-    
-    gSidebarMonitor = new SidebarMonitor("viewGolimojoSidebar");
-
-    // Register the observer.
-    with (Components.classes["@mozilla.org/observer-service;1"])
-    {
-        with (getService(Components.interfaces["nsIObserverService"]))
-        {
-            addObserver(observer, "EndDocumentLoad", false);
-        }
-    }
-}
-
-initialize();
-*/

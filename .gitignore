@@ -1,6 +1,7 @@
 target/
 temp/*
 !temp/.gitignore
+jetty.log
 
 *.jar
 *.xpi

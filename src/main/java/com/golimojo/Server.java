@@ -31,6 +31,7 @@ package com.golimojo;
 
 import org.mortbay.http.HttpContext;
 import org.mortbay.http.HttpServer;
+import org.mortbay.http.NCSARequestLog;
 import org.mortbay.http.handler.DumpHandler;
 import org.mortbay.http.handler.NotFoundHandler;
 import org.mortbay.http.handler.ResourceHandler;
@@ -73,7 +74,7 @@ public class Server extends ShellTools
         String[] extraEnvVariables = new String[] {"MOZ_NO_REMOTE=1"};
         String pathToXpi = FirefoxExtensionConfigurationFactory.lazyCreateXpi("localhost", 8085);
 //      system("cmd /c start /wait Firefox -Profile test-files/FirefoxTestProfile -install-global-extension {pathToXpi}", extraEnvVariables, sub("pathToXpi", pathToXpi));
-//      system("cmd /c start /wait Firefox -Profile test-files/FirefoxTestProfile http://localhost:8085/ http://localhost:8085/javascript/tablog.html", extraEnvVariables);
+//      system("cmd /c start /wait Firefox -Profile test-files/FirefoxTestProfile http://www.washingtonmonthly.com/ http://localhost:8085/javascript/tablog.html", extraEnvVariables);
         system("/Applications/Firefox.app/Contents/MacOS/firefox -CreateProfile Golimojo");
         system("/Applications/Firefox.app/Contents/MacOS/firefox --jsconsole -P Golimojo {pathToXpi} http://www.jsc.nasa.gov/Bios/htmlbios/aldrin-b.html", sub("pathToXpi", pathToXpi));
     }
@@ -115,6 +116,7 @@ public class Server extends ShellTools
         // Default is no virtual host.
         String host=null;
         HttpContext context = server.getContext(host,"/");
+        context.setRequestLog(new NCSARequestLog("jetty.log"));
 
         ServletHandler servletHandler = new ServletHandler();
         servletHandler.addServlet("Add Links", "/servlet/add-links", AddLinksProxyServlet.class.getName());

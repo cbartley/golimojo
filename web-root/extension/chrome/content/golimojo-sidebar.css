@@ -1,0 +1,46 @@
+
+.link-style-listbox
+{
+    height: 56px; 
+    margin-bottom: 10px;
+}
+
+listitem[selected="true"]
+{
+    color: white;
+    background-color: royalblue;
+    border-bottom: dotted black 1px;
+}
+
+listitem
+{
+    border-bottom: solid lightgrey 1px;
+}
+
+label
+{
+//    margin: 0px;
+//    padding-top: 1px;
+//    padding-bottom: 2px;
+//    padding-left: 3px;
+//    padding-right: 3px;
+}
+
+label.group-label
+{
+    margin-top: 2px;
+    margin-bottom: 0px;
+    margin-left: 4px;
+    margin-right: 4px;
+    padding: 4px;
+    color: white;
+    background-color: midnightblue;
+    font-weight: bold;
+}
+
+.color-swatch
+{
+    width:12px;
+    height:12px;
+    border:solid black 1px;
+}

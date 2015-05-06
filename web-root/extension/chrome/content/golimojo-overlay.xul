@@ -26,6 +26,7 @@
   </broadcasterset>
 
   <script src="chrome://golimojo/content/config.js"/>
+  <script src="chrome://golimojo/content/tools.js"/>
   <script src="chrome://golimojo/content/golimojo.js"/>
   <script src="chrome://golimojo/content/linker.js"/>  
   
