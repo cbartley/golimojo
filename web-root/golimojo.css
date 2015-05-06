@@ -124,16 +124,6 @@ a.tab-unselected:hover
     margin: 1em;
 }
 
-.page-selected
-{
-    display: block;
-}
-
-.page-unselected
-{
-    display: none;
-}
-
 .screenshot-stack
 {
     position: relative;

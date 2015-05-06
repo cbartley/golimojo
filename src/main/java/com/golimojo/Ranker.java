@@ -47,7 +47,28 @@ public class Ranker
         _defaultWeight = weightedWordList.size() * 3;
     }
     
-    public Integer[] phraseWeightAndWordCount(String phrase)
+    public static class PageScore
+    {
+        private String _phrase;
+        private int _weight;
+        private int _wordCount;
+        private int _wordCharCount;
+        
+        public PageScore(String phrase, int weight, int wordCount, int wordCharCount)
+        {
+            _phrase = phrase;
+            _weight = weight;
+            _wordCount = wordCount;
+            _wordCharCount = wordCharCount;
+        }
+        
+        public String getPhrase() {return _phrase;}
+        public int getWeight() {return _weight;}
+        public int getWordCount() {return _wordCount;}
+        public int getWordCharCount() {return _wordCharCount;}
+    }
+    
+    public PageScore phraseWeightAndWordCount(String phrase)
     {
         List<TextFragment> fragmentList = TextFragment.splitTextIntoFragments(phrase);
     
@@ -64,7 +85,7 @@ public class Ranker
                 wordsCharCount += fragment.getText().length();
             }
         }
-        return new Integer[] {weight, wordCount, wordsCharCount};
+        return new PageScore(phrase, weight, wordCount, wordsCharCount);
     }
 
     private int wordWeight(String word)

@@ -46,31 +46,20 @@ public class PageDataStore
     
     private CrudeFragmentPhrasePrefixHashSet _pageTitlePrefixSet;
     private Hashtable<String, PageData> _pageTitleBag;
-    private Ranker _ranker;
-    private StopList _stopList;
     
     // ---------------------------------------- PageDataStore constructor
     
     public PageDataStore(Ranker ranker, String articleTitlesFilePath) throws Exception
     {
+        // Read the page data from the file, and store it in a lookup table.
         List<PageData> pageDataList = PageData.readPageTitles(articleTitlesFilePath);
-        _stopList = new StopList(pageDataList);
-        _ranker = ranker;
-
-        List<PageData> pageDataList2 = new ArrayList<PageData>();
-        for (PageData pageData : pageDataList)
-        {
-            if (isHighQualityPage(pageData))
-            {
-                pageDataList2.add(pageData);
-            }
-        }
-        pageDataList = pageDataList2;
-
-        _pageTitlePrefixSet = createPageTitlePrefixSet(pageDataList);
         _pageTitleBag = createPageTitleBag(pageDataList);
-        _stopList = new StopList(pageDataList);
-        _ranker = ranker;
+        
+        // Remove pages that will produce too many false negatives.
+        PageFilter.removeLowQualityPages(_pageTitleBag, ranker);
+        
+        // Create the prefix set from the pared down page data store.
+        _pageTitlePrefixSet = createPageTitlePrefixSet(pageDataList);
     }
 
     // ---------------------------------------- PageDataStore findMatchingPageTitleAtPosition
@@ -191,60 +180,6 @@ public class PageDataStore
         }
 
         return matchingPageTitle;
-    }
-
-    // ---------------------------------------- PageDataStore isHighQualityPage
-    
-    private boolean isHighQualityPage(PageData pageData)
-    {
-        String pageTitle = pageData.getTitle();
-        
-        Integer[] results = _ranker.phraseWeightAndWordCount(pageTitle);
-        int frequencyRank = results[0];
-        int wordCount = results[1];
-        int wordsCharCount = results[2];
-        int refRank = pageData.getRefRank();
-
-//      System.out.printf("*** %-32s %-32s %7dM %7dF %7dR\n", 
-//              "[" + possiblePageTitle + "]", "[" + matchingPageTitle + "]", matchStrength, frequencyRank, refRank);
-
-        if (wordsCharCount < 4) return false;
-        
-        if (pageTitle.startsWith("The "))
-        {
-            wordCount = wordCount - 1;
-        }
-
-        if (wordCount == 1)
-        {
-            if (_stopList.hasWord(pageTitle)) return false;
-
-            if (frequencyRank < 50000)
-            {
-                if (5 * refRank < frequencyRank) return true;
-                return false;
-            }
-
-            if (refRank < 5 * frequencyRank) return true;
-
-            return false;
-        }
-        
-        if (wordCount == 2)
-        {
-            if (refRank < 10 * frequencyRank) return true;
-
-            return false;
-        }
-        
-        if (wordCount > 2)
-        {
-            if (refRank < 10 * frequencyRank) return true;
-
-            return false;
-        }
-
-        return false;
     }
 
     // ---------------------------------------- PageDataStore caseSensitiveMatch
@@ -388,9 +323,6 @@ public class PageDataStore
     }
 
 }
-
-
-
 
 /* ------------------------------------------------------------ */
 /* ---------- class CrudeFragmentPhrasePrefixHashSet ---------- */

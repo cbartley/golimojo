@@ -29,6 +29,60 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ************************************************************/
 
 // ------------------------------------------------------------
+// ----------------------- class Starter ----------------------
+// ------------------------------------------------------------
+
+// ---------------------------------------- Starter constructor
+
+function Starter()
+{
+    this.sidebarMonitor = new SidebarMonitor("viewGolimojoSidebar");
+    Tools.registerObserver(this, "StartDocumentLoad");
+    Tools.registerObserver(this, "TestTestTest");
+}
+
+// ---------------------------------------- Starter observe
+
+Starter.prototype.observe = function (source, eventName)
+{
+    Tools.unregisterObserver(this, "StartDocumentLoad");
+    if (this.isFirstRunForNewExtension())
+    {
+        this.showWelcomeScreen();
+    }
+}
+
+// ---------------------------------------- Starter isFirstRunForNewExtension
+
+Starter.prototype.isFirstRunForNewExtension = function ()
+{
+    var lastBuildId = Tools.getPreference("buildId");
+    if (lastBuildId == window.buildId) return false;
+    Tools.setPreference("buildId", window.buildId);
+    return true;
+}
+
+// ---------------------------------------- Starter showWelcomeScreen
+
+Starter.prototype.showWelcomeScreen = function ()
+{
+    // Skip the welcome screen if we're obviously running a test configuration.
+    if (serverName == "localhost")
+    {
+        Log.print("Skipping new extension welcome screen since we're running against localhost.");
+        return;
+    }
+
+    // Load the welcome screen into the first tab.
+    var tabWindowList = Tools.getTabWindows();
+    if (tabWindowList.length > 0)
+    {
+        var tabWindow = tabWindowList[0];
+        tabWindow.location.href = "http://" + serverName + ":" + serverPort + "/welcome.html";
+    }
+}
+
+// ------------------------------------------------------------
 // ------------------- class SidebarMonitor -------------------
 // ------------------------------------------------------------
 
@@ -36,20 +90,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 function SidebarMonitor(sidebarCommandName)
 {
-    this.observe = Tools.createCallback(this.observe, this);
     this.sidebarCommandName = sidebarCommandName;
     this.isSidebarOpen = this.checkIsSidebarOpen();
     this.driver = new Driver();
-
-    // Register this object as an observer.
-    with (Components.classes["@mozilla.org/observer-service;1"])
-    {
-        with (getService(Components.interfaces["nsIObserverService"]))
-        {
-            addObserver(this, "chrome-webnavigation-create", false);
-            addObserver(this, "chrome-webnavigation-destroy", false);
-        }
-    }
+    Tools.registerObserver(this, "chrome-webnavigation-create");
+    Tools.registerObserver(this, "chrome-webnavigation-destroy");
 }
 
 // ---------------------------------------- SidebarMonitor observe
@@ -340,13 +385,11 @@ Log.printHtml = function (msgHtml)
 
 Log.getTabLog = function (tabLog)
 {
-    var tabBrowser = getBrowser();
-    var browserList = tabBrowser.browsers;
-    for (var i = 0; i < browserList.length; i++)
+    var tabWindowList = Tools.getTabWindows();
+    for (var i = 0; i < tabWindowList.length; i++)
     {
-        var browser = browserList[i];
-        var contentWindow = browser.contentWindow.wrappedJSObject;
-        var tabLog = contentWindow.golimojoTabLog;
+        var tabWindow = tabWindowList[i];
+        var tabLog = tabWindow.golimojoTabLog;
         if (tabLog != null) return tabLog;
     }
     return null;
@@ -469,6 +512,39 @@ Tools.createCallback = function (fun, receiver)
     return callback;
 }
 
+// ---------------------------------------- static Tools registerObserver
+
+Tools.registerObserver = function (observer, eventName)
+{
+    // Make sure the observe method is properly wrapped as a callback.
+    if (!observer.observe.callbacked)
+    {
+        observer.observe = Tools.createCallback(observer.observe, observer);
+        observer.observe.callbacked = true;
+    }
+
+    // Register the observer.
+    with (Components.classes["@mozilla.org/observer-service;1"])
+    {
+        with (getService(Components.interfaces["nsIObserverService"]))
+        {
+            addObserver(observer, eventName, false);
+        }
+    }
+}
+
+// ---------------------------------------- static Tools unregisterObserver
+
+Tools.unregisterObserver = function (observer, eventName)
+{
+    with (Components.classes["@mozilla.org/observer-service;1"])
+    {
+        with (getService(Components.interfaces["nsIObserverService"]))
+        {
+            removeObserver(observer, eventName, false);
+        }
+    }
+}
 
 // ---------------------------------------- static Tools getTabWindows
 
@@ -484,6 +560,34 @@ Tools.getTabWindows = function ()
         tabWindowList.push(contentWindow);
     }
     return tabWindowList;
+}
+
+// ---------------------------------------- static Tools getPreference
+
+Tools.getPreference = function (prefName)
+{
+    var prefsSubBranch = Tools.getPreferenceBranch();
+    if (!prefsSubBranch.prefHasUserValue(prefName)) return null;
+    return prefsSubBranch.getCharPref(prefName);
+}
+
+// ---------------------------------------- static Tools getPreference
+
+Tools.setPreference = function (prefName, value)
+{
+    var prefsSubBranch = Tools.getPreferenceBranch();
+    prefsSubBranch.setCharPref(prefName, value);
+}
+
+// ---------------------------------------- static Tools getPreferenceBranch
+
+Tools.getPreferenceBranch = function ()
+{
+    var prefsSubBranchName = "extensions.golimojo.";
+    var prefsService = Components.classes["@mozilla.org/preferences-service;1"];
+    var prefsBranch = prefsService.getService(Components.interfaces.nsIPrefBranch);
+    var prefsSubBranch = prefsBranch.getBranch(prefsSubBranchName);
+    return prefsSubBranch;
 }
 
 // ------------------------------------------------------------
@@ -520,7 +624,7 @@ Test.assert = function (testResult, optionalContext, optionalValue)
 
 try
 {
-    gSidebarMonitor = new SidebarMonitor("viewGolimojoSidebar");
+    var gStarter = new Starter();
 }
 catch (e)
 {

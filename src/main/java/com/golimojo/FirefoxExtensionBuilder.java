@@ -54,6 +54,7 @@ public class FirefoxExtensionBuilder extends ShellTools
         Dictionary<String, String> subDict = new Hashtable<String, String>();
         subDict.put("serverName", serverName);
         subDict.put("serverPort", Integer.toString(serverPort));
+        subDict.put("buildId", Long.toString(System.currentTimeMillis()));
         Template.preprocessFileTree(new File(pathToExtensionFolder), subDict);
         createXpiJarFile(pathToExtensionFolder + "/chrome", extensionName + ".jar");
         createXpi(pathToExtensionFolder, xpiName, extensionName);

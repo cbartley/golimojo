@@ -37,8 +37,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 public class Template
 {
@@ -137,19 +139,19 @@ public class Template
         // which gives us an array where odd locations (1, 3, 5, ...) are variable
         // names to be substituted, and even locations are literal text runs which
         // may be empty strings but usually aren't.
-        String[] fragments = templateText.split("(\\{\\{)|(\\}\\})");
+        List<String> fragmentList = splitAtTopLevelBracePairs(templateText);
 
         // Replace each odd location in the array with its substitution.
-        for (int i = 1; i < fragments.length; i += 2)
+        for (int i = 1; i < fragmentList.size(); i += 2)
         {
-            String key = fragments[i];
+            String key = fragmentList.get(i);
             String value = computeSubstitution(key, subDict);
-            fragments[i] = value;
+            fragmentList.set(i, value);
         }
     
         // Re-assemble the fragments into the final output text.
         StringBuffer sbFinalText = new StringBuffer();
-        for (String fragment : fragments)
+        for (String fragment : fragmentList)
         {
             sbFinalText.append(fragment);
         }
@@ -159,28 +161,7 @@ public class Template
     }
 
     public static void L1TEST_applySubstitutions()
-    {
-        // --- First, let's verify split works as expected. ---
-    
-        assert "[foo]".split("[\\[\\]]")[1].equals("foo");
-        assert "alpha[foo]".split("[\\[\\]]")[1].equals("foo");
-        assert "alpha[foo]bravo".split("[\\[\\]]")[1].equals("foo");
-        assert "[foo]bravo".split("[\\[\\]]")[1].equals("foo");
-    
-        assert "[foo][bar]".split("[\\[\\]]")[1].equals("foo");
-        assert "alpha[foo][bar]".split("[\\[\\]]")[1].equals("foo");
-        assert "alpha[foo]bravo[bar]".split("[\\[\\]]")[1].equals("foo");
-        assert "alpha[foo]bravo[bar]charlie".split("[\\[\\]]")[1].equals("foo");
-        assert "alpha[foo][bar]charlie".split("[\\[\\]]")[1].equals("foo");
-    
-        assert "[foo][bar]".split("[\\[\\]]")[3].equals("bar");
-        assert "alpha[foo][bar]".split("[\\[\\]]")[3].equals("bar");
-        assert "alpha[foo]bravo[bar]".split("[\\[\\]]")[3].equals("bar");
-        assert "alpha[foo]bravo[bar]charlie".split("[\\[\\]]")[3].equals("bar");
-        assert "alpha[foo][bar]charlie".split("[\\[\\]]")[3].equals("bar");
-        
-        // --- Now, verify our function ---
-        
+    {       
         Dictionary<String, String> subDict = new Hashtable<String, String>();
         subDict.put("foo", "FOO");
         subDict.put("bar", "BAR");
@@ -190,6 +171,84 @@ public class Template
         assert applySubstitutions("alpha{{foo}}bravo{{bar}}charlie", subDict).equals("alphaFOObravoBARcharlie");
         assert applySubstitutions("alpha{{foo}}{{bar}}charlie", subDict).equals("alphaFOOBARcharlie");
         
+    }
+
+    // ---------------------------------------- Template splitAtTopLevelBracePairs
+    
+    private static List<String> splitAtTopLevelBracePairs(String text)
+    {
+        int level = 0;
+        List<String> fragmentList = new ArrayList<String>();
+        if (text.length() == 0) return fragmentList;
+        StringBuffer fragmentBuffer = new StringBuffer();
+        fragmentBuffer.append(text.charAt(0));
+        for (int i = 1; i < text.length(); i++)
+        {
+            char ch1 = text.charAt(i - 1);
+            char ch2 = text.charAt(i);
+            fragmentBuffer.append(ch2);
+            if (  (ch1 == '{' && ch2 == '{')  ||  (ch1 == '}' && ch2 == '}')  )
+            {
+                // We need to "pop" *before* we check for the end of a fragment.
+                if (ch1 == '}')
+                {
+                    level--;
+                }
+
+                // Check for the end of a fragment.
+                if (level == 0)
+                {
+                    String fragment = fragmentBuffer.substring(0, fragmentBuffer.length() - 2);
+                    fragmentList.add(fragment);
+                    fragmentBuffer.setLength(0);
+                }
+                
+                // We need to "push" *after* we check for the end of a fragment.
+                if (ch1 == '{')
+                {
+                    level++;
+                }
+
+                // In cases where we have cccc, we do not want to match c(cc)c!
+                i++;
+                if (i < text.length())
+                {
+                    fragmentBuffer.append(text.charAt(i));
+                }           
+            }           
+        }
+        
+        String finalFragment = fragmentBuffer.toString();
+        fragmentList.add(finalFragment);
+        
+        return fragmentList;
+    }
+
+    public static void L1TEST_split()
+    {
+        assert splitAtTopLevelBracePairs("{{foo}}").get(1).equals("foo");
+        assert splitAtTopLevelBracePairs("alpha{{foo}}").get(1).equals("foo");
+        assert splitAtTopLevelBracePairs("alpha{{foo}}bravo").get(1).equals("foo");
+        assert splitAtTopLevelBracePairs("{{foo}}bravo").get(1).equals("foo");
+    
+        assert splitAtTopLevelBracePairs("{{foo}}{{bar}}").get(1).equals("foo");
+        assert splitAtTopLevelBracePairs("alpha{{foo}}{{bar}}").get(1).equals("foo");
+        assert splitAtTopLevelBracePairs("alpha{{foo}}bravo{{bar}}").get(1).equals("foo");
+        assert splitAtTopLevelBracePairs("alpha{{foo}}bravo{{bar}}charlie").get(1).equals("foo");
+        assert splitAtTopLevelBracePairs("alpha{{foo}}{{bar}}charlie").get(1).equals("foo");
+    
+        assert splitAtTopLevelBracePairs("{{foo}}{{bar}}").get(3).equals("bar");
+        assert splitAtTopLevelBracePairs("alpha{{foo}}{{bar}}").get(3).equals("bar");
+        assert splitAtTopLevelBracePairs("alpha{{foo}}bravo{{bar}}").get(3).equals("bar");
+        assert splitAtTopLevelBracePairs("alpha{{foo}}bravo{{bar}}charlie").get(3).equals("bar");
+        assert splitAtTopLevelBracePairs("alpha{{foo}}{{bar}}charlie").get(3).equals("bar");
+        
+        assert splitAtTopLevelBracePairs("{{{{foo}}}}").get(1).equals("{{foo}}");
+        assert splitAtTopLevelBracePairs("{{{{foo}}{{bar}}}}").get(1).equals("{{foo}}{{bar}}");
+        assert splitAtTopLevelBracePairs("{{{{{{foo}}{{bar}}}}}}").get(1).equals("{{{{foo}}{{bar}}}}");
+        assert splitAtTopLevelBracePairs("{{alpha{{foo}}}}").get(1).equals("alpha{{foo}}");
+        assert splitAtTopLevelBracePairs("{{alpha{{foo}}bravo}}").get(1).equals("alpha{{foo}}bravo");
+        assert splitAtTopLevelBracePairs("{{{{foo}}bravo}}").get(1).equals("{{foo}}bravo");
     }
 
     // ---------------------------------------- Template computeSubstitution
@@ -212,16 +271,18 @@ public class Template
                 thenValue = valueExpression.substring(0, ccIndex);
                 elseValue = valueExpression.substring(ccIndex + 2);
             }
-            if (subDict.get("queryString").equals(conditionalKey))
+            
+            String resultValue = thenValue;
+            if (!subDict.get("queryString").equals(conditionalKey))
             {
-                return thenValue;
+                resultValue = elseValue;
             }
-            else
-            {
-                return elseValue;
-            }
+
+            // Recursively apply substitutions to the sub-text.
+            resultValue = Template.applySubstitutions(resultValue, subDict);
+            return resultValue;
         }
-        
+
         // It was a simple substitution, or possibly a syntax error.
         String value = subDict.get(expression);
         if (value == null)
