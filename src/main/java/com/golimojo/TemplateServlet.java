@@ -53,28 +53,21 @@ public class TemplateServlet extends GolimojoServlet
     public void customDoGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException
     {
+        // Some test URLs have leaked into the web at large.  If we get called 
+        // through one and it doesn't look like a test, redirect to the main site.
+        String testUrlRedirectUrl = checkForTestUrlRedirect(request);
+        if (testUrlRedirectUrl != null)
+        {
+            response.sendRedirect(testUrlRedirectUrl);
+            return;
+        }
+
         PrintWriter out = response.getWriter();
         try
-        {   
+        {
             String pathToRequestedTemplateFile = getServletContext().getRealPath(request.getServletPath());
-            String templateText = Template.readFile(pathToRequestedTemplateFile);
-            Dictionary<String, String> subDict = new Hashtable<String, String>();
-            String queryString = request.getQueryString();
-            if (queryString != null)
-            {
-                subDict.put("queryString", queryString);
-                subDict.put("queryStringUnescaped", URLDecoder.decode(queryString, "UTF-8"));
-            }
-            else
-            {
-                subDict.put("queryString", "null");
-                subDict.put("queryStringUnescaped", "null");
-            }
-            subDict.put("serverName", request.getServerName());
-            subDict.put("serverPort", Integer.toString(request.getServerPort()));
-            subDict.put("exampleBeforeHtml", our_exampleBeforeHtml);
-            subDict.put("exampleAfterHtml", our_exampleAfterHtml);
-            String finalText = Template.applySubstitutions(templateText, subDict);
+            Dictionary<String, String> subDict = createSubstitutionDictionary(request);
+            String finalText = Template.applySubstitutionsToFile(pathToRequestedTemplateFile, subDict);
             
             // If there's an embedded redirect command, then do the redirect now.
             String url = checkForRedirectUrl(finalText);
@@ -92,18 +85,64 @@ public class TemplateServlet extends GolimojoServlet
         }
     }
     
+    // ---------------------------------------- TemplateServlet checkForTestUrlRedirect
+    
+    private String checkForTestUrlRedirect(HttpServletRequest request)
+    {
+        String referer = request.getHeader("referer");
+        if (referer == null) return null;
+        String requestUrl = request.getRequestURL().toString().toLowerCase();
+        String requestToRedirectPrefix = "http://golimojo.dnsalias.net:8080/";
+        if (!requestUrl.startsWith(requestToRedirectPrefix)) return null;
+        referer = referer.toLowerCase();
+        if (!referer.startsWith("http")) return null;
+        if (referer.startsWith(requestToRedirectPrefix)) return null;
+        String redirectUrl = requestUrl.replace(requestToRedirectPrefix, "http://www.golimojo.com/");
+        return redirectUrl;
+    }   
+
     // ---------------------------------------- TemplateServlet setSharedExampleBeforeHtml
     
     public static void setSharedExampleBeforeHtml(String exampleBeforeHtml)
     {
         our_exampleBeforeHtml = exampleBeforeHtml;
     }
-    
+
     // ---------------------------------------- TemplateServlet setSharedExampleAfterHtml
     
     public static void setSharedExampleAfterHtml(String exampleAfterHtml)
     {
         our_exampleAfterHtml = exampleAfterHtml;        
+    }
+
+    // ---------------------------------------- TemplateServlet createSubstitutionDictionary
+
+    private Dictionary<String, String> createSubstitutionDictionary(HttpServletRequest request) throws UnsupportedEncodingException
+    {
+        Dictionary<String, String> subDict = new Hashtable<String, String>();
+
+        String requestPath = request.getServletPath();
+        String requestPathPlusQueryString = requestPath;
+        String queryString = request.getQueryString();
+        if (queryString != null)
+        {
+            requestPathPlusQueryString += "?" + queryString;
+        }
+        
+        if (queryString == null)
+        {
+            queryString = "null";
+        }
+        
+        subDict.put("requestPath", requestPath);
+        subDict.put("requestPathPlusQueryString", requestPathPlusQueryString);
+        subDict.put("queryString", queryString);
+        subDict.put("queryStringUnescaped", URLDecoder.decode(queryString, "UTF-8"));
+        subDict.put("serverName", request.getServerName());
+        subDict.put("serverPort", Integer.toString(request.getServerPort()));
+        subDict.put("exampleBeforeHtml", our_exampleBeforeHtml);
+        subDict.put("exampleAfterHtml", our_exampleAfterHtml);
+        return subDict;
     }
     
     // ---------------------------------------- TemplateServlet checkForRedirectUrl

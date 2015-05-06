@@ -1,0 +1,67 @@
+### shell 'shell.html' 'Golimojo - Try It Out'
+
+<script>
+
+    function createProxyUrl(url)
+    {
+        if (!url.match(/^http:\/\//))
+        {
+            url = "http://" + url;
+        }
+
+        var strippedUrl = url.replace(/^http:\/\//, "");
+        var escapedStrippedUrl = escape(strippedUrl);
+        var proxyServletUrl = "http://{{serverName}}:{{serverPort}}/proxy.html?";
+        if (url.indexOf(proxyServletUrl) >= 0) return url;      // just say no to nested proxies
+        var proxyUrl = proxyServletUrl + escapedStrippedUrl;
+        return proxyUrl;
+    }
+
+    function proxyUrl(url)
+    {
+        if (url.replace(/ /g, "") == "") return;
+        location = createProxyUrl(url);
+    }
+
+</script>
+
+<div class="page" id="page-try">
+
+
+    <style>         
+
+        .url-label
+        {
+            font-weight: bold;
+        }
+
+        #url-input
+        {
+            width: 30em;
+            margin-right: 0.3em;
+        }
+    </style>
+
+    <h2>Try It Out</h2>
+
+    <p>
+        Golimojo will work with most web pages.  To try it out, simply
+        enter a URL in the form below and hit <b>Go</b>.  Golimojo will
+        add links to the page at that URL and then display it.
+    </p>
+
+    <div class="try-it-out-form">
+        <form action="javascript:proxyUrl(document.getElementById('url-input').value)">
+            <label class="url-label">URL:</label> 
+            <input id="url-input" type="text">
+            <button type="submit">Go</button>
+        </form>
+    </div>
+
+    <br>
+
+    <div class="next">
+        <a href="bookmarklet.html">Next - Bookmarklet &gt;&gt;</a>
+    </div>
+
+</div>

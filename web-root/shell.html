@@ -1,0 +1,97 @@
+<html>
+    <head>
+        <title>{{title}}</title>
+    
+        <link rel=stylesheet href="/golimojo.css" type="text/css">
+
+        <script>
+        
+            var gxPageType = "SystemPage";
+
+        </script>
+
+    </head>
+    <body>
+    
+        <table class="master-layout">
+
+            <tbody>
+            
+                <tr>
+                    
+                    <td class="banner-box">
+
+                        <table class="banner-layout">
+                        
+                            <tbody>
+                            
+                                <tr>
+                                
+                                    <td class="left">
+                                        &nbsp;
+                                    </td>
+                                    
+                                    <td class="right">
+                                        <a class="banner" href="http://{{serverName}}:{{serverPort}}/index.html">Golimojo</a>
+                                    </td>
+                                    
+                                </tr>
+                                
+                            </tbody>
+                            
+                        </table>
+                        
+                    </td>
+
+
+                </tr>
+                
+                <tr>
+                
+                    <td class="content-box">
+
+                        <table class="content-layout">
+                        
+                            <tbody>
+                            
+                                <tr>
+                                
+                                    <td class="left">
+
+                                        <div class="tab-block">
+                                            <a class="tab {{/index.html??tab-selected::tab-unselected}}" href="/index.html">Introduction/Overview</a>
+                                            <a class="tab {{/examples.html??tab-selected::tab-unselected}}" href="/examples.html">Examples</a>
+                                            <a class="tab {{/try.html??tab-selected::tab-unselected}}" href="/try.html">Try It Out</a>
+                                            <a class="tab {{/bookmarklet.html??tab-selected::tab-unselected}}" href="/bookmarklet.html">Bookmarklet</a>
+                                            <a class="tab {{/extension.html??tab-selected::tab-unselected}}" href="/extension.html">Firefox Extension</a>
+                                            <a class="tab {{/privacy.html??tab-selected::tab-unselected}}" href="/privacy.html">Privacy Policy</a>
+                                            <a class="tab {{/contact.html??tab-selected::tab-unselected}}" href="/contact.html">Contact</a>
+                                        </div>
+
+                                        <div class="tab-block">
+                                            <a class="tab {{/etc/index.html??tab-selected::tab-unselected}}" href="/etc/index.html">Other Stuff</a>
+                                        </div>
+
+                                    </td>
+
+                                    <td class="right">
+{{content}}
+                                    </td>
+                                    
+                                </tr>
+                                
+                            </tbody>
+                            
+                        </table>
+                        
+                    </td>
+                        
+                </tr>
+                
+            </tbody>
+
+        </table>
+
+    </body>
+
+</html>

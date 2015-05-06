@@ -59,15 +59,23 @@ public class PageDumpReader
     public static void main(String[] args) throws Exception
     {
         String pathToSmallPageDumpFile = "temp/truncated-enwiki-pages-articles.xml";
-//      String pathToLargePageDumpFile = "temp/enwiki-pages-articles.xml";
-        Object[] results = readPageDump(pathToSmallPageDumpFile);
+        String pathToLargePageDumpFile = "temp/enwiki-pages-articles.xml";
+//      Object[] results = readPageDump(pathToSmallPageDumpFile);
 //      Object[] results = readPageDump(pathToLargePageDumpFile);
-        Hashtable<String, PageData> pageDataBag = (Hashtable<String, PageData>)results[0];
-        Hashtable<String, WordData> wordDataBag = (Hashtable<String, WordData>)results[1];
+//      Hashtable<String, PageData> pageDataBag = (Hashtable<String, PageData>)results[0];
+//      Hashtable<String, WordData> wordDataBag = (Hashtable<String, WordData>)results[1];
 
+//      String pathToPageDumpFile = pathToSmallPageDumpFile;
+        String pathToPageDumpFile = pathToLargePageDumpFile;
+        Hashtable<String, PageData> pageDataBag = readPageDumpForPageData(pathToPageDumpFile);
         dumpPageData(pageDataBag, "temp/page-data-dump.txt", 100 * 1000);
         dumpPageData(pageDataBag, "temp/page-data-dump-large.txt", 1000 * 1000);
+
+        pageDataBag = null;
+        
+        Hashtable<String, WordData> wordDataBag = readPageDumpForWordData(pathToPageDumpFile);
         dumpWordData(wordDataBag, "temp/word-data-dump.txt");
+
         System.out.println("Done.");
     }
 
@@ -100,6 +108,57 @@ public class PageDumpReader
         }
         
         return new Object[] {pageDataBag, wordDataBag};
+    }
+
+    // ---------------------------------------- PageDumpReader readPageDump
+
+    public static Hashtable<String, PageData> readPageDumpForPageData(String pathToPageDumpFile) 
+        throws IOException
+    {
+        Hashtable<String, PageData> pageDataBag = null;
+        QdmlParser parser = new QdmlParser();
+        BufferedReader reader = new BufferedReader(new FileReader(pathToPageDumpFile));
+        try
+        {
+            pageDataBag = readTitlesFromPageDump(parser, reader);
+        }
+        finally
+        {
+            reader.close();
+        }
+
+        parser = new QdmlParser();
+        reader = new BufferedReader(new FileReader(pathToPageDumpFile));
+        try
+        {
+            readPageRefs(parser, reader, pageDataBag, null);
+        }
+        finally
+        {
+            reader.close();
+        }
+
+        return pageDataBag;
+    }
+
+    // ---------------------------------------- PageDumpReader readPageDumpForWordData
+
+    public static Hashtable <String, WordData> readPageDumpForWordData(String pathToPageDumpFile) 
+        throws IOException
+    {
+        QdmlParser parser = new QdmlParser();
+        BufferedReader reader = new BufferedReader(new FileReader(pathToPageDumpFile));
+        Hashtable <String, WordData> wordDataBag = new Hashtable <String, WordData>();
+        try
+        {
+            readPageRefs(parser, reader, null, wordDataBag);
+        }
+        finally
+        {
+            reader.close();
+        }
+        
+        return wordDataBag;
     }
 
     // ---------------------------------------- PageDumpReader readTitlesFromPageDump
@@ -141,8 +200,9 @@ public class PageDumpReader
             if ((counter) % 1000 == 0) System.out.println("*** " + counter);
             String text = readEnclosedText(parser, reader, "text");
             if (text == null) break;
-            recordPageReferences(pageDataBag, text);
-            recordWordReferences(wordDataBag, text);
+            if (pageDataBag != null) recordPageReferences(pageDataBag, text);
+            ;;if (counter % 15 != 0) continue;
+            if (wordDataBag != null) recordWordReferences(wordDataBag, text);
         }
     }
 
@@ -224,8 +284,10 @@ public class PageDumpReader
         text = text.replaceAll("\\&.*?\\;", "");
         
         List<TextFragment> fragmentList = TextFragment.splitTextIntoFragments(text);
-        for (TextFragment fragment : fragmentList)
+        for (int fragmentIndex = 0; fragmentIndex < fragmentList.size(); fragmentIndex++)
         {
+//          if (fragmentIndex % 10000 != 0) continue;   // not enough memory to do every one
+            TextFragment fragment = fragmentList.get(fragmentIndex);
             if (fragment.getType() == FragmentType.Word)
             {
                 String fragmentText = fragment.getText();

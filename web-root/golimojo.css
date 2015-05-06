@@ -61,10 +61,14 @@ table.banner-layout td.right
     text-align: right;
 }
 
-table.banner-layout a
+
+a.banner:link
+, a.banner:visited
+, a.banner:hover
+, a.banner:active
 {
     text-decoration: none;
-    color: inherit;
+    color: white;
 }
 
 table.content-layout
@@ -89,6 +93,11 @@ table.content-layout td.right
     border-top: solid gray 1px;
     border-right: solid lightgrey 1px;
     border-bottom: solid lightgrey 1px;
+}
+
+.tab-block
+{
+    margin-bottom: 6px;
 }
 
 .tab
@@ -127,7 +136,7 @@ a.tab-unselected:hover
 
 .page
 {
-    margin: 1em;
+    margin: 0.5em;
 }
 
 h2

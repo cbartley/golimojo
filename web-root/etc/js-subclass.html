@@ -1,0 +1,437 @@
+### shell '../shell.html' 'The JavaScript subclass Function'
+
+<style>
+
+    .example-block
+    {
+        padding-top: 10px;
+    }
+
+    .example-block, .js-example-block
+    {
+        display: block;
+        margin: 10px;
+        border: solid black 1px;
+        background-color: cornsilk;
+        width: 80%;
+        padding-left: 10px;
+    }
+
+    code, .js-example-block, .js-example-fragment
+    {
+        white-space: pre;
+        font-family: monospace;
+    }
+
+    code
+    {
+        font-weight: bold;
+    }
+
+    .js-example-fragment
+    {
+    }
+
+    .result-arrow
+    {
+        position: absolute;
+        left: -2.5em;
+        top: 0.3em;
+    }
+
+    .result
+    {
+        position: relative;
+        margin-left: 2.5em;
+        margin-top: 0.5em;
+        margin-right: 2em;
+        margin-bottom: 1.0em;
+        border: solid black 1px;
+        padding: 3px;
+        padding-left: 5px;
+        background-color: lightgrey;    
+    }
+
+    .highlight
+    {
+        color:red;
+    }
+
+</style>
+
+<script>
+
+    window.onload = function ()
+    {
+        var codeSnippetElemList = [];
+        var elemList = document.getElementsByTagName("*");
+        for (var i = 0; i < elemList.length; i++)
+        {
+            var elem = elemList[i];
+            if (elem.className.match(/^js-example-/) != null)
+            {
+                codeSnippetElemList.push(elem);
+            }
+        }
+
+        function getText(elem)
+        {
+            return elem.textContent || elem.innerText;
+        }
+
+        function setText(elem, text)
+        {
+            elem.textContent = text;
+            elem.innerText = text;
+        }
+
+        function createWriteFun(sourceElem)
+        {
+            function write(msg)
+            {
+                var textElem = document.createElement("DIV");
+                textElem.className = "result";
+                setText(textElem, msg);
+
+                var arrowElem = document.createElement("DIV");
+                arrowElem.className = "result-arrow";
+                setText(arrowElem, "==>");
+
+                textElem.insertBefore(arrowElem, textElem.firstChild);
+                sourceElem.appendChild(textElem);
+            }
+
+            return write;
+        }
+
+        for (var i = 0; i < codeSnippetElemList.length; i++)
+        {
+            var codeSnippetElem = codeSnippetElemList[i];
+            var codeText = getText(codeSnippetElem);
+            var scriptElem = document.createElement("SCRIPT");
+            codeSnippetElem.parentNode.insertBefore(scriptElem, codeSnippetElem.nextSibling);
+            window.alert = createWriteFun(codeSnippetElem);
+
+
+            try
+            {
+                eval(codeText);
+            }
+            catch (e)
+            {
+                alert(e);
+            }
+        }
+    }
+
+</script>
+
+<div class="page">
+
+    <h2>
+        Make Object-Oriented Programming Easier With Only Six Lines of JavaScript
+    </h2>
+
+    <h3>Introduction</h3>
+
+    <p>
+        JavaScript, as we're told, is not a class-based object-oriented language.  There's
+        little explicit support for the object-oriented notion of classes and inheritance.
+        However, everything you can do with classes and inheritance in an explicitly
+        class-based language like Java or C# can be done in JavaScript with
+        constructor functions and delegation through the prototype chain.  These 
+        relationships have to be set up programmatically at runtime using idiomatic
+        JavaScript.  Given JavaScript's highly dynamic nature this turns out to be
+        pretty simple.
+    </p>
+
+    <h3>The <code>subclass</code> function</h3>
+
+    <p>
+        Simple nonetheless, I find it worthwhile to abstract the idiomatic JavaScript
+        away inside a function.  This has the added bonus of making the inheritance
+        relationship more explicit in the code and it addresses a couple of JavaScript
+        "warts" in the process.  Most of the JavaScript code I write is simple enough
+        that it doesn't need inheritance.  Whenever I find I do need it, however, I always take
+        the time to write a function like the <code>subclass</code> function below.  It's pretty
+        simple, clocking in at a mere 6 lines of non-trivial JavaScript.
+    </p>
+
+    <!------------------------------------------------------------>
+    <!------------------------------------------------------------>
+    <!------------------------------------------------------------>
+
+<pre class="js-example-block">
+function subclass(constructor, superConstructor)
+{
+    function surrogateConstructor()
+    {
+    }
+
+    surrogateConstructor.prototype = superConstructor.prototype;
+
+    var prototypeObject = new surrogateConstructor();
+    prototypeObject.constructor = constructor;
+
+    constructor.prototype = prototypeObject;
+}
+
+</pre>
+
+    <!------------------------------------------------------------>
+    <!------------------------------------------------------------>
+    <!------------------------------------------------------------>
+
+    <h3>Using the <code>subclass</code> function</h3>
+
+    <p>
+        Suppose we have two JavaScript constructor functions: <code>NamedItem</code> and 
+        <code>NamedNumberedItem</code>, where we want to be able to use <code>NamedNumberedItem</code>  
+        objects anywhere we use <code>NamedItem</code> objects (but not vice-versa).  Furthermore,
+        we want <code>NamedNumberedItem</code> to <i>inherit</i> <code>NamedItem</code> functionality
+        rather than reimplementing it.  In idiomatic JavaScript we'd express this relationship 
+        something like:
+    </p>
+
+    <code class="example-block">NamedNumberedItem.prototype = new NamedItem("")</code>
+
+    <p>
+        Using the <code>subclass</code> function above, the same relationship can be expressed as:
+    </p>
+
+    <code class="example-block">subclass(NamedNumberedItem, NamedItem);</code>
+
+    <p>
+        Below is an example implementation of the <code>NamedItem</code> and <code>NamedNumberedItem</code> "classes"
+        using the <code>subclass</code> function.  The example then creates instances of the two types of objects
+        and queries them to demonstrate that the <code>subclass</code> function really does what you think it does.
+    </p>
+
+    <!------------------------------------------------------------>
+    <!------------------------------------------------------------>
+    <!------------------------------------------------------------>
+
+<pre class="js-example-block">
+// ---------------------------------------- class NamedItem
+
+function NamedItem(name)
+{
+    this.name = name;
+}
+
+NamedItem.prototype.getDescription = function ()
+{
+    return this.name;
+}
+
+
+// ---------------------------------------- class NamedNumberedItem
+
+<span class="highlight">subclass(NamedNumberedItem, NamedItem);</span>
+
+function NamedNumberedItem(name, number)
+{
+    NamedItem.call(this, name);
+    this.number = number;
+}
+
+NamedNumberedItem.prototype.getDescription = function ()
+{
+    return this.name + ":" + this.number;
+}
+
+</pre>
+
+<pre class="js-example-block">
+var namedItem = new NamedItem("foo");
+var namedNumberedItem = new NamedNumberedItem("foo", 1);
+
+</pre>
+
+    <div class="example-block">
+        <div class="js-example-fragment">alert(namedItem.getDescription());</div>   
+        <div class="js-example-fragment">alert(namedItem instanceof Object);</div>  
+        <div class="js-example-fragment">alert(namedItem instanceof NamedItem);</div>   
+        <div class="js-example-fragment">alert(namedItem instanceof NamedNumberedItem);</div>   
+        <div class="js-example-fragment">alert(namedItem.constructor);</div>
+
+
+        <div class="js-example-fragment">alert(namedNumberedItem.getDescription());</div>   
+        <div class="js-example-fragment">alert(namedNumberedItem instanceof Object);</div>  
+        <div class="js-example-fragment">alert(namedNumberedItem instanceof NamedItem);</div>   
+        <div class="js-example-fragment">alert(namedNumberedItem instanceof NamedNumberedItem);</div>   
+        <div class="js-example-fragment">alert(namedNumberedItem.constructor);</div>
+    </div>
+
+    <p>
+        There should be no surprises.  However, we should compare the behavior of the same
+        code, only using idiomatic JavaScript to set up the inheritance relationship.  I'll
+        do that next.
+    </p>
+
+
+    <!------------------------------------------------------------>
+    <!------------------------------------------------------------>
+    <!------------------------------------------------------------>
+
+<pre class="js-example-block">
+// ---------------------------------------- class NamedItem
+
+function NamedItem(name)
+{
+    this.name = name;
+}
+
+NamedItem.prototype.getDescription = function ()
+{
+    return this.name;
+}
+
+
+// ---------------------------------------- class NamedNumberedItem
+
+<span class="highlight">NamedNumberedItem.prototype = new NamedItem("");</span>
+
+function NamedNumberedItem(name, number)
+{
+    NamedItem.call(this, name);
+    this.number = number;
+}
+
+NamedNumberedItem.prototype.getDescription = function ()
+{
+    return this.name + ":" + this.number;
+}
+
+</pre>
+
+<pre class="js-example-block">
+var namedItem = new NamedItem("foo");
+var namedNumberedItem = new NamedNumberedItem("foo", 1);
+
+</pre>
+
+    <div class="example-block">
+        <div class="js-example-fragment">alert(namedItem.getDescription());</div>   
+        <div class="js-example-fragment">alert(namedItem instanceof Object);</div>  
+        <div class="js-example-fragment">alert(namedItem instanceof NamedItem);</div>   
+        <div class="js-example-fragment">alert(namedItem instanceof NamedNumberedItem);</div>   
+        <div class="js-example-fragment">alert(namedItem.constructor);</div>
+
+
+        <div class="js-example-fragment">alert(namedNumberedItem.getDescription());</div>   
+        <div class="js-example-fragment">alert(namedNumberedItem instanceof Object);</div>  
+        <div class="js-example-fragment">alert(namedNumberedItem instanceof NamedItem);</div>   
+        <div class="js-example-fragment">alert(namedNumberedItem instanceof NamedNumberedItem);</div>   
+        <div class="js-example-fragment">alert(namedNumberedItem.constructor);</div>
+    </div>
+
+    <p>
+        As the example code demonstrates, the two subclassing methods behave essentially the 
+        same way, but they do differ on two key points: The handling of instance variables in the prototype and
+        the handling of the <code>constructor</code> property.  In both of these cases, I contend
+        that the behavior of the <code>subclass</code> function makes more sense and is less
+        likely to lead to confusion.
+    </p>
+
+    <h3>The Handling of Instance Properties Compared</h3>
+
+    <p>
+        The idiomatic JavaScript code
+        creates a <code>NamedItem</code> object to serve as the prototype object for all objects
+        created by the <code>NamedNumberedItem</code> constructor.  This means that 
+        <code>NamedNumberedItem</code> objects inherit all the properties of the <code>NamedItem</code>
+        prototype. Some of these properties are class-wide properties shared by all members of
+        the <code>NamedItem</code> "class", but other properties (the <code>name</code> property) is
+        specic to that one object that is serving as the prototype.
+    </p>
+
+    <p>
+        Of course the problem is that while these properties may be instance properties to the prototype
+        object, they act like class properties to all of <code>NamedNumberedItem</code> objects that
+        inherit them.  This can be a problem when the inherited methods that work with those properties
+        expect them to act like instance properties.  Imagine what can happen if such an inherited
+        property is a mutable value like an array.  There's a big semantic difference between modifying
+        an array local to one object as opposed to modifying one shared by many objects.
+    </p> 
+
+    <p>
+        Normally we get around this problem by having the subclass constructor chain to the
+        superclass constructor before it does anything else.  This way the superclass 
+        constructor gets to create instance properties that really are instance properties.
+        These instance properties completely hide the ones in the prototype.  So those properties 
+        may be superfluous but they're also harmless.
+    </p>
+
+    <p>
+        The <code>subclass</code> function sidesteps this whole issue.  Instead of calling the
+        superclass constructor function to create the prototype it uses a "surrogate" 
+        constructor instead.  To create a proper prototype chain, the surrogate constructor
+        "borrows" the prototype from the superclass constructor.  However, it defines no
+        instance properties and equally importantly takes no arguments, regardless of how
+        many the superclass constructor itself takes.  This solves two problems -- there 
+        are no superfluous instance-properties-that-aren't-really-instance-properties in
+        the prototype, and the <code>superclass</code> function is off the hook for knowing
+        how many and what kind of arguments to pass to the superclass constructor.
+    </p>
+
+    <p>
+        One nod that JavaScript does makes towards class-based object-oriented programming is 
+        the <code>instanceof</code> operator.  This operator evaluates true if the first
+        argument, an object, has been constructed by the second argument, a constructor
+        function.  It will also return true if the constructor was used to construct the
+        object's prototype, which is to say that there's something like a subclass relationship
+        between the two constructors.
+    </p>
+
+    <p>
+        You might expect that the use of the surrogate constructor would confound the 
+        <code>instanceof</code> operator.  However, the <code>instanceof</code> operator 
+        relies on the prototype chain to determine "class" membership, rather than on an 
+        object's <code>constructor</code> property.  There's a good reason for this, as 
+        we'll see next.
+    </p>
+
+    <h3>The <code>constructor</code> Property</h3>
+
+    <p>
+        One place the two subclassing approaches disagree is the <code>constructor</code> property.
+        In both examples, the <code>NamedItem</code> object's <code>constructor</code> properties each
+        evaluate to <code>NamedItem</code> just as you would expect.  In the example using the
+        <code>subclass</code> function, the <code>NamedNumberedItem</code> object's <code>constructor</code>
+        evaluates to <code>NamedNumberedItem</code>, again, just as you would expect.  In the idiomatic 
+        JavaScript example, however, the <code>NamedNumberedItem</code> object's <code>constructor</code> 
+        property evaluates to <code>NamedItem</code> -- the superclass.  This is surprising, but it's 
+        also consistent with the ECMAScript standard.
+    </p>
+
+    <p>
+        This is because the constructor property is not an instance property, but rather lives
+        in the prototype.  More precisely it lives in <i>a</i> prototype.  The problem here is that it's
+        missing from the <code>NamedNumberedItem</code> prototype, which instead inherits the constructor property 
+        defined in the <code>NamedItem</code> prototype -- the value of which is the <code>NamedItem</code>
+        constructor.  The problem, very simply, is that JavaScript automatically assigns constructor properties
+        to the default prototypes that it generates for functions.  If you replace the default
+        prototype with one of your own -- as we did when we "subclassed" <code>NamedItem</code> to
+        get <code>NamedNumberedItem</code> -- then you get a prototype without a constructor instance property.
+        The prototype object instead inherits the <code>constructor</code> property from its own prototype
+        object.
+    </p>
+
+    <p>
+        We could have corrected this after setting up the prototype, like so:
+    </p>
+
+<pre class="js-example-block">
+NamedNumberedItem.prototype = new NamedItem("");
+NamedNumberedItem.prototype.constructor = NamedNumberedItem;
+</pre>
+
+    <p>
+        This is rarely done in practice.  Since the <code>constructor</code> property is rarely used, maybe it
+        doesn't hurt anything.  However, when inspecting an arbitrary object in JavaScript the
+        constructor property is the only really convenient way you have of telling what kind of
+        object you have.  This can make debugging unneccesarily complicated and confusing.
+    </p>
+
+</div>

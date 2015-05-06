@@ -1,0 +1,133 @@
+### shell 'shell.html' 'Golimojo - Contact'
+
+<script>
+
+    // Note: Don't use "//" style comments in this function, it may break the bookmarklet.
+    function createProxyUrl(url)
+    {
+        if (!url.match(/^http:\/\//))
+        {
+            url = "http://" + url;
+        }
+
+        var strippedUrl = url.replace(/^http:\/\//, "");
+        var escapedStrippedUrl = escape(strippedUrl);
+        var proxyServletUrl = "http://{{serverName}}:{{serverPort}}/proxy.html?";
+        if (url.indexOf(proxyServletUrl) >= 0) return url;      /* just say no to nested proxies */
+        var proxyUrl = proxyServletUrl + escapedStrippedUrl;
+        return proxyUrl;
+    }
+
+    function proxyUrl(url)
+    {
+        location = createProxyUrl(url);
+    }
+
+    function createBookmarklet()
+    {
+        var bookmarklet = 
+            "javascript:location = ((#createProxyUrl#)(location.href))"
+                .replace(/#createProxyUrl#/, createProxyUrl.toString())
+                        .replace(/"/g, "'");
+        return bookmarklet;
+    }
+
+    function blockClick(event)
+    {
+        // If there's a click message, then show it.
+        var clickMessage = this.getAttribute("custom-click-message");
+        if (clickMessage != null)
+        {
+            alert(clickMessage);
+        }
+
+        // Cancel the event so that the link is not followed.
+        if (event.preventDefault)
+        {
+            event.preventDefault();     // for Firefox
+        }
+        return false;                   // for IE
+    }
+
+    function insertBookmarklet(anchorText, clickMessage)
+    {
+        var html = 
+            '<a onclick="return blockClick.call(this, event) "'
+                + 'custom-click-message="#clickMessage#" href="#bookmarklet#">#anchorText#</a>'
+                        .replace(/#anchorText#/, anchorText)
+                            .replace(/#clickMessage#/, clickMessage)
+                                .replace(/#bookmarklet#/, createBookmarklet());
+        document.write(html);
+    }
+
+</script>
+
+<div class="page" id="page-bookmarklet">
+
+    <h2>The Bookmarklet</h2>
+
+    <div class="explanatory-callout">
+        A <b>bookmarklet</b> is a special kind of bookmark.  Normal bookmarks take you to
+        another page when they are selected.  Bookmarklets simply make changes to the page
+        you are currently viewing, rather than taking you to a new one.
+    </div>
+
+    <p>
+        The <b>Golimojo</b> bookmarklet can be used to add links directly
+        to the page you're currently viewing.  Once you've installed the 
+        bookmarklet this is as simple as choosing it from your Bookmarks
+        or Favorites menu.
+    </p>
+
+    <h2>Installing the Bookmarklet</h2>
+
+    <div class="explanatory-callout">
+        Bookmarks are called <b>favorites</b> in Internet Explorer, where they're accessed
+        through the <i>Favorites</i> menu.
+    </div>
+
+    <p>
+
+        Installing the bookmarklet is easy.  
+
+        <ol>
+
+            <li>
+                Right-click (Ctrl-click on the Macintosh) the bookmarklet link in the box
+                below. This will bring up the context menu.
+            </li>
+
+            <li>
+                From the context menu you want to select <b>Bookmark this Link...</b> 
+                (Firefox) or <b>Add to Favorites...</b> (Internet Explorer).
+            </li>
+
+            <li>
+                Click <b>OK</b> in the dialog box.
+            </li>
+
+        </ol>
+
+    </p>
+
+    <div class="bookmarklet-box">
+        <script>
+            insertBookmarklet("Golimojo Bookmarklet", "Right-click, please!");
+        </script>
+    </div>
+
+    <h2>Using the Bookmarklet</h2>
+
+    <p>
+    If you open the <b>Bookmarks</b> or <b>Favorites</b> menu in your browser, you
+    should see the <b>Golimojo Bookmarklet</b>.  To invoke the bookmarklet on
+    whatever page you are currently viewing just select it from the menu.  You
+    may want to try it out on this page, although the results may not be very 
+    interesting.
+    </p>
+
+    <div class="next">
+        <a href="extension.html">Next - Firefox Extension &gt;&gt;</a>
+    </div>
+
+</div>

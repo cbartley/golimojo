@@ -41,6 +41,8 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Template
 {
@@ -87,10 +89,63 @@ public class Template
         String preprocessedFileText = applySubstitutions(fileText, subDict);
         writeFile(outputFile.getAbsolutePath(), preprocessedFileText);
     }
+
+    // ---------------------------------------- Template applySubstitutionsToFile
+
+    public static String applySubstitutionsToFile(String templateFilePath, Dictionary<String, String> subDict)
+        throws IOException
+    {
+        String[] templateTriplet = readTemplateFile(templateFilePath);
+        String pathToShellFile = templateTriplet[0];
+        String title = templateTriplet[1];
+        String templateText = templateTriplet[2];
+
+        String contentText = Template.applySubstitutions(templateText, subDict);
+        if (pathToShellFile == null) return contentText;
+
+        subDict.put("title", title);
+        subDict.put("content", contentText);
+        String finalText = applySubstitutionsToFile(pathToShellFile, subDict);
+        return finalText;
+    }
+
+    // ---------------------------------------- Template readTemplateFile
+
+    private static String[] readTemplateFile(String pathToTemplateFile)
+        throws IOException
+    {
+        // Read the file and extract the first line.
+        String templateText = readFile(pathToTemplateFile);
+        int indexOfFirstLineBreak = templateText.indexOf('\n');
+        String templateTextFirstLine = templateText.substring(0, indexOfFirstLineBreak + 1);
+        
+        // Extract the shell directive, if any, from the first line.
+        String pathToShellFile = null;
+        String title = null;
+        Pattern p = Pattern.compile("###[ \t]*shell[ \t]+'(.*)'[ \t]+'(.*)'$");
+        Matcher m = p.matcher(templateTextFirstLine);
+        if (m.find() && m.groupCount() == 2) 
+        {
+            // Extract the path to the shell file and interpret it relative to the template file.
+            String relativePathToShellFile = m.group(1).trim();
+            File templateFile = new File(pathToTemplateFile);
+            File shellFile = new File(templateFile.getParent(), relativePathToShellFile);
+            pathToShellFile = shellFile.getPath();
+            
+            // Extract the title.
+            title = m.group(2).trim();
+            
+            // Exclude the first line from the template text.
+            templateText = templateText.substring(indexOfFirstLineBreak + 1);
+        }
+
+        // Return the components as an array triplet.
+        return new String[] {pathToShellFile, title, templateText};
+    }
     
     // ---------------------------------------- Template readFile
     
-    public static String readFile(String pathToFile) throws IOException
+    private static String readFile(String pathToFile) throws IOException
     {
         Reader reader = new BufferedReader(new FileReader(pathToFile));
         try
@@ -113,7 +168,7 @@ public class Template
     
     // ---------------------------------------- Template writeFile
     
-    public static void writeFile(String pathToFile, String fileText) throws IOException
+    private static void writeFile(String pathToFile, String fileText) throws IOException
     {
         Writer writer = new BufferedWriter(new FileWriter(pathToFile));
         try
@@ -132,7 +187,7 @@ public class Template
 
     // ---------------------------------------- Template applySubstitutions
 
-    public static String applySubstitutions(String templateText, Dictionary<String, String> subDict)
+    private static String applySubstitutions(String templateText, Dictionary<String, String> subDict)
     {
         // Substitutions are of the form "{{expression}}", where the simplest
         // expression is simply a named variable.  We split at "{{" or "}}"
@@ -255,8 +310,8 @@ public class Template
     
     private static String computeSubstitution(String expression, Dictionary<String, String> subDict)
     {
-        // We support a simple conditional construct on the queryString:
-        // {{queryStringValue??text-to-use-on-match::text-to-use-on-mismatch}}.
+        // We support a simple conditional construct on the request path:
+        // {{request-path-including-the-query-string??text-to-use-on-match::text-to-use-on-mismatch}}.
         // When the <text-to-use-on-mismatch> is the empty string, the :: may be omitted.
         int qqIndex = expression.indexOf("??");
         if (qqIndex >= 0)
@@ -273,7 +328,7 @@ public class Template
             }
             
             String resultValue = thenValue;
-            if (!subDict.get("queryString").equals(conditionalKey))
+            if (!subDict.get("requestPathPlusQueryString").equals(conditionalKey))
             {
                 resultValue = elseValue;
             }
@@ -299,7 +354,7 @@ public class Template
         Dictionary<String, String> subDict = new Hashtable<String, String>();
         subDict.put("foo", "FOO");
         subDict.put("bar", "BAR");
-        subDict.put("queryString", "test");
+        subDict.put("requestPathPlusQueryString", "test");
 
         assert computeSubstitution("foo", subDict).equals("FOO");
         assert computeSubstitution("bar", subDict).equals("BAR");
