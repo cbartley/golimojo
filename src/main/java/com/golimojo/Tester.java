@@ -50,8 +50,8 @@ public class Tester
         try
         {
             List<String> classNameList = listAllClasses();
-            List<Class> classList = loadClasses(classNameList);
-            for (Class metaClass : classList)
+            List<Class<?>> classList = loadClasses(classNameList);
+            for (Class<?> metaClass : classList)
             {
                 TestSuite testSuite = new TestSuite(metaClass, testPrefix);
                 _testSuiteList.add(testSuite);
@@ -134,14 +134,14 @@ public class Tester
         }
     }
     
-    private static List<Class> loadClasses(List<String> classNameList) 
+    private static List<Class<?>> loadClasses(List<String> classNameList) 
     {
-        List<Class> classList = new ArrayList<Class>();
+        List<Class<?>> classList = new ArrayList<Class<?>>();
         for (String className : classNameList)
         {
             try
             {
-                Class metaClass = Class.forName(className);
+                Class<?> metaClass = Class.forName(className);
                 classList.add(metaClass);
             } catch (ClassNotFoundException e)
             {
@@ -158,10 +158,10 @@ public class Tester
 
 class TestSuite
 {
-    private Class _metaClass;
+    private Class<?> _metaClass;
     private String _testPrefix;
     
-    public TestSuite(Class metaClass, String testPrefix)
+    public TestSuite(Class<?> metaClass, String testPrefix)
     {
         _metaClass = metaClass;
         _testPrefix = testPrefix;
@@ -178,7 +178,7 @@ class TestSuite
         }
     }
 
-    private static List<Method> getTestMethods(Class metaClass, String testPrefix)
+    private static List<Method> getTestMethods(Class<?> metaClass, String testPrefix)
     {
         List<Method> methodList = new ArrayList<Method>();
         String fullTestPrefix = testPrefix + "_";

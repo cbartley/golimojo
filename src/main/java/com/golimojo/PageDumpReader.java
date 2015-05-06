@@ -56,11 +56,10 @@ public class PageDumpReader
     /**
      * @param args
      */
-    @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Exception
     {
 
-        String pathToSmallPageDumpFile = "temp/truncated-enwiki-pages-articles.xml";
+//      String pathToSmallPageDumpFile = "temp/truncated-enwiki-pages-articles.xml";
 //      String pathToLargePageDumpFile = "temp/enwiki-pages-articles.xml";
         String pathToLargePageDumpFile = "temp/enwiki-pages-articles.xml";
 //      Object[] results = readPageDump(pathToSmallPageDumpFile);
@@ -458,11 +457,6 @@ public class PageDumpReader
         public int getReferenceCount()
         {
             return myReferenceCount;
-        }
-        
-        public void setReferenceCount(int referenceCount)
-        {
-            myReferenceCount = referenceCount;
         }
         
         public void incrementReferenceCount()
