@@ -7,12 +7,6 @@
         <script>
 
             // ---------------------------------------- proxying
-        
-            var $host$ = location.host;
-if ($host$ == "")
-{
-    $host$ = "localhost:8080";
-}
     
             function createProxyUrl(url)
             {
@@ -23,7 +17,7 @@ if ($host$ == "")
 
                 var strippedUrl = url.replace(/^http:\/\//, "");
                 var escapedStrippedUrl = escape(strippedUrl);
-                var proxyServletUrl = "http://" + $host$ + "/servlet/missing-link/";
+                var proxyServletUrl = "http://{{localName}}:{{localPort}}/proxy.html?";
                 var proxyUrl = proxyServletUrl + escapedStrippedUrl;
                 return proxyUrl;
             }
@@ -38,7 +32,6 @@ if ($host$ == "")
                 var bookmarklet = 
                     "javascript:location = ((#createProxyUrl#)(location.href))"
                         .replace(/#createProxyUrl#/, createProxyUrl.toString())
-                            .replace(/\$host\$/, '"' + $host$ + '"')
                                 .replace(/"/g, "'");
                 return bookmarklet;
             }

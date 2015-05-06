@@ -32,98 +32,84 @@ package com.golimojo;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
 public class Ranker
 {
-    private Hashtable<String, WeightedWord> myWeightedWordBag;
-    
+    private Hashtable<String, WeightedWord> _weightedWordBag;
+    private int _defaultWeight;
+
     public Ranker(String pathToWordFrequencyFile) throws Exception
     {
-        List<CountedWord> countedWordList = readWordFrequencyFile(pathToWordFrequencyFile);
-        List<WeightedWord> weightedWordList = createWeightedWordList(countedWordList);
-        myWeightedWordBag = createWeightedWordBag(weightedWordList);
+        List<WeightedWord> weightedWordList = readWordFrequencyFile(pathToWordFrequencyFile);
+        _weightedWordBag = createWeightedWordBag(weightedWordList);
+        _defaultWeight = weightedWordList.size() * 3;
     }
     
-    public double rankPhrase(String phrase)
+    public Integer[] phraseWeightAndWordCount(String phrase)
     {
-        double phraseRank = 1.0;
-        String[] wordList = phrase.split("[ \t\r\n]+");
-        for (String word : wordList)
+        List<TextFragment> fragmentList = TextFragment.splitTextIntoFragments(phrase);
+    
+        int weight = 0;
+        int wordCount = 0;
+        int wordsCharCount = 0;
+        for (TextFragment fragment : fragmentList)
         {
-            double weight = rankWord(word);
-//System.out.printf("*** %1.5f %s \n", weight, word);
-            phraseRank *= weight;
+            if (fragment.getType() == TextFragment.FragmentType.Word)
+            {
+//              System.out.printf("... %-64s %7d\n", fragment.getText().toLowerCase(), wordWeight(fragment.getText().toLowerCase()));
+                weight += wordWeight(fragment.getText().toLowerCase());
+                wordCount++;
+                wordsCharCount += fragment.getText().length();
+            }
         }
-        return phraseRank;
+        return new Integer[] {weight, wordCount, wordsCharCount};
     }
-    
-    private double rankWord(String word)
+
+    private int wordWeight(String word)
     {
-        WeightedWord weightedWord = myWeightedWordBag.get(word.toLowerCase());
-        if (weightedWord == null) return 0.0;
+        boolean isNumber = true;
+        for (int i = 0; i < word.length(); i++)
+        {
+            if (!Character.isDigit(word.charAt(i)))
+            {
+                isNumber = false;
+            }
+        }
+
+        if (isNumber) return 0;
+        
+        WeightedWord weightedWord = _weightedWordBag.get(word.toLowerCase());
+        if (weightedWord == null) return _defaultWeight;
         return weightedWord.weight;
     }
 
-    private static List<CountedWord> readWordFrequencyFile(String pathToWordFrequencyFile) throws Exception
+    private static List<WeightedWord> readWordFrequencyFile(String pathToWordFrequencyFile) throws Exception
     {
-        List <CountedWord> countedWordList = new ArrayList<CountedWord>();
+        List <WeightedWord> weightedWordList = new ArrayList<WeightedWord>();
         BufferedReader in = new BufferedReader(new FileReader(pathToWordFrequencyFile));
         try
         {
-            in.readLine();      // first line is column headings, not data
+            int count = 1;
             while (true)
             {
                 String line = in.readLine();
                 if (line == null) break;
-                String[] fields = line.split(" *\t *");
-                if (fields.length == 4)
-                {
-                    String word = fields[1];
-                    String countAsString = fields[3];
-                    int count = Integer.parseInt(countAsString);
-                    CountedWord countedWord = new CountedWord(word, count);
-                    countedWordList.add(countedWord);
-                }
-                else
-                {
-                    System.out.println("*** Line skipped, bad format!");
-                    System.out.println("... " + line);
-                }               
+                String[] fields = line.split("\t");
+                String word = fields[fields.length - 1].trim();
+                WeightedWord weightedWord = new WeightedWord(word, count);
+                weightedWordList.add(weightedWord);
+                count++;
             }
         }
         finally
         {
             in.close();
         }
-        return countedWordList;
-    }
-    
-    private static List<WeightedWord> createWeightedWordList(List<CountedWord> countedWordList)
-    {
-        long totalWordCount = totalWordCount(countedWordList);
-        List<WeightedWord> weightedWordList = new ArrayList<WeightedWord>();
-        for (CountedWord countedWord : countedWordList)
-        {
-            double wordWeight = ((double)countedWord.count) / ((double)totalWordCount);
-            weightedWordList.add(new WeightedWord(countedWord.word, wordWeight));
-        }
         return weightedWordList;
     }
 
-    private static long totalWordCount(List<CountedWord> countedWordList)
-    {
-        long totalWordCount = 0;
-        for (CountedWord countedWord : countedWordList)
-        {
-            totalWordCount += countedWord.count;
-        }
-        return totalWordCount;
-    }
-    
     private static Hashtable<String, WeightedWord> createWeightedWordBag(List<WeightedWord> weightedWordList)
     {
         Hashtable<String, WeightedWord> weightedWordBag = new Hashtable<String, WeightedWord>();
@@ -135,24 +121,12 @@ public class Ranker
         return weightedWordBag;
     }
 
-    private static class CountedWord
-    {
-        public final String word;
-        public final int count;
-        
-        public CountedWord(String _word, int _count)
-        {
-            word = _word;
-            count = _count;
-        }
-    }
-    
     private static class WeightedWord
     {
         public final String word;
-        public final double weight;
+        public final int weight;
         
-        public WeightedWord(String _word, double _weight)
+        public WeightedWord(String _word, int _weight)
         {
             word = _word;
             weight = _weight;

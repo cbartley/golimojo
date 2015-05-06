@@ -2505,7 +2505,7 @@
 *** 638	Jennifer Lopez 
 *** 638	Orson Welles 
 *** 637	CBC 
-*** 637	Gdańsk 
+*** 637	Gda?sk 
 *** 637	LSD 
 *** 636	Indianapolis 500 
 *** 635	International Space Station 
@@ -2937,7 +2937,7 @@
 *** 535	National Wrestling Alliance 
 *** 535	New York State 
 *** 535	St. Louis Rams 
-*** 534	Wrocław 
+*** 534	Wroc?aw 
 *** 533	Continental Airlines 
 *** 533	Knesset 
 *** 533	Rabbi 
@@ -3221,7 +3221,7 @@
 *** 485	Dream Theater 
 *** 485	Edmonton 
 *** 485	GNOME 
-*** 485	M�?ori 
+*** 485	M?ori 
 *** 485	Ralph Nader 
 *** 484	Avignon 
 *** 484	Gloucester 
@@ -3232,7 +3232,7 @@
 *** 484	North Holland 
 *** 484	Old Norse 
 *** 484	Philips 
-*** 484	São Tomé and Príncipe 
+*** 484	Seo Tomé and Príncipe 
 *** 484	The Age 
 *** 484	University of Tennessee 
 *** 484	Wii 
@@ -3557,7 +3557,7 @@
 *** 439	Joseph Smith, Jr. 
 *** 439	Mystery Science Theater 3000 
 *** 439	Peterborough 
-*** 439	Poznań 
+*** 439	Pozna? 
 *** 439	Santo Domingo 
 *** 439	Spokane, Washington 
 *** 439	US Airways Express 
@@ -3995,7 +3995,7 @@
 *** 388	NYPD Blue 
 *** 388	Peerage of Ireland 
 *** 388	Worcester 
-*** 388	�?ódź 
+*** 388	?dd? 
 *** 387	Ahmedabad 
 *** 387	Boston Globe 
 *** 387	Indiana University 
@@ -4841,7 +4841,7 @@
 *** 328	Delphi 
 *** 328	Ice Hockey 
 *** 328	Saturn 
-*** 328	Slobodan Milošević 
+*** 328	Slobodan Miloševi? 
 *** 328	Sydney, Australia 
 *** 328	Tatooine 
 *** 328	USA Network 
@@ -8241,7 +8241,7 @@
 *** 203	Greg Biffle 
 *** 203	Hanukkah 
 *** 203	INSEE 
-*** 203	Iaşi 
+*** 203	Ia?i 
 *** 203	Isambard Kingdom Brunel 
 *** 203	Jean Sibelius 
 *** 203	Jordan River 
@@ -8757,7 +8757,7 @@
 *** 193	War on Terror 
 *** 193	World Council of Churches 
 *** 193	Ñoldor 
-*** 193	İstanbul 
+*** 193	?stanbul 
 *** 192	20/20 
 *** 192	500 BC 
 *** 192	A Coruña 
@@ -8898,7 +8898,7 @@
 *** 190	Minor Threat 
 *** 190	Morgan Shepherd 
 *** 190	Murphy Brown 
-*** 190	Nicolae Ceauşescu 
+*** 190	Nicolae Ceau?escu 
 *** 190	Norman Mailer 
 *** 190	Peter Cook 
 *** 190	Qingdao 
@@ -9046,7 +9046,7 @@
 *** 187	Košice 
 *** 187	Leader of the Opposition 
 *** 187	Lebanese Civil War 
-*** 187	Lech Wałęsa 
+*** 187	Lech Wa??sa 
 *** 187	Ligue 1 
 *** 187	Lincoln Ellsworth 
 *** 187	Louis IX of France 
@@ -9391,7 +9391,7 @@
 *** 181	Snake River 
 *** 181	Sogn og Fjordane 
 *** 181	Solihull 
-*** 181	Steaua Bucureşti 
+*** 181	Steaua Bucure?ti 
 *** 181	Stereophonics 
 *** 181	Steve Buscemi 
 *** 181	Sudbury Wolves 
@@ -9514,7 +9514,7 @@
 *** 179	TV movie 
 *** 179	Tales of Symphonia 
 *** 179	Tamworth 
-*** 179	Toruń 
+*** 179	Toru? 
 *** 179	Upper Silesia 
 *** 179	Vigo 
 *** 179	Violent Femmes 
@@ -9601,7 +9601,7 @@
 *** 177	Binghamton, New York 
 *** 177	Bob Gibson 
 *** 177	Boston, MA 
-*** 177	Braşov 
+*** 177	Bra?ov 
 *** 177	British Invasion 
 *** 177	Capua 
 *** 177	Cato Institute 
@@ -9677,7 +9677,7 @@
 *** 176	Austrian Airlines 
 *** 176	Bachelor of Laws 
 *** 176	Battle of Gallipoli 
-*** 176	Białystok 
+*** 176	Bia?ystok 
 *** 176	Bowdoin College 
 *** 176	Buda 
 *** 176	Chera 
@@ -9780,7 +9780,7 @@
 *** 175	Islamofascism 
 *** 175	Jadakiss 
 *** 175	Jochen Mass 
-*** 175	Józef Piłsudski 
+*** 175	Józef Pi?sudski 
 *** 175	Kalamazoo, Michigan 
 *** 175	Kim Basinger 
 *** 175	Lester B. Pearson 
@@ -9889,7 +9889,7 @@
 *** 174	VJ 
 *** 174	Walter Matthau 
 *** 174	Western Isles 
-*** 174	Wisła Kraków 
+*** 174	Wis?a Kraków 
 *** 174	Yaroslavl 
 *** 174	Zadar 
 *** 174	Zork 
@@ -10198,7 +10198,7 @@
 *** 169	John Wilkes Booth 
 *** 169	Kalevala 
 *** 169	Ken Shamrock 
-*** 169	KoЯn 
+*** 169	Ko?n 
 *** 169	LAN 
 *** 169	LaGuardia Airport 
 *** 169	List of Korean monarchs 
@@ -11011,7 +11011,7 @@
 *** 159	The Allman Brothers Band 
 *** 159	The Elder Scrolls 
 *** 159	The Stone Roses 
-*** 159	Timişoara 
+*** 159	Timi?oara 
 *** 159	Treviso 
 *** 159	Umeå 
 *** 159	Wesley Clark 
@@ -11203,7 +11203,7 @@
 *** 156	Alex Ross 
 *** 156	American League Championship Series 
 *** 156	Angevin 
-*** 156	Antonín Dvořák 
+*** 156	Antonín Dvo?ák 
 *** 156	Apollo 8 
 *** 156	Araneae 
 *** 156	Atheism 
@@ -11973,7 +11973,7 @@
 *** 148	Civil Air Patrol 
 *** 148	Coast Mountains 
 *** 148	Congress of the United States 
-*** 148	Constanţa 
+*** 148	Constan?a 
 *** 148	Count of Champagne 
 *** 148	Ctesiphon 
 *** 148	Daniel Day-Lewis 
@@ -12018,7 +12018,7 @@
 *** 148	Paracelsus 
 *** 148	Paymaster-General 
 *** 148	Pierluigi Martini 
-*** 148	P�?li 
+*** 148	P?li 
 *** 148	Quasi-War 
 *** 148	Red Bull New York 
 *** 148	Russian Far East 
@@ -12067,7 +12067,7 @@
 *** 147	Dark Templar 
 *** 147	Dessau 
 *** 147	Devin Townsend 
-*** 147	Dinamo Bucureşti 
+*** 147	Dinamo Bucure?ti 
 *** 147	Doug Flutie 
 *** 147	Drew Carey 
 *** 147	Eddie Vedder 
@@ -12586,10 +12586,10 @@
 *** 142	Indigo Girls 
 *** 142	Interstate 65 
 *** 142	Italian language 
-*** 142	Ivan�?na Gorica 
+*** 142	Ivan?na Gorica 
 *** 142	Jim Anderton 
 *** 142	Johnny Benson 
-*** 142	José Luis Rodríguez Zapatero 
+*** 142	Jose Luis Rodríguez Zapatero 
 *** 142	Kansas City Southern Railway 
 *** 142	Kenyon College 
 *** 142	King of Burgundy 
@@ -13017,7 +13017,7 @@
 *** 138	Champaign, Illinois 
 *** 138	Charles Peirce 
 *** 138	Chinese calendar 
-*** 138	Chişinău 
+*** 138	Chi?in?u 
 *** 138	Cindy Sheehan 
 *** 138	Clapham 
 *** 138	Codemasters 
@@ -14503,7 +14503,7 @@
 *** 127	Praetorian Guard 
 *** 127	Radio Disney 
 *** 127	Rainer Maria Rilke 
-*** 127	Rapid Bucureşti 
+*** 127	Rapid Bucure?ti 
 *** 127	Reed College 
 *** 127	Ron Wood 
 *** 127	Russian Premier League 
@@ -14530,7 +14530,7 @@
 *** 127	Yorkshire Television 
 *** 127	Zulfikar Ali Bhutto 
 *** 127	Édith Piaf 
-*** 127	Črnomelj 
+*** 127	?rnomelj 
 *** 126	16th Century 
 *** 126	1993 in music 
 *** 126	2006 FIFA World Cup 
@@ -14649,7 +14649,7 @@
 *** 126	Space Shuttle Columbia 
 *** 126	Spike Jonze 
 *** 126	Spinal Tap 
-*** 126	Stanisław Lem 
+*** 126	Stanis?aw Lem 
 *** 126	Sunderland A.F.C. 
 *** 126	Sunnydale 
 *** 126	Susan Sontag 
@@ -15126,7 +15126,7 @@
 *** 122	BGM-109 Tomahawk 
 *** 122	Barbara Boxer 
 *** 122	Barbara Walters 
-*** 122	Ba�?ka 
+*** 122	Ba?ka 
 *** 122	Bobby Moore 
 *** 122	Brett Bodine 
 *** 122	Bryan Singer 
@@ -15148,7 +15148,7 @@
 *** 122	David Lange 
 *** 122	Deira 
 *** 122	Deventer 
-*** 122	Die Ärzte 
+*** 122	Die  rzte 
 *** 122	Dinosaur 
 *** 122	Down syndrome 
 *** 122	Druid 
@@ -15404,7 +15404,7 @@
 *** 121	Yeah Yeah Yeahs 
 *** 121	Yellow 
 *** 121	York County, Pennsylvania 
-*** 121	İzmir 
+*** 121	?zmir 
 *** 120	2008 Summer Olympics 
 *** 120	210s BC 
 *** 120	240s BC 
@@ -15728,7 +15728,7 @@
 *** 119	Yad Vashem 
 *** 119	Zinedine Zidane 
 *** 119	Örebro 
-*** 119	�? 
+*** 119	? 
 *** 118	&quot; 
 *** 118	170s BC 
 *** 118	1992 Winter Olympics 
@@ -15753,7 +15753,7 @@
 *** 118	Billy West 
 *** 118	Bird 
 *** 118	Borough 
-*** 118	Boötes 
+*** 118	Boetes 
 *** 118	Bradford Bulls 
 *** 118	Brown 
 *** 118	Buffyverse canon 
@@ -15907,7 +15907,7 @@
 *** 118	Valentinian III 
 *** 118	Walter Payton 
 *** 118	White Sea 
-*** 118	Władysław Sikorski 
+*** 118	W?adys?aw Sikorski 
 *** 117	120s BC 
 *** 117	360s BC 
 *** 117	440s BC 
@@ -17311,7 +17311,7 @@
 *** 110	Treaty of Brest-Litovsk 
 *** 110	Tsunami 
 *** 110	Twilight Zone 
-*** 110	T�?hoku Main Line 
+*** 110	T?hoku Main Line 
 *** 110	United States Armed Forces 
 *** 110	Victor Young 
 *** 110	Volksgerichtshof 
@@ -17325,8 +17325,8 @@
 *** 110	Whose Line Is It Anyway? 
 *** 110	World Cycling Championship 
 *** 110	Zubin Mehta 
-*** 110	Århus 
-*** 110	�?lava 
+*** 110	irhus 
+*** 110	?lava 
 *** 109	1260s 
 *** 109	1270s 
 *** 109	13th century in literature 
@@ -17849,7 +17849,7 @@
 *** 107	Outworld 
 *** 107	Pacific Islander 
 *** 107	Pashto 
-*** 107	Paul Erdős 
+*** 107	Paul Erd?s 
 *** 107	Pedro Martínez 
 *** 107	Peninsular Malaysia 
 *** 107	Peter Beattie 
@@ -18256,7 +18256,7 @@
 *** 105	Kareena Kapoor 
 *** 105	Keio University 
 *** 105	Kingdom Hearts: Chain of Memories 
-*** 105	Klaipėda 
+*** 105	Klaip?da 
 *** 105	Knight Ridder 
 *** 105	La Trobe University 
 *** 105	Lafayette, Indiana 
@@ -18729,7 +18729,7 @@
 *** 103	Norwalk, Connecticut 
 *** 103	Ophiuchus 
 *** 103	Osama Bin Laden 
-*** 103	Owain Glyndŵr 
+*** 103	Owain Glynd?r 
 *** 103	Paul Atreides 
 *** 103	Paul Cézanne 
 *** 103	Pedro de la Rosa 
@@ -18768,7 +18768,7 @@
 *** 103	Southampton F.C. 
 *** 103	Spirit of the West 
 *** 103	Springfield, Ohio 
-*** 103	Stanisław August Poniatowski 
+*** 103	Stanis?aw August Poniatowski 
 *** 103	Stirlingshire 
 *** 103	Svetlana Kuznetsova 
 *** 103	Tarja Halonen 
@@ -19202,7 +19202,7 @@
 *** 101	Patent 
 *** 101	Paul Molitor 
 *** 101	Pedro Rodriguez 
-*** 101	Plzeň 
+*** 101	Plze? 
 *** 101	Prime Minister of Afghanistan 
 *** 101	Prix de Rome 
 *** 101	Priština 
@@ -19359,7 +19359,7 @@
 *** 100	Fondmetal 
 *** 100	Fort Bragg 
 *** 100	Fort Collins, Colorado 
-*** 100	Franjo Tuđman 
+*** 100	Franjo Tu?man 
 *** 100	Free software 
 *** 100	GPA 
 *** 100	Galatia 
@@ -19607,7 +19607,7 @@
 *** 99	Flag 
 *** 99	Four Weddings and a Funeral 
 *** 99	Free State Province 
-*** 99	Fushigi Yūgi 
+*** 99	Fushigi Y?gi 
 *** 99	Ganges River 
 *** 99	Gary Sheffield 
 *** 99	Gil Hodges 
@@ -19616,7 +19616,7 @@
 *** 99	Good Night, and Good Luck. 
 *** 99	Grant Hackett 
 *** 99	Guy Ritchie 
-*** 99	Győr 
+*** 99	Gy?r 
 *** 99	Haarlemmermeer 
 *** 99	Hero 
 *** 99	History of France 
@@ -19847,7 +19847,7 @@
 *** 98	Dirty Dancing 
 *** 98	Dunbar 
 *** 98	Dunlop 
-*** 98	Elbląg 
+*** 98	Elbl?g 
 *** 98	Electrical engineering 
 *** 98	Enoch 
 *** 98	Epping Forest 
@@ -19903,7 +19903,7 @@
 *** 98	Kevin Michael Richardson 
 *** 98	Killswitch Engage 
 *** 98	Kingdom of Wei 
-*** 98	Ko�?evje 
+*** 98	Ko?evje 
 *** 98	Krasnodar Krai 
 *** 98	Krist Novoselic 
 *** 98	Kyle MacLachlan 
@@ -19970,7 +19970,7 @@
 *** 98	Prix Médicis 
 *** 98	Proto-Celtic 
 *** 98	Purana 
-*** 98	Płock 
+*** 98	P?ock 
 *** 98	Quebec French 
 *** 98	Quercus 
 *** 98	Randy Rhoads 
@@ -20176,7 +20176,7 @@
 *** 97	Miss Marple 
 *** 97	Molly Shannon 
 *** 97	Mordechai Vanunu 
-*** 97	M�?ori Party 
+*** 97	M?ori Party 
 *** 97	Nalanda 
 *** 97	Nashua, New Hampshire 
 *** 97	National Museum of Natural History 
@@ -20200,7 +20200,7 @@
 *** 97	Portland State University 
 *** 97	Pretty Woman 
 *** 97	Prime Minister of South Africa 
-*** 97	Primera División de México 
+*** 97	Primera Divisi	n de México 
 *** 97	Prince Rupert of the Rhine 
 *** 97	Rebel Without a Cause 
 *** 97	Red Hat Linux 
@@ -21052,7 +21052,7 @@
 *** 94	United Irishmen 
 *** 94	University of Tübingen 
 *** 94	Varese 
-*** 94	Velike Laš�?e 
+*** 94	Velike Laš?e 
 *** 94	Vespers 
 *** 94	Victory Mountains 
 *** 94	Virgin Interactive 
@@ -21061,9 +21061,9 @@
 *** 94	Weekend Update 
 *** 94	Western movie 
 *** 94	Wichita State University 
-*** 94	Wilhelm Furtwängler 
+*** 94	Wilhelm Furtwsngler 
 *** 94	William Tyndale 
-*** 94	Witold Lutosławski 
+*** 94	Witold Lutos?awski 
 *** 94	Wittgenstein 
 *** 94	Wohlthat Mountains 
 *** 94	Young British Artists 
@@ -22688,7 +22688,7 @@
 *** 88	Kenneth Williams 
 *** 88	Kensington Palace 
 *** 88	Khitan Empire 
-*** 88	Krzysztof Kieślowski 
+*** 88	Krzysztof Kie?lowski 
 *** 88	Lakshmana 
 *** 88	Le Tigre 
 *** 88	Lebesgue measure 
@@ -22799,7 +22799,7 @@
 *** 88	School of Visual Arts 
 *** 88	Schopenhauer 
 *** 88	Sean K Reynolds 
-*** 88	Seiyū 
+*** 88	Seiy? 
 *** 88	Shannara 
 *** 88	Sheffield United F.C. 
 *** 88	Shkodër 
@@ -23258,7 +23258,7 @@
 *** 86	Cottbus 
 *** 86	County Leitrim 
 *** 86	Cryptozoology 
-*** 86	Częstochowa 
+*** 86	Cz?stochowa 
 *** 86	DDR SDRAM 
 *** 86	DV 
 *** 86	DVB-T 
@@ -23568,7 +23568,7 @@
 *** 85	Al Simmons 
 *** 85	Alaska Railroad 
 *** 85	Albi 
-*** 85	Aleksander Kwaśniewski 
+*** 85	Aleksander Kwa?niewski 
 *** 85	Almagest 
 *** 85	Aneurin Bevan 
 *** 85	Anthony Powell 
@@ -23709,7 +23709,7 @@
 *** 85	Lago 
 *** 85	Lance Parkin 
 *** 85	Lawrence University 
-*** 85	Lech Poznań 
+*** 85	Lech Pozna? 
 *** 85	Lensman 
 *** 85	Leonard McCoy 
 *** 85	Liam Howlett 
@@ -23805,7 +23805,7 @@
 *** 85	São Tomé 
 *** 85	TV network 
 *** 85	TVNZ 
-*** 85	Tadeusz Kościuszko 
+*** 85	Tadeusz Ko?ciuszko 
 *** 85	Tai Chi Chuan 
 *** 85	Teddington 
 *** 85	Teleri 
@@ -24966,7 +24966,7 @@
 *** 82	Young Turks 
 *** 82	Yves Montand 
 *** 82	Östersund 
-*** 82	�?satrú 
+*** 82	?satra 
 *** 81	$ 
 *** 81	1200 BC 
 *** 81	120s 
@@ -25910,7 +25910,7 @@
 *** 79	Lamar Alexander 
 *** 79	Laurell K. Hamilton 
 *** 79	Lawrence Ferlinghetti 
-*** 79	Leoš Janá�?ek 
+*** 79	Leoš Janá?ek 
 *** 79	Liberal Arts 
 *** 79	Lise Meitner 
 *** 79	Lisieux 
@@ -25933,7 +25933,7 @@
 *** 79	Mark Hoppus 
 *** 79	Marvan Atapattu 
 *** 79	Mary-Louise Parker 
-*** 79	Mathieu Kérékou 
+*** 79	Mathieu K9rékou 
 *** 79	Maumee River 
 *** 79	McLeod County, Minnesota 
 *** 79	Medford, Massachusetts 
@@ -26415,7 +26415,7 @@
 *** 78	Radio-Canada 
 *** 78	Ragnar Lodbrok 
 *** 78	Ravenloft 
-*** 78	Recep Tayyip Erdoğan 
+*** 78	Recep Tayyip Erdo?an 
 *** 78	Redmond, Washington 
 *** 78	René Goscinny 
 *** 78	Ribeirão Preto 
@@ -26841,7 +26841,7 @@
 *** 77	Private 
 *** 77	Pro Tools 
 *** 77	Probus 
-*** 77	Przemyśl 
+*** 77	Przemy?l 
 *** 77	Public transport 
 *** 77	Punky Brewster 
 *** 77	Pwllheli 
@@ -27262,7 +27262,7 @@
 *** 76	Pieter van den Hoogenband 
 *** 76	Pig 
 *** 76	Pikes Peak 
-*** 76	Ploieşti 
+*** 76	Ploie?ti 
 *** 76	Pokémon FireRed and LeafGreen 
 *** 76	Pontiac Firebird 
 *** 76	Pope Gregory XVI 
@@ -28410,7 +28410,7 @@
 *** 73	Fulton County, Georgia 
 *** 73	G. I. Gurdjieff 
 *** 73	GTE 
-*** 73	Galaţi 
+*** 73	Gala?i 
 *** 73	Gardiner Expressway 
 *** 73	Geezer Butler 
 *** 73	Gen 13 
@@ -28756,7 +28756,7 @@
 *** 72	Agadir 
 *** 72	Air Mobility Command 
 *** 72	Alameda County, California 
-*** 72	Alexander Dub�?ek 
+*** 72	Alexander Dub?ek 
 *** 72	Aligarh 
 *** 72	Aluminum 
 *** 72	Amaliada 
@@ -28987,7 +28987,7 @@
 *** 72	Manchester Grammar School 
 *** 72	Manny Ramírez 
 *** 72	Margaret Weis 
-*** 72	Marijampolė 
+*** 72	Marijampol? 
 *** 72	Mario Davidovsky 
 *** 72	Mario Tennis 
 *** 72	Mark Rothko 
@@ -29273,7 +29273,7 @@
 *** 71	Brian Grazer 
 *** 71	Brian Leetch 
 *** 71	Bruno Sammartino 
-*** 71	Brăila 
+*** 71	Br?ila 
 *** 71	CISC 
 *** 71	Carol Reed 
 *** 71	Catherine II 
@@ -29410,7 +29410,7 @@
 *** 71	James Van Heusen 
 *** 71	James Weldon Johnson 
 *** 71	Jan Zamoyski 
-*** 71	Janica Kostelić 
+*** 71	Janica Kosteli? 
 *** 71	Jason Newsted 
 *** 71	Java Sea 
 *** 71	Java applet 
@@ -29564,7 +29564,7 @@
 *** 71	RADA 
 *** 71	RTL Group 
 *** 71	Racing game 
-*** 71	Radziwiłł 
+*** 71	Radziwi?? 
 *** 71	Raoul Walsh 
 *** 71	Reading Railroad 
 *** 71	Red Sox 
@@ -29576,7 +29576,7 @@
 *** 71	Richard Trevithick 
 *** 71	Rolls-Royce Merlin 
 *** 71	Romain Rolland 
-*** 71	Roman Polański 
+*** 71	Roman Pola?ski 
 *** 71	Roméo LeBlanc 
 *** 71	Ron Cowen 
 *** 71	Ronald McDonald 
@@ -29860,7 +29860,7 @@
 *** 70	Freising 
 *** 70	Frida 
 *** 70	Front Side Bus 
-*** 70	Fu Ji�?n 
+*** 70	Fu Ji?n 
 *** 70	Gadiformes 
 *** 70	Gaius Julius Caesar 
 *** 70	Gale Sayers 
@@ -29959,7 +29959,7 @@
 *** 70	Lake Shore Limited 
 *** 70	Laraine Newman 
 *** 70	Las Vegas Motor Speedway 
-*** 70	Lech Kaczyński 
+*** 70	Lech Kaczy?ski 
 *** 70	Lee Konitz 
 *** 70	Lenin Prize 
 *** 70	Leo McCarey 
@@ -30195,7 +30195,7 @@
 *** 70	Xinhai Revolution 
 *** 70	Youngstown State University 
 *** 70	Zermatt 
-*** 70	České Budějovice 
+*** 70	?eské Bud?jovice 
 *** 69	.50 BMG 
 *** 69	15th century BC 
 *** 69	1993 NHL Entry Draft 
@@ -30272,7 +30272,7 @@
 *** 69	Brendan O'Brien 
 *** 69	Broad Peak 
 *** 69	Bryan Trottier 
-*** 69	Bucureşti 
+*** 69	Bucure?ti 
 *** 69	Bulgarian Orthodox Church 
 *** 69	California State Route 1 
 *** 69	California gold rush 
@@ -30709,7 +30709,7 @@
 *** 69	Youssou N'Dour 
 *** 69	Yuna 
 *** 69	Zamboanga del Norte 
-*** 69	Zamość 
+*** 69	Zamo?? 
 *** 68	+ 
 *** 68	1939 New York World's Fair 
 *** 68	1973 energy crisis 
@@ -31253,7 +31253,7 @@
 *** 68	Yorkshire Phoenix 
 *** 68	Yuvraj Singh 
 *** 68	Östers IF 
-*** 68	�?vila 
+*** 68	?vila 
 *** 67	.380 ACP 
 *** 67	.com 
 *** 67	20 BC 
@@ -31942,7 +31942,7 @@
 *** 66	Chart 
 *** 66	Chase Stevens 
 *** 66	Chaudière-Appalaches 
-*** 66	Chełmno 
+*** 66	Che?mno 
 *** 66	Chief Executive of Hong Kong 
 *** 66	Chinese surname 
 *** 66	Chuang Yi 
@@ -32439,7 +32439,7 @@
 *** 66	Zone of the Enders 
 *** 66	Zulfiqar Ali Bhutto 
 *** 66	Ögedei Khan 
-*** 66	�?lvaro Obregón 
+*** 66	?lvaro Obregln 
 *** 65	12 BC 
 *** 65	1330 BC 
 *** 65	1500 metres 
@@ -33050,7 +33050,7 @@
 *** 65	Zaphod Beeblebrox 
 *** 65	Zooropa 
 *** 65	Ö 
-*** 65	�?edán mac Gabráin 
+*** 65	?edpn mac Gabráin 
 *** 64	100 Greatest British Television Programmes 
 *** 64	1300 BC 
 *** 64	212 BC 
@@ -33108,7 +33108,7 @@
 *** 64	Bernie Sanders 
 *** 64	Berserk 
 *** 64	Betty Friedan 
-*** 64	Bielsko-Biała 
+*** 64	Bielsko-Bia?a 
 *** 64	Big Dipper 
 *** 64	Birmingham City Council 
 *** 64	Blackstreet 
@@ -33188,7 +33188,7 @@
 *** 64	Dinosaur Jr 
 *** 64	DirectShow 
 *** 64	Dispensationalism 
-*** 64	Diyarbakır 
+*** 64	Diyarbak?r 
 *** 64	Dolly the sheep 
 *** 64	Don Newcombe 
 *** 64	Don Valley East 
@@ -33203,7 +33203,7 @@
 *** 64	East 17 
 *** 64	Eddie Powers Memorial Trophy 
 *** 64	Edna Purviance 
-*** 64	Eiichir�? Oda 
+*** 64	Eiichir? Oda 
 *** 64	Eisenstadt 
 *** 64	Elisabeth Shue 
 *** 64	Emeril Lagasse 
@@ -33221,7 +33221,7 @@
 *** 64	FA Amateur Cup 
 *** 64	FN FAL 
 *** 64	Family Compact 
-*** 64	Faure Gnassingbé 
+*** 64	Faure Gnassingb6 
 *** 64	Federation of American Scientists 
 *** 64	Fenerbahçe 
 *** 64	Fingal 
@@ -33957,7 +33957,7 @@
 *** 63	Julianna Margulies 
 *** 63	Junípero Serra 
 *** 63	Jurisprudence 
-*** 63	Karel Čapek 
+*** 63	Karel ?apek 
 *** 63	Karl Böhm 
 *** 63	Kate Smith 
 *** 63	Kathleen Blanco 
@@ -34326,7 +34326,7 @@
 *** 63	Woonsocket, Rhode Island 
 *** 63	World Bowl 
 *** 63	World Heroes 
-*** 63	Władysław II Jagiełło 
+*** 63	W?adys?aw II Jagie??o 
 *** 63	X-Men Legends 
 *** 63	Xuchang 
 *** 63	Yamanashi Prefecture 
@@ -34339,7 +34339,7 @@
 *** 63	Zhang Qian 
 *** 63	Zhongshan 
 *** 63	Zygmunt I the Old 
-*** 63	�?ras an Uachtaráin 
+*** 63	?ras an Uachtar in 
 *** 62	10 Things I Hate About You 
 *** 62	1080i 
 *** 62	1971 in music 
@@ -34422,7 +34422,7 @@
 *** 62	Blue Nile 
 *** 62	Bob Chiarelli 
 *** 62	Bobby Hutcherson 
-*** 62	Bolesław I the Brave 
+*** 62	Boles?aw I the Brave 
 *** 62	Bra'tac 
 *** 62	Bradford County, Pennsylvania 
 *** 62	Brian Friel 
@@ -34846,12 +34846,12 @@
 *** 62	Sea Launch 
 *** 62	Sea level 
 *** 62	Secretary of State for Work and Pensions 
-*** 62	Semi�? 
+*** 62	Semi? 
 *** 62	Senate of Canada 
 *** 62	Septimania 
 *** 62	Seraphimon 
 *** 62	Seymour Papert 
-*** 62	Seán MacBride 
+*** 62	SeLn MacBride 
 *** 62	Seán T. O'Kelly 
 *** 62	Sham Shui Po 
 *** 62	Shamil Basayev 
@@ -34967,7 +34967,7 @@
 *** 62	White Army 
 *** 62	Who's Who 
 *** 62	Wichita 
-*** 62	Widzew �?ódź 
+*** 62	Widzew ?*d? 
 *** 62	Wild Bill Hickok 
 *** 62	Wilhelm Canaris 
 *** 62	William Massey 
@@ -35447,7 +35447,7 @@
 *** 61	Paul Winchell 
 *** 61	Pax Romana 
 *** 61	Pechenegs 
-*** 61	Pedro �?lvares Cabral 
+*** 61	Pedro ?lvares Cabral 
 *** 61	Peer-to-peer 
 *** 61	Peggy Mitchell 
 *** 61	Pelecanidae 
@@ -35682,7 +35682,7 @@
 *** 61	Zeiss 
 *** 61	Zengi 
 *** 61	Zoological Society of London 
-*** 61	Zoran �?inđić 
+*** 61	Zoran ?in1i? 
 *** 61	Zurich International Airport 
 *** 61	Örebro County 
 *** 61	Örnsköldsvik 
@@ -36163,7 +36163,7 @@
 *** 60	RENFE 
 *** 60	Rabelais 
 *** 60	Radio Hall of Fame 
-*** 60	Radovan Karadžić 
+*** 60	Radovan Karadži? 
 *** 60	Radovljica 
 *** 60	Raffles Institution 
 *** 60	Rat 
@@ -36377,7 +36377,7 @@
 *** 60	Zamboanga City 
 *** 60	Zefram Cochrane 
 *** 60	Zenobia 
-*** 60	Ōfunato Line 
+*** 60	?funato Line 
 *** 59	133 BC 
 *** 59	148 BC 
 *** 59	14th 
@@ -36866,7 +36866,7 @@
 *** 59	Noahide Laws 
 *** 59	Normal, Illinois 
 *** 59	Norrbotten 
-*** 59	Nowy Sącz 
+*** 59	Nowy S?cz 
 *** 59	Oakland Seals 
 *** 59	Oboe 
 *** 59	Occupation of Palestine 
@@ -36903,7 +36903,7 @@
 *** 59	Pieria 
 *** 59	Pikmin 2 
 *** 59	Pirates of the Caribbean: Dead Man's Chest 
-*** 59	Piteşti 
+*** 59	Pite?ti 
 *** 59	Planet 
 *** 59	Plastic 
 *** 59	Playboy Magazine 
@@ -37055,7 +37055,7 @@
 *** 59	Tokyo Stock Exchange 
 *** 59	Tom Strong 
 *** 59	Towcester 
-*** 59	Traian Băsescu 
+*** 59	Traian B?sescu 
 *** 59	Transcendentalism 
 *** 59	Trent-Severn Waterway 
 *** 59	Tri-Rail 
@@ -37145,8 +37145,8 @@
 *** 58	Adirondacks 
 *** 58	Aesop Rock 
 *** 58	Agartala 
-*** 58	Ajdovš�?ina 
-*** 58	Alan García 
+*** 58	Ajdovš?ina 
+*** 58	Alan Garcna 
 *** 58	Alan Hansen 
 *** 58	Alan King 
 *** 58	Alan Thicke 
@@ -38351,7 +38351,7 @@
 *** 57	Kisei 
 *** 57	Klamath Falls, Oregon 
 *** 57	Konstantin Tsiolkovsky 
-*** 57	Kościuszko Uprising 
+*** 57	Ko?ciuszko Uprising 
 *** 57	Krosno 
 *** 57	KwaZulu-Natal Province 
 *** 57	Kyivan Rus' 
@@ -38489,7 +38489,7 @@
 *** 57	Paladine 
 *** 57	Panchen Lama 
 *** 57	Pandora 
-*** 57	Pan�?evo 
+*** 57	Pan?evo 
 *** 57	Paolo Maldini 
 *** 57	Paridae 
 *** 57	Pat Metheny Group 
@@ -38805,7 +38805,7 @@
 *** 57	Zoids: Fuzors 
 *** 57	Zuid-Holland 
 *** 57	Ø 
-*** 57	⌇ 
+*** 57	? 
 *** 56	.hack//Legend of the Twilight 
 *** 56	12th 
 *** 56	16th century BC 
@@ -38899,7 +38899,7 @@
 *** 56	Bhavnagar 
 *** 56	Bill Berry 
 *** 56	Bill Vukovich 
-*** 56	Bistriţa 
+*** 56	Bistri?a 
 *** 56	Blacksburg, Virginia 
 *** 56	Blue Angels 
 *** 56	Bob Balaban 
@@ -39347,13 +39347,13 @@
 *** 56	Ottawa West 
 *** 56	Outaouais 
 *** 56	Oxford Brookes University 
-*** 56	Oświęcim 
+*** 56	O?wi?cim 
 *** 56	PRINCE2 
 *** 56	Paddington station 
 *** 56	Padstow 
 *** 56	Pagliacci 
 *** 56	Pan Africanist Congress 
-*** 56	Panevėžys 
+*** 56	Panev?žys 
 *** 56	Paracel Islands 
 *** 56	Parramatta River 
 *** 56	Parrot 
@@ -39510,7 +39510,7 @@
 *** 56	Sverdlovsk 
 *** 56	Sydney Bristow 
 *** 56	Sylvia Sidney 
-*** 56	Słupsk 
+*** 56	S?upsk 
 *** 56	TAP Portugal 
 *** 56	TD Banknorth Garden 
 *** 56	TRIGA 
@@ -39874,7 +39874,7 @@
 *** 55	Eddie Griffin 
 *** 55	Ede 
 *** 55	Edict of Milan 
-*** 55	Edward Rydz-Śmigły 
+*** 55	Edward Rydz-?mig?y 
 *** 55	El Aaiún 
 *** 55	Electric Guitar 
 *** 55	Electrolux 
@@ -40444,7 +40444,7 @@
 *** 55	Tvedestrand 
 *** 55	Ty Tabor 
 *** 55	Tyne Tees Television 
-*** 55	T�?hoku Shinkansen 
+*** 55	T?hoku Shinkansen 
 *** 55	U-boats 
 *** 55	U.S. House 
 *** 55	U.S. Route 71 
@@ -40463,7 +40463,7 @@
 *** 55	VH1 Classic 
 *** 55	VRT 
 *** 55	Vancouver East 
-*** 55	Vatnajökull 
+*** 55	Vatnajlkull 
 *** 55	Vegemite 
 *** 55	Vietnam Veterans Against the War 
 *** 55	Villach 
@@ -40652,7 +40652,7 @@
 *** 54	Charlton Athletic 
 *** 54	Chauncey Billups 
 *** 54	Chaves 
-*** 54	Chełm 
+*** 54	Che?m 
 *** 54	Cho Oyu 
 *** 54	Chris Judd 
 *** 54	Chrysler Sebring 
@@ -41023,7 +41023,7 @@
 *** 54	Monmouth Rebellion 
 *** 54	Moog Music 
 *** 54	Moravian 
-*** 54	Morav�?e 
+*** 54	Morav?e 
 *** 54	Mormon Tabernacle Choir 
 *** 54	Mother Earth 
 *** 54	Mount Lofty Ranges 
@@ -41046,7 +41046,7 @@
 *** 54	New World First Bus 
 *** 54	New World Order 
 *** 54	Niagara County, New York 
-*** 54	Niccolò Paganini 
+*** 54	Niccol4 Paganini 
 *** 54	Nicias 
 *** 54	Nicko McBrain 
 *** 54	Nicolae Carpathia 
@@ -41464,7 +41464,7 @@
 *** 53	Azanian People's Organisation 
 *** 53	B-26 Marauder 
 *** 53	BSN 
-*** 53	Bacău 
+*** 53	Bac?u 
 *** 53	Balarama 
 *** 53	Baldur's Gate 
 *** 53	Baldur's Gate series 
@@ -42014,14 +42014,14 @@
 *** 53	Official Monster Raving Loony Party 
 *** 53	Ohio Turnpike 
 *** 53	Okayama Prefecture 
-*** 53	Okita S�?ji 
+*** 53	Okita S?ji 
 *** 53	Olomouc Region 
 *** 53	Ommen 
 *** 53	Onion 
 *** 53	Online 
 *** 53	Operation Gladio 
 *** 53	Opium War 
-*** 53	Opéra-Comique 
+*** 53	Opara-Comique 
 *** 53	Orlando Jones 
 *** 53	Orsini 
 *** 53	Orson Pratt 
@@ -43439,7 +43439,7 @@
 *** 51	Berwick 
 *** 51	Bethlehem Steel Company 
 *** 51	Beverly Cleary 
-*** 51	Bihać 
+*** 51	Biha? 
 *** 51	Billie Burke 
 *** 51	Billund 
 *** 51	Bioethics 
@@ -43575,7 +43575,7 @@
 *** 51	Department for Constitutional Affairs 
 *** 51	Department for Culture, Media and Sport 
 *** 51	Derbyshire Dales 
-*** 51	Devan�?garī 
+*** 51	Devan?gars 
 *** 51	Dhar 
 *** 51	Diaboromon 
 *** 51	Diane de Poitiers 
@@ -43745,7 +43745,7 @@
 *** 51	Hurricane Jeanne 
 *** 51	Hydra 
 *** 51	Hydrobatidae 
-*** 51	I ♥ Huckabees 
+*** 51	I ? Huckabees 
 *** 51	I'm Sorry, I'll Read That Again 
 *** 51	IBM mainframe 
 *** 51	ICBN 
@@ -43825,7 +43825,7 @@
 *** 51	Kamboj 
 *** 51	Kathy Mattea 
 *** 51	Kaveri River 
-*** 51	Kazimierz Pułaski 
+*** 51	Kazimierz Pu?aski 
 *** 51	Ken Scott 
 *** 51	Kenneth Kitchen 
 *** 51	Keokuk, Iowa 
@@ -44205,7 +44205,7 @@
 *** 51	Swiss Confederation 
 *** 51	Sydney Riot of 1879 
 *** 51	Syracuse Nationals 
-*** 51	Sándor Petőfi 
+*** 51	Sándor Pet?fi 
 *** 51	Sørfold 
 *** 51	TCG 
 *** 51	TV special 
@@ -44278,7 +44278,7 @@
 *** 51	Tulare County, California 
 *** 51	Turner Entertainment 
 *** 51	Tyumen Oblast 
-*** 51	Târgu Mureş 
+*** 51	Târgu Mure? 
 *** 51	UBS AG 
 *** 51	UCD 
 *** 51	UNRWA 
@@ -44491,7 +44491,7 @@
 *** 50	Bobby Bonilla 
 *** 50	Boca Raton 
 *** 50	Boeing 737-800 
-*** 50	Bohuslav Martinů 
+*** 50	Bohuslav Martin? 
 *** 50	Book of the Month Club 
 *** 50	Boston Terrier 
 *** 50	Bowie, Maryland 
@@ -45050,7 +45050,7 @@
 *** 50	MyTravel Airways 
 *** 50	Mycobacterium tuberculosis 
 *** 50	Märkischer Kreis 
-*** 50	M�?ori language 
+*** 50	M?ori language 
 *** 50	N.S. 
 *** 50	Nainital 
 *** 50	Nakdong River 
@@ -45089,7 +45089,7 @@
 *** 50	Nude &amp; Natural 
 *** 50	Nurse With Wound 
 *** 50	Oberlin, Ohio 
-*** 50	Ole Rømer 
+*** 50	Ole R
 *** 50	Olive 
 *** 50	Oliver Wendell Holmes, Sr. 
 *** 50	One Hundred and One Dalmatians 
@@ -45249,7 +45249,7 @@
 *** 50	Sony PSP 
 *** 50	Soong May-ling 
 *** 50	Soria 
-*** 50	South Ba�?ka District 
+*** 50	South Ba?ka District 
 *** 50	South Devon Railway 
 *** 50	South Kesteven 
 *** 50	Space Shuttle Challenger disaster 
@@ -45291,7 +45291,7 @@
 *** 50	Syrah 
 *** 50	Syriac alphabet 
 *** 50	Szolnok 
-*** 50	São Luís 
+*** 50	SDo Luís 
 *** 50	Séamus Pattison 
 *** 50	T-90 
 *** 50	TRIZ 
@@ -45388,8 +45388,8 @@
 *** 50	Visorak 
 *** 50	Vitas Gerulaitis 
 *** 50	Vlaams Blok 
-*** 50	Vyso�?ina Region 
-*** 50	Västernorrland County 
+*** 50	Vyso?ina Region 
+*** 50	Vksternorrland County 
 *** 50	WCAU 
 *** 50	WGC-World Cup 
 *** 50	Wade Hampton 
@@ -45588,7 +45588,7 @@
 *** 49	Boomtown Rats 
 *** 49	Braemar 
 *** 49	Brand Nubian 
-*** 49	Braşov County 
+*** 49	Bra?ov County 
 *** 49	Breakbeat 
 *** 49	Breckin Meyer 
 *** 49	Breeders' Cup Classic 
@@ -46558,8 +46558,8 @@
 *** 49	World Boxing Association 
 *** 49	World Conservation Union 
 *** 49	World Trade Organisation 
-*** 49	Władysław I Herman 
-*** 49	Włocławek 
+*** 49	W?adys?aw I Herman 
+*** 49	W?oc?awek 
 *** 49	XM Radio 
 *** 49	Xinhua News Agency 
 *** 49	Xtreme Pro Wrestling 
@@ -46578,8 +46578,8 @@
 *** 49	Zulu War 
 *** 49	Zwingli 
 *** 49	Æon Flux 
-*** 49	�?rpád 
-*** 49	�? 
+*** 49	?rp*d 
+*** 49	? 
 *** 48	-onym 
 *** 48	105 BC 
 *** 48	107 BC 
@@ -46646,7 +46646,7 @@
 *** 48	Andrew Smith 
 *** 48	Andromeda 
 *** 48	Andromon 
-*** 48	André Ouellet 
+*** 48	Andry Ouellet 
 *** 48	Andy Scott 
 *** 48	Anglo-American 
 *** 48	Ankh 
@@ -46732,7 +46732,7 @@
 *** 48	Boat Race 
 *** 48	Bobby Molloy 
 *** 48	Bobcat Goldthwait 
-*** 48	Bolesław Prus 
+*** 48	Boles?aw Prus 
 *** 48	Book of Abraham 
 *** 48	Books of Kings 
 *** 48	Boston Pops Orchestra 
@@ -47046,7 +47046,7 @@
 *** 48	Helena Petrovna Blavatsky 
 *** 48	Hell Gate Bridge 
 *** 48	Hematology 
-*** 48	Henri Coandă International Airport 
+*** 48	Henri Coand? International Airport 
 *** 48	Hero of the Russian Federation 
 *** 48	Hideyuki Kikuchi 
 *** 48	Highland Park, Illinois 
@@ -47117,7 +47117,7 @@
 *** 48	Jim Lehrer 
 *** 48	Jim Rathmann 
 *** 48	Jim Wallace 
-*** 48	Jiří Novák 
+*** 48	Ji?í Novák 
 *** 48	Jo Dee Messina 
 *** 48	Jodie Henry 
 *** 48	Johann Bayer 
@@ -47248,7 +47248,7 @@
 *** 48	Manon 
 *** 48	Manukau Harbour 
 *** 48	Mar Dinkha IV 
-*** 48	Maramureş 
+*** 48	Maramure? 
 *** 48	Marblehead, Massachusetts 
 *** 48	Marcel Dupré 
 *** 48	Marie de' Medici 
@@ -47602,13 +47602,13 @@
 *** 48	Sunny Baudelaire 
 *** 48	Super Bowl XI 
 *** 48	Supermarine Walrus 
-*** 48	Suwałki 
+*** 48	Suwa?ki 
 *** 48	Svenska Mästerskapet 
 *** 48	Swiss People's Party 
 *** 48	Syedna Mohammed Burhanuddin 
 *** 48	Synchestra 
 *** 48	System V 
-*** 48	S�?suke Aizen 
+*** 48	S?suke Aizen 
 *** 48	T-1000 
 *** 48	Taggart 
 *** 48	Tamia 
@@ -47698,7 +47698,7 @@
 *** 48	University of Prince Edward Island 
 *** 48	University of Utrecht 
 *** 48	VLC media player 
-*** 48	Vadsø 
+*** 48	Vads* 
 *** 48	Vaikundar 
 *** 48	Valentina Tereshkova 
 *** 48	Vermonter 
@@ -47835,7 +47835,7 @@
 *** 47	Anna Magnani 
 *** 47	Annales Cambriae 
 *** 47	Anne Meara 
-*** 47	Ante Pavelić 
+*** 47	Ante Paveli? 
 *** 47	Antonia Fraser 
 *** 47	AppleWorks 
 *** 47	April Wine 
@@ -50073,7 +50073,7 @@
 *** 46	Shirley Fry 
 *** 46	Shubert Theatre 
 *** 46	Shusha 
-*** 46	Sh�?nen 
+*** 46	Sh?nen 
 *** 46	Siegfried 
 *** 46	Siegfried &amp; Roy 
 *** 46	Simon de Montfort 
@@ -50086,7 +50086,7 @@
 *** 46	Sitka, Alaska 
 *** 46	Ska-P 
 *** 46	Ski 
-*** 46	Skjåk 
+*** 46	Skj k 
 *** 46	SkullSatamon 
 *** 46	Slate.com 
 *** 46	Slavic language 
@@ -50210,7 +50210,7 @@
 *** 46	Transport and General Workers Union 
 *** 46	Treaty of Karlowitz 
 *** 46	Treecko 
-*** 46	Tren�?ín 
+*** 46	Tren?*n 
 *** 46	Trill 
 *** 46	Tsathoggua 
 *** 46	Tudor style 
@@ -50509,7 +50509,7 @@
 *** 45	Burlington, North Carolina 
 *** 45	Butterfinger 
 *** 45	Buzz Osborne 
-*** 45	Buzău 
+*** 45	Buz?u 
 *** 45	Byakuya Kuchiki 
 *** 45	CDMA2000 1x 
 *** 45	Cadiz CF 
@@ -51406,7 +51406,7 @@
 *** 45	Shirley Collins 
 *** 45	Shneur Zalman of Liadi 
 *** 45	Shonen Sunday 
-*** 45	Sighişoara 
+*** 45	Sighi?oara 
 *** 45	Simon Mayo 
 *** 45	Siouxsie Sioux 
 *** 45	Sir John A. Macdonald 
@@ -51573,7 +51573,7 @@
 *** 45	Truckee River 
 *** 45	Trumbull County, Ohio 
 *** 45	Trustee 
-*** 45	Trži�? 
+*** 45	Trži? 
 *** 45	Tsing Yi 
 *** 45	Tsukihime 
 *** 45	Tsutomu Nihei 
@@ -51583,7 +51583,7 @@
 *** 45	Turner Broadcasting 
 *** 45	Twinkie 
 *** 45	Tynedale 
-*** 45	Túrin Turambar 
+*** 45	T*rin Turambar 
 *** 45	U.K 
 *** 45	U.S. 1st Infantry Division 
 *** 45	U.S. Army Signal Corps 
@@ -51672,7 +51672,7 @@
 *** 45	World Anti-Doping Agency 
 *** 45	WorldNetDaily 
 *** 45	Wyoming County, New York 
-*** 45	Władysław Anders 
+*** 45	W?adys?aw Anders 
 *** 45	XML-RPC 
 *** 45	Xavier Malisse 
 *** 45	Xenophobia 
@@ -51868,7 +51868,7 @@
 *** 44	Bharata 
 *** 44	Bicol Region 
 *** 44	Big Bend National Park 
-*** 44	Bish�?jo game 
+*** 44	Bish?jo game 
 *** 44	Black Isle Studios 
 *** 44	Black Rock Desert 
 *** 44	Blavatsky 
@@ -51905,7 +51905,7 @@
 *** 44	Burlingame, California 
 *** 44	Burntisland 
 *** 44	Burt Young 
-*** 44	Béla Kun 
+*** 44	B*la Kun 
 *** 44	C-141 Starlifter 
 *** 44	C. Thomas Howell 
 *** 44	CFRB 
@@ -52437,11 +52437,11 @@
 *** 44	Korean Air Flight 007 
 *** 44	Krav Maga 
 *** 44	Kurtwood Smith 
-*** 44	K�?ichi Yamadera 
+*** 44	K?ichi Yamadera 
 *** 44	LEXX 
 *** 44	LINEAR 
 *** 44	La Boheme 
-*** 44	La Résistance 
+*** 44	La Rhsistance 
 *** 44	Ladies Home Journal 
 *** 44	Lady Madonna 
 *** 44	Lagonda 
@@ -52718,7 +52718,7 @@
 *** 44	Pinchas Zukerman 
 *** 44	Pink Flamingos 
 *** 44	Pippin the Younger 
-*** 44	Piła 
+*** 44	Pi?a 
 *** 44	Placer County, California 
 *** 44	Plaxton Pointer 
 *** 44	Plymouth Fury 
@@ -52770,7 +52770,7 @@
 *** 44	Rang De Basanti 
 *** 44	Rangers FC 
 *** 44	Rank of hands (poker) 
-*** 44	Ratko Mladić 
+*** 44	Ratko Mladi? 
 *** 44	Raúl Juliá 
 *** 44	Real Oviedo 
 *** 44	Regice 
@@ -52920,7 +52920,7 @@
 *** 44	St. John's East 
 *** 44	St. Mary 
 *** 44	Stamford Raffles 
-*** 44	Stanisław Leszczyński 
+*** 44	Stanis?aw Leszczy?ski 
 *** 44	Star Trek canon 
 *** 44	State President of South Africa 
 *** 44	Steve Armstrong 
@@ -54188,7 +54188,7 @@
 *** 43	Pete Domenici 
 *** 43	Peter Brock 
 *** 43	Peter I Island 
-*** 43	Peć 
+*** 43	Pe? 
 *** 43	Pharmaceutical 
 *** 43	Phil Goff 
 *** 43	Phil McGraw 
@@ -54534,7 +54534,7 @@
 *** 43	Twilight Zone: The Movie 
 *** 43	Typhoon 
 *** 43	Táin Bó Cúailnge 
-*** 43	Târgovişte 
+*** 43	Târgovi?te 
 *** 43	U.S. Army Rangers 
 *** 43	U.S. House election, 2004 
 *** 43	U.S. Route 62 
@@ -54660,9 +54660,9 @@
 *** 43	¥ 
 *** 43	Újpest FC 
 *** 43	Ötzi the Iceman 
-*** 43	Çankırı 
-*** 43	�? 
-*** 43	Šabac 
+*** 43	Çank?r? 
+*** 43	? 
+*** 43	 abac 
 *** 42	!!! 
 *** 42	135 BC 
 *** 42	140 BC 
@@ -54817,7 +54817,7 @@
 *** 42	Beaufort, North Carolina 
 *** 42	Beavis and Butthead 
 *** 42	Beccles 
-*** 42	Bedřich Smetana 
+*** 42	Bed?ich Smetana 
 *** 42	Before Sunset 
 *** 42	Belgian Revolution 
 *** 42	Beltrami County, Minnesota 
@@ -55188,7 +55188,7 @@
 *** 42	Gray code 
 *** 42	Great American Boycott 
 *** 42	Great American Songbook 
-*** 42	Great Kant�? earthquake 
+*** 42	Great Kant? earthquake 
 *** 42	Greco-Roman wrestling 
 *** 42	Green Party candidates, 2004 Canadian federal election 
 *** 42	Greencastle, Indiana 
@@ -55204,7 +55204,7 @@
 *** 42	Guru Amar Das 
 *** 42	Guru Nanak Dev 
 *** 42	Guy Hamilton 
-*** 42	Gästrikland 
+*** 42	Gostrikland 
 *** 42	Gödel's incompleteness theorems 
 *** 42	Haakon IV of Norway 
 *** 42	Haber process 
@@ -55428,7 +55428,7 @@
 *** 42	Lexus GS 
 *** 42	Liao Dynasty 
 *** 42	Liberation Day 
-*** 42	Liep�?ja 
+*** 42	Liep?ja 
 *** 42	Lifetime Television 
 *** 42	Liger Zero 
 *** 42	Like a Rolling Stone 
@@ -55489,7 +55489,7 @@
 *** 42	Malcolm Glazer 
 *** 42	Malcolm Ross 
 *** 42	Malcolm-Jamal Warner 
-*** 42	Malinké 
+*** 42	Malinkn 
 *** 42	Manhattan Beach, California 
 *** 42	Mano Negra 
 *** 42	Manu Smriti 
@@ -55523,7 +55523,7 @@
 *** 42	McHale's Navy 
 *** 42	Me and My Girl 
 *** 42	Meera Syal 
-*** 42	Mehmet Ali Ağca 
+*** 42	Mehmet Ali A?ca 
 *** 42	Melbourne High School 
 *** 42	Melbourne Park 
 *** 42	Meliphagidae 
@@ -55945,7 +55945,7 @@
 *** 42	Sustrans 
 *** 42	Synopsys 
 *** 42	Szare Szeregi 
-*** 42	Szczecin-Dąbie 
+*** 42	Szczecin-D?bie 
 *** 42	Södermanland County 
 *** 42	Sørlandet 
 *** 42	Süleyman Demirel 
@@ -55964,7 +55964,7 @@
 *** 42	Tennessee Senate 
 *** 42	Terrorism in Kashmir 
 *** 42	Tervel 
-*** 42	Tessh�? Genda 
+*** 42	Tessh? Genda 
 *** 42	Thalidomide 
 *** 42	Thames Barrier 
 *** 42	The 10th Kingdom 
@@ -56031,7 +56031,7 @@
 *** 42	Trams in Melbourne 
 *** 42	Treason 
 *** 42	Treaty of Aix-la-Chapelle 
-*** 42	Tré Cool 
+*** 42	Trr Cool 
 *** 42	Tsubasa Chronicle 
 *** 42	Tuskegee, Alabama 
 *** 42	Tyche 
@@ -56358,7 +56358,7 @@
 *** 41	Blithe Spirit 
 *** 41	Blood-Horse magazine 
 *** 41	Bob Marley and the Wailers 
-*** 41	Bolesław II the Bold 
+*** 41	Boles?aw II the Bold 
 *** 41	Bombacaceae 
 *** 41	Bondi Beach 
 *** 41	Book of Proverbs 
@@ -56734,7 +56734,7 @@
 *** 41	Gary Oak 
 *** 41	Gateway Arch 
 *** 41	Gay Pride 
-*** 41	Gdańsk Główny 
+*** 41	Gda?sk G?ówny 
 *** 41	Geek 
 *** 41	Gemini 3 
 *** 41	Gemini program 
@@ -56847,7 +56847,7 @@
 *** 41	Hugo Boss 
 *** 41	Humans 
 *** 41	Humberside Police 
-*** 41	Huế 
+*** 41	Hu? 
 *** 41	Hvidovre 
 *** 41	Hvidovre IF 
 *** 41	Hwa Chong Institution 
@@ -57181,7 +57181,7 @@
 *** 41	Mumbles 
 *** 41	Mummy 
 *** 41	Munchausen syndrome 
-*** 41	Mureş County 
+*** 41	Mure? County 
 *** 41	Murray Rose 
 *** 41	Mushroom 
 *** 41	Mycroft Holmes 
@@ -57725,7 +57725,7 @@
 *** 41	Tyco International 
 *** 41	Tyrannosaurus Rex 
 *** 41	Târgu Jiu 
-*** 41	T�?dai-ji 
+*** 41	T?dai-ji 
 *** 41	U.S. Highway 90 
 *** 41	U.S. Route 11 
 *** 41	U.S. Route 206 
@@ -57823,7 +57823,7 @@
 *** 41	Westminster College 
 *** 41	Westpac 
 *** 41	What Dreams May Come 
-*** 41	Whitby—Ajax 
+*** 41	Whitby1Ajax 
 *** 41	White Mage 
 *** 41	Who Wants to be a Millionaire? 
 *** 41	Wildfowl and Wetlands Trust 
@@ -57848,7 +57848,7 @@
 *** 41	Wood County, Wisconsin 
 *** 41	Woodrow Wilson School of Public and International Affairs 
 *** 41	World Record 
-*** 41	Władysław Gomułka 
+*** 41	W?adys?aw Gomu?ka 
 *** 41	Xanten 
 *** 41	Xenocide 
 *** 41	Xfce 
@@ -57874,8 +57874,8 @@
 *** 41	Zuiderzee Works 
 *** 41	Zähringen 
 *** 41	Årdal 
-*** 41	�?lvaro Uribe 
-*** 41	Świnoujście 
+*** 41	?lvaro Uribe 
+*** 41	 winouj?cie 
 *** 40	10 m Air Pistol 
 *** 40	12&quot; Maxi Single 
 *** 40	13 colonies 
@@ -58779,7 +58779,7 @@
 *** 40	Komen 
 *** 40	Kongsvinger I.L. 
 *** 40	Kraljevo 
-*** 40	Krzyż Walecznych 
+*** 40	Krzy? Walecznych 
 *** 40	Kurdistan Democratic Party 
 *** 40	Kyushu region 
 *** 40	L.D. Alajuelense 
@@ -59189,7 +59189,7 @@
 *** 40	Pythagorean tuning 
 *** 40	Pär Lagerkvist 
 *** 40	Písek 
-*** 40	P�?ṇini 
+*** 40	P?aini 
 *** 40	Qajar Dynasty 
 *** 40	Quarry Bay 
 *** 40	Queens Park Rangers 
@@ -59762,7 +59762,7 @@
 *** 39	Adoption 
 *** 39	Adrian Adonis 
 *** 39	Adrian Fernandez 
-*** 39	Adrian Năstase 
+*** 39	Adrian N?stase 
 *** 39	Adult Album Alternative 
 *** 39	Advocate 
 *** 39	Aegis combat system 
@@ -59874,7 +59874,7 @@
 *** 39	Ballyshannon 
 *** 39	Baltimore &amp; Ohio Railroad 
 *** 39	Balts 
-*** 39	Banj�? Ginga 
+*** 39	Banj? Ginga 
 *** 39	Bannockburn 
 *** 39	Banstead 
 *** 39	Bantam 
@@ -59893,7 +59893,7 @@
 *** 39	Battle of Seven Pines 
 *** 39	Battle of Towton 
 *** 39	Battle of the Saintes 
-*** 39	Bayern München 
+*** 39	Bayern M nchen 
 *** 39	Beckton 
 *** 39	Bedouin Soundclash 
 *** 39	Beloit, Wisconsin 
@@ -59939,7 +59939,7 @@
 *** 39	Book of Jubilees 
 *** 39	Borgia 
 *** 39	Boris Shakhlin 
-*** 39	Boris Tadić 
+*** 39	Boris Tadi? 
 *** 39	Boston and Lowell Railroad 
 *** 39	Boulenger 
 *** 39	Bowling For Soup 
@@ -60168,11 +60168,11 @@
 *** 39	Dipsacaceae 
 *** 39	Dirk Benedict 
 *** 39	Discharge 
-*** 39	Diva�?a 
+*** 39	Diva?a 
 *** 39	Division Series 
 *** 39	Division of Grey 
 *** 39	Dixons 
-*** 39	Djenné 
+*** 39	Djennc 
 *** 39	Doc 
 *** 39	Doc Rivers 
 *** 39	Documentary hypothesis 
@@ -60239,7 +60239,7 @@
 *** 39	Engadin 
 *** 39	English Democrats Party 
 *** 39	Erben Wennemars 
-*** 39	Erdős number 
+*** 39	Erd?s number 
 *** 39	Eric Foner 
 *** 39	Erik van der Luijt 
 *** 39	Ernest O. Lawrence 
@@ -60685,7 +60685,7 @@
 *** 39	Korea University 
 *** 39	Korea, South 
 *** 39	Koryakia 
-*** 39	Kor�?ula 
+*** 39	Kor?ula 
 *** 39	Kostroma Oblast 
 *** 39	Kristin Davis 
 *** 39	Kubera 
@@ -60841,7 +60841,7 @@
 *** 39	Max Factor 
 *** 39	Maximilian I of Bavaria 
 *** 39	Maxwell's demon 
-*** 39	Ma�?va 
+*** 39	Ma?va 
 *** 39	McAllen, Texas 
 *** 39	MeatballWiki 
 *** 39	Medical 
@@ -61518,7 +61518,7 @@
 *** 39	Virginia Water 
 *** 39	Visigothic 
 *** 39	Vitruvian Man 
-*** 39	Vladimír Me�?iar 
+*** 39	Vladimír Me?iar 
 *** 39	Volcano Islands 
 *** 39	Volga Germans 
 *** 39	Voynich Manuscript 
@@ -61594,7 +61594,7 @@
 *** 39	X-Men Evolution 
 *** 39	Xabi Alonso 
 *** 39	Xenophanes 
-*** 39	Xiaolongnü 
+*** 39	Xiaolongno 
 *** 39	Y.A. Tittle 
 *** 39	Yarkand 
 *** 39	Yehuda Halevi 
@@ -61607,8 +61607,8 @@
 *** 39	Zurich, Switzerland 
 *** 39	Zygmunt III Vasa 
 *** 39	Ørsta 
-*** 39	�?lvaro Cunhal 
-*** 39	�?ódź Voivodship 
+*** 39	?lvaro Cunhal 
+*** 39	3?ód? Voivodship 
 *** 38	.25 ACP 
 *** 38	0-4-2 
 *** 38	1. FC Saarbrücken 
@@ -61704,7 +61704,7 @@
 *** 38	Alice B. Toklas 
 *** 38	Alice Meynell 
 *** 38	Alif Alif Atoll 
-*** 38	Alija Izetbegović 
+*** 38	Alija Izetbegovi? 
 *** 38	All In The Family 
 *** 38	Allianz 
 *** 38	Almada 
@@ -61871,7 +61871,7 @@
 *** 38	Bock 
 *** 38	Bohinj 
 *** 38	Boies Penrose 
-*** 38	Bolesław III Wrymouth 
+*** 38	Boles?aw III Wrymouth 
 *** 38	Boltzmann distribution 
 *** 38	Bomis 
 *** 38	Boolean satisfiability problem 
@@ -61921,7 +61921,7 @@
 *** 38	Business Intelligence 
 *** 38	Butane 
 *** 38	Byker Grove 
-*** 38	By�?d�?-in 
+*** 38	By?dA?-in 
 *** 38	CDA 
 *** 38	CFP franc 
 *** 38	CM Punk 
@@ -62200,7 +62200,7 @@
 *** 38	Ernest Gruening 
 *** 38	Ernest Thompson Seton 
 *** 38	Escape from L.A. 
-*** 38	Eskişehir 
+*** 38	Eski?ehir 
 *** 38	Esquerra Republicana de Catalunya 
 *** 38	Essex South 
 *** 38	Ethiopian People's Revolutionary Democratic Front 
@@ -62218,7 +62218,7 @@
 *** 38	Explorer I 
 *** 38	Explosive 
 *** 38	F-86 
-*** 38	FC Argeş Piteşti 
+*** 38	FC Arge? Pite?ti 
 *** 38	FIFA 100 
 *** 38	FLOPS 
 *** 38	Fabian Gottlieb von Bellingshausen 
@@ -62406,7 +62406,7 @@
 *** 38	Holmenkollen 
 *** 38	Holy Cross 
 *** 38	Homo neanderthalensis 
-*** 38	Honshū 
+*** 38	Honsh? 
 *** 38	Hot Shots! 
 *** 38	Hou Hanshu 
 *** 38	House of Bëor 
@@ -62700,7 +62700,7 @@
 *** 38	Lucretia Mott 
 *** 38	Lupercalia 
 *** 38	Lymsleia 
-*** 38	Lębork 
+*** 38	L?bork 
 *** 38	M'Naghten Rules 
 *** 38	M3 motorway 
 *** 38	MCI Communications 
@@ -62758,7 +62758,7 @@
 *** 38	Master of the Household 
 *** 38	Matilda of Tuscany 
 *** 38	Matrox 
-*** 38	Matsuo Bash�? 
+*** 38	Matsuo Bash? 
 *** 38	Matt Morris 
 *** 38	Matt Santos 
 *** 38	Mauricio Kagel 
@@ -62782,7 +62782,7 @@
 *** 38	Menstrual cycle 
 *** 38	Mesoamerican ballgame 
 *** 38	Metro Goldwyn Mayer 
-*** 38	Metsähallitus 
+*** 38	Metsuhallitus 
 *** 38	Meyerbeer 
 *** 38	Michael H. Hart 
 *** 38	Michael Kinsley 
@@ -62958,7 +62958,7 @@
 *** 38	Philip Neri 
 *** 38	Phoenix 
 *** 38	Physical chemistry 
-*** 38	Piatra Neamţ 
+*** 38	Piatra Neam? 
 *** 38	Picea 
 *** 38	Pierre Levegh 
 *** 38	Pierre Messmer 
@@ -62986,7 +62986,7 @@
 *** 38	Potsdam Agreement 
 *** 38	Pottsville, Pennsylvania 
 *** 38	Powder River Basin 
-*** 38	Powązki Cemetery 
+*** 38	Pow?zki Cemetery 
 *** 38	Prajadhipok 
 *** 38	Pratt &amp; Whitney Canada 
 *** 38	Presbyterian Church USA 
@@ -63006,7 +63006,7 @@
 *** 38	Pueblo Revolt 
 *** 38	Puerto Rican Nationalist Party 
 *** 38	Punch-Drunk Love 
-*** 38	Puławy 
+*** 38	Pu?awy 
 *** 38	Périgord 
 *** 38	Q code 
 *** 38	Quasimodo 
@@ -63114,7 +63114,7 @@
 *** 38	Russian Academy of Science 
 *** 38	Russian Provisional Government 
 *** 38	Rusty Staub 
-*** 38	Ruzyně International Airport 
+*** 38	Ruzyn? International Airport 
 *** 38	Ryutaro Hashimoto 
 *** 38	S/PDIF 
 *** 38	SBT 
@@ -63528,7 +63528,7 @@
 *** 38	Zihuatanejo 
 *** 38	Zurab Zhvania 
 *** 38	Überwald 
-*** 38	Ča�?ak 
+*** 38	?a?ak 
 *** 37	115 BC 
 *** 37	11th Hussars 
 *** 37	127 BC 
@@ -63639,7 +63639,7 @@
 *** 37	American Connection 
 *** 37	Amesbury, Massachusetts 
 *** 37	Amos 
-*** 37	Amílcar Cabral 
+*** 37	Amalcar Cabral 
 *** 37	An American in Paris 
 *** 37	Anaheim Electronics 
 *** 37	Andre Braugher 
@@ -63888,7 +63888,7 @@
 *** 37	Cheonan 
 *** 37	Chesapeake and Delaware Canal 
 *** 37	Chester Brown 
-*** 37	Chełmno Land 
+*** 37	Che?mno Land 
 *** 37	Chicago Police Department 
 *** 37	Chicago and Eastern Illinois Railroad 
 *** 37	Chickahominy River 
@@ -64141,7 +64141,7 @@
 *** 37	F-84 Thunderjet 
 *** 37	F.C. Dallas 
 *** 37	FC Nantes 
-*** 37	FC Naţional Bucureşti 
+*** 37	FC Na?ional Bucure?ti 
 *** 37	FC Sochaux-Montbéliard 
 *** 37	FN MAG 
 *** 37	Fabergé egg 
@@ -64288,7 +64288,7 @@
 *** 37	Gwar 
 *** 37	Gwich'in 
 *** 37	Göppingen 
-*** 37	Głogów 
+*** 37	G?ogów 
 *** 37	HAL 
 *** 37	HK Riga 2000 
 *** 37	HSBC Holdings plc 
@@ -64531,7 +64531,7 @@
 *** 37	Karl von Frisch 
 *** 37	Kary Mullis 
 *** 37	Katarina Srebotnik 
-*** 37	Kateřina Neumannová 
+*** 37	Kate?ina Neumannová 
 *** 37	Kaurna 
 *** 37	Kautokeino 
 *** 37	Kazan Khanate 
@@ -64748,7 +64748,7 @@
 *** 37	Michael R. Garey 
 *** 37	Michael Stackpole 
 *** 37	Michael York 
-*** 37	Michał Korybut Wiśniowiecki 
+*** 37	Micha? Korybut Wi?niowiecki 
 *** 37	Michoacan 
 *** 37	Mid Bedfordshire 
 *** 37	Middlesex County, Connecticut 
@@ -65540,7 +65540,7 @@
 *** 37	Waverley 
 *** 37	Wavre 
 *** 37	Wayne Goss 
-*** 37	Wałbrzych 
+*** 37	Wa?brzych 
 *** 37	Weierstrass 
 *** 37	Wels 
 *** 37	Wendie Malick 
@@ -65587,7 +65587,7 @@
 *** 37	Wroclaw 
 *** 37	Wychavon 
 *** 37	Wye 
-*** 37	Władysław III of Varna 
+*** 37	W?adys?aw III of Varna 
 *** 37	X.400 
 *** 37	XD bit 
 *** 37	Xenix 
@@ -65617,10 +65617,10 @@
 *** 37	Óscar Romero 
 *** 37	Épernay 
 *** 37	Železniki 
-*** 37	Ōu Main Line 
-*** 37	�? 
-*** 37	• 
-*** 37	�?? 
+*** 37	?u Main Line 
+*** 37	? 
+*** 37	* 
+*** 37	?? 
 *** 36	1 Kings 
 *** 36	109th United States Congress 
 *** 36	122 BC 
@@ -66100,7 +66100,7 @@
 *** 36	Cutthroat Island 
 *** 36	Czech Extraliga 
 *** 36	Czech Social Democratic Party 
-*** 36	Czesław Miłosz 
+*** 36	Czes?aw Mi?osz 
 *** 36	Cúcuta 
 *** 36	D'Hara 
 *** 36	D-pad 
@@ -66423,7 +66423,7 @@
 *** 36	Golden Baseball League 
 *** 36	Gonzales v. Raich 
 *** 36	Goodman Theatre 
-*** 36	Goran Bregović 
+*** 36	Goran Bregovi? 
 *** 36	Gordon Coates 
 *** 36	Gower 
 *** 36	Goya Awards 
@@ -66447,7 +66447,7 @@
 *** 36	Gregory XIII 
 *** 36	Grid computing 
 *** 36	Grifter 
-*** 36	Grudziądz 
+*** 36	Grudzi?dz 
 *** 36	Guide for the Perplexed 
 *** 36	Gujrat 
 *** 36	Gulf Daily News 
@@ -66460,7 +66460,7 @@
 *** 36	Hadash 
 *** 36	Hakone 
 *** 36	Halifax Regional School Board 
-*** 36	Halldór �?sgrímsson 
+*** 36	Halldór ?sgrmmsson 
 *** 36	Hallel 
 *** 36	Halo (video game series) 
 *** 36	Hanging Gardens of Babylon 
@@ -66584,7 +66584,7 @@
 *** 36	Italian Riviera 
 *** 36	Italian neorealism 
 *** 36	Itzehoe 
-*** 36	Ivan Ljubi�?ić 
+*** 36	Ivan Ljubi?i  
 *** 36	Ivan Paskevich 
 *** 36	Ivy 
 *** 36	J Dilla 
@@ -66759,14 +66759,14 @@
 *** 36	Kosova 
 *** 36	Kossol Roads 
 *** 36	Kowloon-Canton Railway Corporation 
-*** 36	Kołobrzeg 
+*** 36	Ko?obrzeg 
 *** 36	Krag-Petersson 
 *** 36	Krems 
 *** 36	Krka 
 *** 36	Ku band 
 *** 36	Kutless 
 *** 36	Kähler manifold 
-*** 36	K�?fuku-ji 
+*** 36	K?fuku-ji 
 *** 36	L. S. Lowry 
 *** 36	LSAT 
 *** 36	La traviata 
@@ -67546,7 +67546,7 @@
 *** 36	Stanley Baker 
 *** 36	Stanley Ho 
 *** 36	Star Wars: Ewoks 
-*** 36	Stargard Szczeciński 
+*** 36	Stargard Szczeci?ski 
 *** 36	Starsailor 
 *** 36	State University of New York at Potsdam 
 *** 36	Steal This Album! 
@@ -67558,7 +67558,7 @@
 *** 36	Steve Case 
 *** 36	Stig Blomqvist 
 *** 36	Stina Nordenstam 
-*** 36	Stjepan Mesić 
+*** 36	Stjepan Mesi? 
 *** 36	Stobaeus 
 *** 36	Stock exchange 
 *** 36	Stoke City 
@@ -67772,12 +67772,12 @@
 *** 36	Upper Norwood 
 *** 36	Upper Palaeolithic 
 *** 36	Urticaceae 
-*** 36	Uryū Ishida 
+*** 36	Ury? Ishida 
 *** 36	Ust-Kamenogorsk 
 *** 36	Utrom 
 *** 36	V8 engine 
 *** 36	VF-1 Valkyrie 
-*** 36	Vaira Vīķe-Freiberga 
+*** 36	Vaira V??e-Freiberga 
 *** 36	Vairamuthu 
 *** 36	Valley Forge, Pennsylvania 
 *** 36	Valmet 
@@ -67798,7 +67798,7 @@
 *** 36	Volcanoes of Iceland 
 *** 36	Vortigaunt 
 *** 36	Vosges mountains 
-*** 36	Vuk Stefanović Karadžić 
+*** 36	Vuk Stefanovi? Karadži? 
 *** 36	WCVB-TV 
 *** 36	WTTG 
 *** 36	WW II 
@@ -67866,7 +67866,7 @@
 *** 36	Wrestlemania 22 
 *** 36	Wroxeter 
 *** 36	Wynn Las Vegas 
-*** 36	Władysław IV Vasa 
+*** 36	W?adys?aw IV Vasa 
 *** 36	Xcel Energy Center 
 *** 36	Xilinx 
 *** 36	Xorn 
@@ -68584,7 +68584,7 @@
 *** 35	Fujiwara clan 
 *** 35	Fulton County, New York 
 *** 35	Future Shock 
-*** 35	Făgăraş Mountains 
+*** 35	F?g?ra? Mountains 
 *** 35	G B Buckley 
 *** 35	GE Transportation Systems 
 *** 35	GRE 
@@ -68647,7 +68647,7 @@
 *** 35	Godfrey Reggio 
 *** 35	Gong 
 *** 35	Good Conduct Medal 
-*** 35	Goran Ivanišević 
+*** 35	Goran Ivaniševi? 
 *** 35	Gordon Highlanders 
 *** 35	Goulburn 
 *** 35	Gouraud shading 
@@ -68714,7 +68714,7 @@
 *** 35	Helmholtz free energy 
 *** 35	Helsinki Stock Exchange 
 *** 35	Hemet, California 
-*** 35	Henri Coandă 
+*** 35	Henri Coand? 
 *** 35	Henrik Lundqvist 
 *** 35	Hepatitis A 
 *** 35	Hephthalite 
@@ -68881,7 +68881,7 @@
 *** 35	Julian of Norwich 
 *** 35	Julie Burchill 
 *** 35	Julius II 
-*** 35	Juliusz Słowacki 
+*** 35	Juliusz S?owacki 
 *** 35	Jungian psychology 
 *** 35	Juscelino Kubitschek 
 *** 35	Justify My Love 
@@ -68951,7 +68951,7 @@
 *** 35	Kyoto protocol 
 *** 35	Kyubimon 
 *** 35	Köppen climate classification 
-*** 35	K�?rlis Ulmanis 
+*** 35	K?rlis Ulmanis 
 *** 35	LAAT 
 *** 35	LG Electronics 
 *** 35	LIFO 
@@ -68966,7 +68966,7 @@
 *** 35	Lampre-Caffita 
 *** 35	Lancashire Constabulary 
 *** 35	Lance Bass 
-*** 35	Landnámabók 
+*** 35	Landnamabók 
 *** 35	Landscape architecture 
 *** 35	Language policy 
 *** 35	Languages of France 
@@ -69183,7 +69183,7 @@
 *** 35	Military history of the Soviet Union 
 *** 35	Military of South Korea 
 *** 35	Miller's Crossing 
-*** 35	Miloslav Me�?íř 
+*** 35	Miloslav Me?f? 
 *** 35	Miltank 
 *** 35	Minister 
 *** 35	Ministry of Foreign Affairs 
@@ -69902,7 +69902,7 @@
 *** 35	Tom Thomson 
 *** 35	Tombigbee River 
 *** 35	Tommy Armour 
-*** 35	Toni Kuko�? 
+*** 35	Toni Kuko? 
 *** 35	Tonight, Tonight 
 *** 35	Tony Armas 
 *** 35	Tony Hatch 
@@ -69913,7 +69913,7 @@
 *** 35	Trailmon 
 *** 35	Transition metal 
 *** 35	Travel 
-*** 35	Travemünde 
+*** 35	TravemSnde 
 *** 35	Treaty of Brétigny 
 *** 35	Treaty of Maastricht 
 *** 35	Treaty of Ryswick 
@@ -70182,7 +70182,7 @@
 *** 34	Acumen Nation 
 *** 34	Adair County, Oklahoma 
 *** 34	Adam Foote 
-*** 34	Adam Małysz 
+*** 34	Adam Ma?ysz 
 *** 34	Adam's apple 
 *** 34	Adana Province 
 *** 34	Adelaide Plains 
@@ -70656,7 +70656,7 @@
 *** 34	Curtis Armstrong 
 *** 34	Curzon line 
 *** 34	Cyberspace 
-*** 34	Căile Ferate Române 
+*** 34	C?ile Ferate Române 
 *** 34	D H Lawrence 
 *** 34	D.D. Sheehan 
 *** 34	DBS Bank 
@@ -70944,7 +70944,7 @@
 *** 34	Gary Gaetti 
 *** 34	Gateway International Raceway 
 *** 34	Gatwick 
-*** 34	Gdańsk Bay 
+*** 34	Gda?sk Bay 
 *** 34	Gefreiter 
 *** 34	Gemini 6A 
 *** 34	Gene FitzGerald 
@@ -71095,7 +71095,7 @@
 *** 34	Howard Staunton 
 *** 34	Hugh Griffith 
 *** 34	Hugh Hewitt 
-*** 34	Husein Gradaš�?ević 
+*** 34	Husein Gradaš?evi* 
 *** 34	Huub Rothengatter 
 *** 34	Huy 
 *** 34	Hyde Park, New York 
@@ -71165,7 +71165,7 @@
 *** 34	It's Walky! 
 *** 34	Ituri 
 *** 34	Iveco 
-*** 34	Ivo Andrić 
+*** 34	Ivo Andri? 
 *** 34	Ivory-billed Woodpecker 
 *** 34	Ixelles 
 *** 34	JATO 
@@ -71187,16 +71187,16 @@
 *** 34	James Moody 
 *** 34	Jamie Moyer 
 *** 34	Jamie Redknapp 
-*** 34	Jan Długosz 
+*** 34	Jan D?ugosz 
 *** 34	Jan Kochanowski 
-*** 34	Jan �?ukasiewicz 
+*** 34	Jan ?ukasiewicz 
 *** 34	Japanese animation 
 *** 34	Japanese idol 
 *** 34	Jared Harris 
 *** 34	Jason David Frank 
 *** 34	Javier Grillo-Marxuach 
 *** 34	Jayaatu Khan 
-*** 34	Jaén 
+*** 34	JaHn 
 *** 34	Jean Buridan 
 *** 34	Jean Giraudoux 
 *** 34	Jean Hersholt 
@@ -71471,7 +71471,7 @@
 *** 34	Manfred von Brauchitsch 
 *** 34	Manitoba Junior Hockey League 
 *** 34	Mannes College of Music 
-*** 34	Maramureş County 
+*** 34	Maramure? County 
 *** 34	Marc Wilmots 
 *** 34	Marcellin Berthelot 
 *** 34	March Madness 
@@ -71600,7 +71600,7 @@
 *** 34	Musical composition 
 *** 34	Muskegon County, Michigan 
 *** 34	Muvattupuzha 
-*** 34	Muğla Province 
+*** 34	Mu?la Province 
 *** 34	My Hero 
 *** 34	My Name Is 
 *** 34	My Prerogative 
@@ -71786,7 +71786,7 @@
 *** 34	Peter II of Aragon 
 *** 34	Peter Rauhofer 
 *** 34	Peter Sutcliffe 
-*** 34	Petr Čech 
+*** 34	Petr ?ech 
 *** 34	Petrushka 
 *** 34	Petworth 
 *** 34	Peugeot 504 
@@ -71988,7 +71988,7 @@
 *** 34	Ryan ten Doeschate 
 *** 34	Rye House Plot 
 *** 34	Río Gallegos 
-*** 34	R�?maji 
+*** 34	R?maji 
 *** 34	S Club 8 
 *** 34	S/MIME 
 *** 34	SAP 
@@ -72013,7 +72013,7 @@
 *** 34	Sai Ying Pun 
 *** 34	Sailor Stars 
 *** 34	Saint John Bosco 
-*** 34	Saint-Germain-des-Prés 
+*** 34	Saint-Germain-des-Pr s 
 *** 34	Salaam Namaste 
 *** 34	Salisbury University 
 *** 34	Sally Hemings 
@@ -72179,7 +72179,7 @@
 *** 34	St. Paul's Episcopal Church 
 *** 34	Stage Door 
 *** 34	Stane Street 
-*** 34	Stanisław Żółkiewski 
+*** 34	Stanis?aw ?ó?kiewski 
 *** 34	Stankonia 
 *** 34	Stanley Turrentine 
 *** 34	Star Fox series 
@@ -72188,7 +72188,7 @@
 *** 34	States of Jersey 
 *** 34	Station to Station 
 *** 34	Stealing from Saturn 
-*** 34	Stefan Lazarević 
+*** 34	Stefan Lazarevi? 
 *** 34	Stefanie Powers 
 *** 34	Stendal 
 *** 34	Stephen Boyd 
@@ -72369,7 +72369,7 @@
 *** 34	Two player 
 *** 34	Type 23 frigate 
 *** 34	Tyrogue 
-*** 34	T�?ru Furuya 
+*** 34	T?ru Furuya 
 *** 34	U.S. Highway 101 
 *** 34	U.S. Highway System 
 *** 34	U.S. Naval Reserve 
@@ -72408,7 +72408,7 @@
 *** 34	University of Wisconsin Law School 
 *** 34	University of Wisconsin-Eau Claire 
 *** 34	University of the Philippines, Diliman 
-*** 34	Université de Moncton 
+*** 34	Universit  de Moncton 
 *** 34	Upper Marlboro, Maryland 
 *** 34	Ur-Nammu 
 *** 34	User Datagram Protocol 
@@ -72465,7 +72465,7 @@
 *** 34	War on Poverty 
 *** 34	Warner Baxter 
 *** 34	Warren Spector 
-*** 34	Warta Poznań 
+*** 34	Warta Pozna? 
 *** 34	Warwick Castle 
 *** 34	Warwickshire County Cricket Club 
 *** 34	Watch on the Rhine 
@@ -73648,10 +73648,10 @@
 *** 33	Israel Defense Force 
 *** 33	Isuzu Gemini 
 *** 33	Italian Liberal Party 
-*** 33	Ivan Gašparovi�? 
+*** 33	Ivan Gašparovi? 
 *** 33	Ivan IV 
 *** 33	Ivan Mazepa 
-*** 33	Ivica Ra�?an 
+*** 33	Ivica Rad?an 
 *** 33	Ivrea 
 *** 33	J-Kwon 
 *** 33	J. Jayalalithaa 
@@ -73837,7 +73837,7 @@
 *** 33	Kurt Schuschnigg 
 *** 33	Kyle Broflovski 
 *** 33	Køge 
-*** 33	K�?haku Uta Gassen 
+*** 33	K?haku Uta Gassen 
 *** 33	LBC 97.3 
 *** 33	LG Group 
 *** 33	LPMud 
@@ -73953,7 +73953,7 @@
 *** 33	Lorenzo de Medici 
 *** 33	Lorne Pierce Medal 
 *** 33	Lou Albano 
-*** 33	Louis Blériot 
+*** 33	Louis Blariot 
 *** 33	Louis Hennepin 
 *** 33	Louis Sachar 
 *** 33	Louis XVII of France 
@@ -74107,7 +74107,7 @@
 *** 33	Missouri City, Texas 
 *** 33	Missouri State University 
 *** 33	Mitropa Cup 
-*** 33	Międzymorze 
+*** 33	Mi?dzymorze 
 *** 33	Modern Hebrew 
 *** 33	Moerdijk 
 *** 33	Moffat 
@@ -74154,7 +74154,7 @@
 *** 33	NDH 
 *** 33	NJ 
 *** 33	NK Zagreb 
-*** 33	NK Željezni�?ar 
+*** 33	NK Željezni?ar 
 *** 33	Nadar 
 *** 33	Nahor 
 *** 33	Naked Snake 
@@ -74206,7 +74206,7 @@
 *** 33	Niels Bohr Institute 
 *** 33	Nieuwe Maas 
 *** 33	Nihon-shiki 
-*** 33	Nikšić 
+*** 33	Nikši? 
 *** 33	Nine Men's Morris 
 *** 33	Nizlopi 
 *** 33	Nobuhiro Watsuki 
@@ -74733,7 +74733,7 @@
 *** 33	Stade Félix Bollaert 
 *** 33	Stand and Deliver 
 *** 33	Standard Grade 
-*** 33	Stanisław Koniecpolski 
+*** 33	Stanis?aw Koniecpolski 
 *** 33	Stanley Forman Reed 
 *** 33	Star Fleet Battles 
 *** 33	Star Trek Expanded Universe 
@@ -74971,8 +74971,8 @@
 *** 33	Tyson Foods 
 *** 33	Tzeentch 
 *** 33	Tír na nÓg 
-*** 33	T�?h�? 
-*** 33	T�?shir�? Hitsugaya 
+*** 33	T?hi? 
+*** 33	T?shirT? Hitsugaya 
 *** 33	U.S. Bureau of Reclamation 
 *** 33	U.S. Highway 78 
 *** 33	U.S. Route 19 
@@ -75164,13 +75164,13 @@
 *** 33	Zheng Jie 
 *** 33	Zork Grand Inquisitor 
 *** 33	Zosteropidae 
-*** 33	Zre�?e 
+*** 33	Zre?e 
 *** 33	Zrinski 
 *** 33	Zuid-Beveland 
 *** 33	Zuider Zee 
-*** 33	Özhan Öztürk 
+*** 33	nzhan Öztürk 
 *** 33	Épinal 
-*** 33	�?omża 
+*** 33	?omna 
 *** 32	' 
 *** 32	'Til Tuesday 
 *** 32	...For Dummies 
@@ -75986,7 +75986,7 @@
 *** 32	Ermelo 
 *** 32	Ernest Istook 
 *** 32	Ernest Nagel 
-*** 32	Ernő Goldfinger 
+*** 32	Ern? Goldfinger 
 *** 32	Esgaroth 
 *** 32	Espionage Act of 1917 
 *** 32	Essaouira 
@@ -76120,7 +76120,7 @@
 *** 32	Full Force 
 *** 32	Funkstörung 
 *** 32	Félix Leclerc 
-*** 32	Făgăraş 
+*** 32	F?g?ra? 
 *** 32	GB 
 *** 32	GI 
 *** 32	Gabriel Narutowicz 
@@ -76829,7 +76829,7 @@
 *** 32	Me, Myself and Irene 
 *** 32	Media transparency 
 *** 32	MediaWiki:Monobook.css 
-*** 32	Mediaş 
+*** 32	Media? 
 *** 32	Mega Man Anniversary Collection 
 *** 32	Meganium 
 *** 32	Meitnerium 
@@ -76876,8 +76876,8 @@
 *** 32	Minnan 
 *** 32	Minnesota Golden Gophers 
 *** 32	Mirfield 
-*** 32	Mirna Pe�? 
-*** 32	Mirwais Ahmadzaï 
+*** 32	Mirna Pe? 
+*** 32	Mirwais AhmadzaL 
 *** 32	Misfits of Science 
 *** 32	Mishawaka, Indiana 
 *** 32	Miss Universe Organization 
@@ -77241,7 +77241,7 @@
 *** 32	Punta del Este 
 *** 32	Purple Swamphen 
 *** 32	Pyrginae 
-*** 32	Přemyslid dynasty 
+*** 32	P?emyslid dynasty 
 *** 32	Qaanaaq 
 *** 32	Qian Chu 
 *** 32	Quake III engine 
@@ -77563,7 +77563,7 @@
 *** 32	Spanish treasure fleet 
 *** 32	Spartanburg County, South Carolina 
 *** 32	Spiraea 
-*** 32	Sportul Studenţesc 
+*** 32	Sportul Studen?esc 
 *** 32	Spring Break 
 *** 32	Spud Chandler 
 *** 32	Spyro the Dragon 
@@ -77921,7 +77921,7 @@
 *** 32	Vouliagmeni 
 *** 32	Vrhnika 
 *** 32	Vyazma 
-*** 32	Věra Čáslavská 
+*** 32	V?ra ?áslavská 
 *** 32	W (Double You) 
 *** 32	WBRC 
 *** 32	WBUR 
@@ -78036,7 +78036,7 @@
 *** 32	World of Sport 
 *** 32	World of Warcraft: The Burning Crusade 
 *** 32	Worthington, Ohio 
-*** 32	Władysław Kozaczuk 
+*** 32	W?adys?aw Kozaczuk 
 *** 32	X-Antibody 
 *** 32	XIX century 
 *** 32	XM 
@@ -78078,10 +78078,10 @@
 *** 32	Élie Cartan 
 *** 32	Ériu 
 *** 32	Étienne-Paschal Taché 
-*** 32	�?ed Find 
-*** 32	İzmir Province 
-*** 32	Čakovec 
-*** 32	�?urađ Branković 
+*** 32	?ed Find 
+*** 32	2zmir Province 
+*** 32	?akovec 
+*** 32	?uraa Brankovi? 
 *** 32	Šokci 
 *** 32	Šumadija 
 *** 31	.303 British 
@@ -78449,7 +78449,7 @@
 *** 31	Boeing Company 
 *** 31	Bohemianism 
 *** 31	Bokhara 
-*** 31	Bolesław Bierut 
+*** 31	Boles?aw Bierut 
 *** 31	Bologna F.C. 1909 
 *** 31	Bottle Rocket 
 *** 31	Bowhead Whale 
@@ -78509,7 +78509,7 @@
 *** 31	Byung-Hyun Kim 
 *** 31	C-pop 
 *** 31	C-reactive protein 
-*** 31	C.D. �?guila 
+*** 31	C.D. ?guila 
 *** 31	C.R.A.Z.Y. 
 *** 31	C.S. Forester 
 *** 31	C/Z Records 
@@ -78519,7 +78519,7 @@
 *** 31	CENTCOM 
 *** 31	CRC 
 *** 31	CRM 
-*** 31	CS Marítimo 
+*** 31	CS Mar timo 
 *** 31	CSD Municipal 
 *** 31	CTSS 
 *** 31	Cable 
@@ -78771,7 +78771,7 @@
 *** 31	DOOM 
 *** 31	DTV 
 *** 31	Dagoth Ur 
-*** 31	Daisuke G�?ri 
+*** 31	Daisuke G?ri 
 *** 31	Daisy-Democracy is Freedom 
 *** 31	Dale Carnegie 
 *** 31	Dallas Observer 
@@ -78780,7 +78780,7 @@
 *** 31	Dan Spivey 
 *** 31	Danforth Avenue 
 *** 31	Dani California 
-*** 31	Daniel François Malan 
+*** 31	Daniel Fran1ois Malan 
 *** 31	Danny Masterson 
 *** 31	Dante's Inferno 
 *** 31	Danubio 
@@ -79309,7 +79309,7 @@
 *** 31	His Last Bow 
 *** 31	Historical novel 
 *** 31	History of the European Union 
-*** 31	Hlu�?ínsko 
+*** 31	Hlu?1nsko 
 *** 31	Ho Chi Minh Trail 
 *** 31	Hoffa 
 *** 31	Hogwarts School of Witchcraft and Wizardry 
@@ -80002,7 +80002,7 @@
 *** 31	Mule 
 *** 31	Mungyeong 
 *** 31	Muppets Tonight 
-*** 31	Mureş River 
+*** 31	Mure? River 
 *** 31	Murray Perahia 
 *** 31	Music of Jamaica 
 *** 31	Musique concrète 
@@ -80269,7 +80269,7 @@
 *** 31	Plastic Bertrand 
 *** 31	Plaza Amador 
 *** 31	Pliska 
-*** 31	Plzeň Region 
+*** 31	Plze? Region 
 *** 31	Plön 
 *** 31	Pocklington 
 *** 31	Police Story 
@@ -81196,7 +81196,7 @@
 *** 31	Zucchero 
 *** 31	Zürich Main Station 
 *** 31	Étienne Brûlé 
-*** 31	�?ęczyca 
+*** 31	?nczyca 
 *** 30	.303 
 *** 30	1 Esdras 
 *** 30	117th IOC Session 
@@ -81478,7 +81478,7 @@
 *** 30	Babs Bunny 
 *** 30	Back to the Future: The Animated Series 
 *** 30	Backstroke 
-*** 30	Bacău County 
+*** 30	Bac?u County 
 *** 30	Bad Gastein 
 *** 30	Badenoch and Strathspey 
 *** 30	Bahrain Grand Prix 
@@ -81676,7 +81676,7 @@
 *** 30	Burton K. Wheeler 
 *** 30	Bushwick Bill 
 *** 30	Buttermere 
-*** 30	Buzău County 
+*** 30	Buz?u County 
 *** 30	Bømlo 
 *** 30	C.D. Howe 
 *** 30	CAM 
@@ -81819,7 +81819,7 @@
 *** 30	Church of Christ (Temple Lot) 
 *** 30	Churchgate 
 *** 30	Churchill College, Cambridge 
-*** 30	Chữ nôm 
+*** 30	Ch? nôm 
 *** 30	Circadian rhythm 
 *** 30	Circulatory system 
 *** 30	Citroën CX 
@@ -81878,7 +81878,7 @@
 *** 30	Conrad III of Germany 
 *** 30	Conrad IV of Germany 
 *** 30	Constantine X 
-*** 30	Constanţa County 
+*** 30	Constan?a County 
 *** 30	Constitutional Court 
 *** 30	Cool (African philosophy) 
 *** 30	Copenhagen Metro 
@@ -82588,7 +82588,7 @@
 *** 30	Information entropy 
 *** 30	Ingrid Pitt 
 *** 30	Inner Sphere 
-*** 30	Inowrocław 
+*** 30	Inowroc?aw 
 *** 30	InsideOut 
 *** 30	Inspector Lestrade 
 *** 30	Instant Messaging 
@@ -82843,7 +82843,7 @@
 *** 30	Kwansei Gakuin University 
 *** 30	Kyle Rote 
 *** 30	Kópavogur 
-*** 30	Kłodzko 
+*** 30	K?odzko 
 *** 30	L.E.G.I.O.N. 
 *** 30	LC circuit 
 *** 30	LU decomposition 
@@ -83502,8 +83502,8 @@
 *** 30	Playboy Special Edition 
 *** 30	Pliny's Natural History 
 *** 30	Pochhammer symbol 
-*** 30	Pod�?etrtek 
-*** 30	Poincaré duality 
+*** 30	Pod?etrtek 
+*** 30	Poincar* duality 
 *** 30	Pokémon Stadium 2 
 *** 30	Pola 
 *** 30	Police Quest 
@@ -84033,7 +84033,7 @@
 *** 30	Terceira Island 
 *** 30	Terek Sandpiper 
 *** 30	Teresa Nielsen Hayden 
-*** 30	Teresa of �?vila 
+*** 30	Teresa of ?vila 
 *** 30	Terrence Trammell 
 *** 30	Terry McAuliffe 
 *** 30	Texas County, Missouri 
@@ -84478,10 +84478,10 @@
 *** 30	Émile Borel 
 *** 30	Émilie Heymans 
 *** 30	Étampes 
-*** 30	Český Těšín 
+*** 30	?eský T?šín 
 *** 30	Ž 
-*** 30	Świecie 
-*** 30	Ştefan cel Mare 
+*** 30	?wiecie 
+*** 30	?tefan cel Mare 
 *** 29	&quot;Weird Al&quot; Yankovic in 3-D 
 *** 29	.net 
 *** 29	1 Chronicles 
@@ -84712,7 +84712,7 @@
 *** 29	Areography 
 *** 29	Aretas IV Philopatris 
 *** 29	Arethuseae 
-*** 29	Argeş County 
+*** 29	Arge? County 
 *** 29	Aris FC 
 *** 29	Aristolochiaceae 
 *** 29	Arkansas Project 
@@ -84782,7 +84782,7 @@
 *** 29	Baltasar Garzón 
 *** 29	Baltimore Bayhawks 
 *** 29	Baltimore-Washington International Airport 
-*** 29	Balıkesir Province 
+*** 29	Bal?kesir Province 
 *** 29	Bam Bam Bigelow 
 *** 29	Banda Islands 
 *** 29	Bandung Conference 
@@ -84921,7 +84921,7 @@
 *** 29	Borough High Street 
 *** 29	Boston Braves 
 *** 29	Boston Phoenix 
-*** 29	Botoşani 
+*** 29	Boto?ani 
 *** 29	Bovington Tank Museum 
 *** 29	Bow 
 *** 29	Bowie knife 
@@ -85312,7 +85312,7 @@
 *** 29	Display PostScript 
 *** 29	Distillation 
 *** 29	Divine Light Mission 
-*** 29	Diyarbakır Province 
+*** 29	Diyarbak?r Province 
 *** 29	Dizziness 
 *** 29	Dmitar Zvonimir 
 *** 29	Doak Walker 
@@ -86030,7 +86030,7 @@
 *** 29	Jersey Zoo 
 *** 29	Jerzy Buzek 
 *** 29	Jerzy Grotowski 
-*** 29	Jerzy Różycki 
+*** 29	Jerzy Ró?ycki 
 *** 29	Jesse Pintado 
 *** 29	Jetstar Asia Airways 
 *** 29	Jewish ethnic divisions 
@@ -86404,7 +86404,7 @@
 *** 29	Mantineia 
 *** 29	Manu Dibango 
 *** 29	Manu Katché 
-*** 29	Manuel �?vila Camacho 
+*** 29	Manuel ?vila Camacho 
 *** 29	Manx language 
 *** 29	Mao: The Unknown Story 
 *** 29	Maori Wars 
@@ -86413,7 +86413,7 @@
 *** 29	Mara 
 *** 29	Maranao 
 *** 29	Marathon Oil 
-*** 29	Marc Lépine 
+*** 29	Marc LLpine 
 *** 29	Marca Hispanica 
 *** 29	Marcia Strassman 
 *** 29	Marconi Company 
@@ -86544,7 +86544,7 @@
 *** 29	Milky Way galaxy 
 *** 29	Millennium Commission 
 *** 29	Milo Manara 
-*** 29	Milo �?ukanović 
+*** 29	Milo ?ukanovi
 *** 29	Milt Pappas 
 *** 29	Milton Academy 
 *** 29	Mina 
@@ -86715,14 +86715,14 @@
 *** 29	Norman Hunter 
 *** 29	Norman Lamm 
 *** 29	Norris McWhirter 
-*** 29	North Ba�?ka District 
+*** 29	North Ba?ka District 
 *** 29	North Central College 
 *** 29	Northern Star 
 *** 29	Northumbria University 
 *** 29	Northwest Frontier Province 
 *** 29	Norwegian University of Science and Technology 
 *** 29	Nostalgia 
-*** 29	Notre-Dame-de-Grâce 
+*** 29	Notre-Dame-de-Gr*ce 
 *** 29	Nuffield College, Oxford 
 *** 29	Nyquist–Shannon sampling theorem 
 *** 29	Nór 
@@ -87039,7 +87039,7 @@
 *** 29	Requirements analysis 
 *** 29	Reserve Fleet 
 *** 29	Rex Brown 
-*** 29	Reşiţa 
+*** 29	Re?i?a 
 *** 29	Rhaetia 
 *** 29	Rhinoceros Party of Canada 
 *** 29	Rhizobiales 
@@ -87254,12 +87254,12 @@
 *** 29	Shin Megami Tensei 
 *** 29	Shin-Ei 
 *** 29	Shinzon 
-*** 29	Sh�?jo 
+*** 29	Sh?jo 
 *** 29	Sicherheitspolizei 
 *** 29	Sidney Altman 
 *** 29	Sidney Spivak 
 *** 29	Siege of Tobruk 
-*** 29	Sigmund Jähn 
+*** 29	Sigmund Jthn 
 *** 29	Silk Cut 
 *** 29	Silk Stockings 
 *** 29	Silvio Moser 
@@ -87863,7 +87863,7 @@
 *** 29	Yuppie 
 *** 29	Z Magazine 
 *** 29	Zachary Scott 
-*** 29	Zagłębie Sosnowiec 
+*** 29	Zag??bie Sosnowiec 
 *** 29	Zane Truesdale 
 *** 29	Zara Phillips 
 *** 29	Zat 
@@ -87888,10 +87888,10 @@
 *** 29	Éamon Ó Cuív 
 *** 29	École Pratique des Hautes Études 
 *** 29	Émile Augier 
-*** 29	�?lvar Núñez Cabeza de Vaca 
-*** 29	�?safjörður 
-*** 29	�?KS �?ódź 
-*** 29	�?ańcut 
+*** 29	?lvar Ntñez Cabeza de Vaca 
+*** 29	?safj*rður 
+*** 29	?KS  ?ód? 
+*** 29	?aacut 
 *** 28	1 John 
 *** 28	1. divisjon 
 *** 28	10 Hygiea 
@@ -88263,7 +88263,7 @@
 *** 28	Battle of Munda 
 *** 28	Battle of Rhode Island 
 *** 28	Battle of Sluys 
-*** 28	Battle of al-Q�?disiyyah 
+*** 28	Battle of al-Q?disiyyah 
 *** 28	Baudouin I 
 *** 28	Bauru 
 *** 28	Baxter Building 
@@ -88815,7 +88815,7 @@
 *** 28	Desilu 
 *** 28	Detroit Whalers 
 *** 28	Deutschland sucht den Superstar 
-*** 28	Deşteaptă-te, române! 
+*** 28	De?teapt?-te, române! 
 *** 28	Dholavira 
 *** 28	Dick Butkus Award 
 *** 28	Dick Durbin 
@@ -89067,7 +89067,7 @@
 *** 28	Fluoride 
 *** 28	Fo Guang Shan 
 *** 28	Focal length 
-*** 28	Focşani 
+*** 28	Foc?ani 
 *** 28	Folk-Rock 
 *** 28	Folksonomy 
 *** 28	Fondi 
@@ -89402,7 +89402,7 @@
 *** 28	Hugh III of Cyprus 
 *** 28	Hugh Lawson White 
 *** 28	Hugh the younger Despenser 
-*** 28	Hugo Kołłątaj 
+*** 28	Hugo Ko???taj 
 *** 28	Hula 
 *** 28	Huneric 
 *** 28	Huntsville International Airport 
@@ -89414,7 +89414,7 @@
 *** 28	Hyderabad state 
 *** 28	Hyperopia 
 *** 28	Hélène Cixous 
-*** 28	Hódmezővásárhely 
+*** 28	Hódmez?vásárhely 
 *** 28	I Can't Help Myself (Sugar Pie, Honey Bunch) 
 *** 28	I Shot Andy Warhol 
 *** 28	IAC/InterActiveCorp 
@@ -89473,7 +89473,7 @@
 *** 28	Into the Rush 
 *** 28	Invalid proof 
 *** 28	Iolo Morganwg 
-*** 28	Ion I. C. Brătianu 
+*** 28	Ion I. C. Br?tianu 
 *** 28	Iowa, Chicago and Eastern Railroad 
 *** 28	Ipanema 
 *** 28	Ira Steven Behr 
@@ -89690,7 +89690,7 @@
 *** 28	KLOS 
 *** 28	KPWR 
 *** 28	KTVK 
-*** 28	Kadaň 
+*** 28	Kada? 
 *** 28	Kaiser Wilhelm 
 *** 28	Kaiser Wilhelm Institute 
 *** 28	Kaloyan 
@@ -90452,7 +90452,7 @@
 *** 28	Paul Davis 
 *** 28	Paul Dewar 
 *** 28	Paul McStay 
-*** 28	Pavel Nedvěd 
+*** 28	Pavel Nedv?d 
 *** 28	Pays de Caux 
 *** 28	Peggy Hill 
 *** 28	Pekin, Illinois 
@@ -90630,10 +90630,10 @@
 *** 28	Rachel Ward 
 *** 28	Rad Racer 
 *** 28	Radenci 
-*** 28	Rade�?e 
+*** 28	Rade?e 
 *** 28	Radio &amp; Records 
 *** 28	Radioactive decay 
-*** 28	Rafael Frühbeck de Burgos 
+*** 28	Rafael Fr hbeck de Burgos 
 *** 28	Raghuvaran 
 *** 28	Rainbow Gathering 
 *** 28	Raine Maida 
@@ -91016,7 +91016,7 @@
 *** 28	Stacked 
 *** 28	Stamp Act Congress 
 *** 28	Stan Ridgway 
-*** 28	Stanisław Maczek 
+*** 28	Stanis?aw Maczek 
 *** 28	Star Trek: Voyager Elite Force 
 *** 28	Starland Vocal Band 
 *** 28	StarrCade 
@@ -91354,7 +91354,7 @@
 *** 28	Tyrannidae 
 *** 28	Tyrone Guthrie 
 *** 28	Tyrosine 
-*** 28	Târnăveni 
+*** 28	Târn?veni 
 *** 28	U-Haul 
 *** 28	U.S. Amateur Championship 
 *** 28	U.S. Department of Labor 
@@ -91479,7 +91479,7 @@
 *** 28	Vung Tau 
 *** 28	Västra Frölunda IF 
 *** 28	Vårdö 
-*** 28	Vítězslav Novák 
+*** 28	Vít?zslav Novák 
 *** 28	W. H. Davies 
 *** 28	W.O. Mitchell 
 *** 28	WFLD 
@@ -91643,11 +91643,11 @@
 *** 28	Çanakkale 
 *** 28	Åbo 
 *** 28	Ådne Søndrål 
-*** 28	�?slendingabók 
+*** 28	?slendingabdk 
 *** 28	Š 
 *** 28	Šentilj 
-*** 28	Šubić 
-*** 28	Żnin 
+*** 28	Šubi? 
+*** 28	?nin 
 *** 28	…And You Will Know Us by the Trail of Dead 
 *** 27	.hack//INFECTION 
 *** 27	1,039/Smoothed Out Slappy Hours 
@@ -91925,7 +91925,7 @@
 *** 27	Ardal O'Hanlon 
 *** 27	Ards Peninsula 
 *** 27	Area Code 
-*** 27	Argeş River 
+*** 27	Arge? River 
 *** 27	Arians 
 *** 27	Aristaeus 
 *** 27	Arlington Park 
@@ -92077,7 +92077,7 @@
 *** 27	Betty Cooper 
 *** 27	Beverley Hughes 
 *** 27	Beverly Hills Cop III 
-*** 27	Beşiktaş 
+*** 27	Be?ikta? 
 *** 27	Bharatiya Lok Dal 
 *** 27	Bharrat Jagdeo 
 *** 27	Bhubaneshwar 
@@ -93057,7 +93057,7 @@
 *** 27	Gordon the Big Engine 
 *** 27	Gore Verbinski 
 *** 27	Goshawk 
-*** 27	Gospić 
+*** 27	Gospi? 
 *** 27	Gothenburg-Landvetter Airport 
 *** 27	Gothic Revival architecture 
 *** 27	Government of Quebec 
@@ -93124,7 +93124,7 @@
 *** 27	Hague Convention 
 *** 27	Haifa University 
 *** 27	Hairspray 
-*** 27	Hakan Şükür 
+*** 27	Hakan ?ükür 
 *** 27	Hal Davis 
 *** 27	Hal Pereira 
 *** 27	Hal Smith 
@@ -93421,7 +93421,7 @@
 *** 27	James Wong Howe 
 *** 27	Jan Bos 
 *** 27	Jan Brueghel the Elder 
-*** 27	Jan Evangelista Purkyně 
+*** 27	Jan Evangelista Purkyn? 
 *** 27	Jana Gana Mana 
 *** 27	Janny Wurts 
 *** 27	Janwillem van de Wetering 
@@ -93450,7 +93450,7 @@
 *** 27	Jefferson Parish 
 *** 27	Jennifer Esposito 
 *** 27	Jens Lekman 
-*** 27	Jeremi Wiśniowiecki 
+*** 27	Jeremi Wi?niowiecki 
 *** 27	Jeremy Rifkin 
 *** 27	Jerome Lawrence 
 *** 27	Jerry Leiber and Mike Stoller 
@@ -94905,7 +94905,7 @@
 *** 27	Serious Organised Crime and Police Act 2005 
 *** 27	Server Message Block 
 *** 27	Sesamstraat 
-*** 27	Sessh�?maru 
+*** 27	Sessh?maru 
 *** 27	Seven Sages of Greece 
 *** 27	Severe acute respiratory syndrome 
 *** 27	Severia 
@@ -95039,7 +95039,7 @@
 *** 27	Standard Oil Company 
 *** 27	Standard missile 
 *** 27	Stanford Stadium 
-*** 27	Stanisław Mikołajczyk 
+*** 27	Stanis?aw Miko?ajczyk 
 *** 27	Stanley Jordan 
 *** 27	Stanley Rowley 
 *** 27	Stantler 
@@ -95118,7 +95118,7 @@
 *** 27	Syriac Christianity 
 *** 27	Sábado Gigante 
 *** 27	Süddeutsche Zeitung 
-*** 27	Służba Bezpieczeństwa 
+*** 27	S?u?ba Bezpiecze?stwa 
 *** 27	T-28 
 *** 27	T. V. Soong 
 *** 27	TOPGUN 
@@ -95502,7 +95502,7 @@
 *** 27	Vitória de Setúbal 
 *** 27	Vladislav Volkov 
 *** 27	Vocal Majority 
-*** 27	Voja Antonić 
+*** 27	Voja Antoni? 
 *** 27	Volkswagen AG 
 *** 27	Volynia 
 *** 27	Vostok 6 
@@ -95545,7 +95545,7 @@
 *** 27	Wayne Morse 
 *** 27	Wayra Peru 
 *** 27	We Don't Need to Whisper 
-*** 27	We ♥ Katamari 
+*** 27	We ? Katamari 
 *** 27	WebKit 
 *** 27	Welfare state 
 *** 27	Wendy Padbury 
@@ -95638,7 +95638,7 @@
 *** 27	Wyndham Halswelle 
 *** 27	Wythenshawe 
 *** 27	Wyvern 
-*** 27	Władysław I the Elbow-high 
+*** 27	W?adys?aw I the Elbow-high 
 *** 27	X band 
 *** 27	X-Games 
 *** 27	X/Open 
@@ -95689,7 +95689,7 @@
 *** 27	Zond program 
 *** 27	Zora 
 *** 27	Zoë Ball 
-*** 27	Zygmunt Krasiński 
+*** 27	Zygmunt Krasi?ski 
 *** 27	Zygomycota 
 *** 27	Überlingen 
 *** 27	Újpesti TE 
@@ -95699,14 +95699,14 @@
 *** 27	École des Hautes Études en Sciences Sociales 
 *** 27	Édouard Lalo 
 *** 27	Évry 
-*** 27	�?akovica 
-*** 27	Şanlıurfa Province 
+*** 27	?akovica 
+*** 27	Lanl?urfa Province 
 *** 27	Œ 
-*** 27	�? 
+*** 27	? 
 *** 26	$pringfield 
 *** 26	'Salem's Lot 
 *** 26	1 Thessalonians 
-*** 26	1.FC Köln 
+*** 26	1.FC KWln 
 *** 26	1020s BC 
 *** 26	1030s BC 
 *** 26	1100s BC 
@@ -96053,7 +96053,7 @@
 *** 26	Avril Doyle 
 *** 26	Avro Manchester 
 *** 26	Axl Rotten 
-*** 26	Aydın Province 
+*** 26	Ayd?n Province 
 *** 26	Azerbaijan Airlines 
 *** 26	Aztec calendar 
 *** 26	Azumarill 
@@ -96264,7 +96264,7 @@
 *** 26	Branches of Religion 
 *** 26	Brandon Routh 
 *** 26	Brantford 
-*** 26	Braslov�?e 
+*** 26	Braslov?e 
 *** 26	Bratsk 
 *** 26	Braunau am Inn 
 *** 26	Breakfast in America 
@@ -96294,7 +96294,7 @@
 *** 26	Britney and Kevin: Chaotic 
 *** 26	Broad gauge 
 *** 26	Broken Lizard 
-*** 26	Brossard—La Prairie 
+*** 26	Brossard6La Prairie 
 *** 26	Bruce Reid 
 *** 26	Bruce South 
 *** 26	Bruck an der Mur 
@@ -96634,7 +96634,7 @@
 *** 26	Cyril M. Kornbluth 
 *** 26	Cytotoxic T cell 
 *** 26	Czech Legion 
-*** 26	Călin Popescu-Tăriceanu 
+*** 26	C?lin Popescu-T?riceanu 
 *** 26	D programming language 
 *** 26	D. J. Enright 
 *** 26	DCL 
@@ -96797,7 +96797,7 @@
 *** 26	Dragonball 
 *** 26	Dragostea Din Tei 
 *** 26	Drahmin 
-*** 26	Dražen Petrović 
+*** 26	Dražen Petrovi? 
 *** 26	Dresden Staatskapelle 
 *** 26	Dressy Bessy 
 *** 26	Driver: Parallel Lines 
@@ -96824,9 +96824,9 @@
 *** 26	Dusclops 
 *** 26	Dwaraka 
 *** 26	Dyersburg, Tennessee 
-*** 26	Dąbrowa Górnicza 
-*** 26	Dě�?ín 
-*** 26	D�?jinshi 
+*** 26	D?browa Górnicza 
+*** 26	D?? n 
+*** 26	D?jinshi 
 *** 26	E-Ring 
 *** 26	EA Los Angeles 
 *** 26	EBITDA 
@@ -96868,7 +96868,7 @@
 *** 26	Eastern Wei Dynasty 
 *** 26	Easton 
 *** 26	Ebonics 
-*** 26	Eckerö 
+*** 26	Ecker  
 *** 26	Economy of Asia 
 *** 26	Ecruteak City 
 *** 26	Ed Olczyk 
@@ -97271,7 +97271,7 @@
 *** 26	Grace Zabriskie 
 *** 26	Graham Bonnet 
 *** 26	Grammatical mood 
-*** 26	Grand Duchy of Poznań 
+*** 26	Grand Duchy of Pozna? 
 *** 26	Grand Haven, Michigan 
 *** 26	Grand Slam bomb 
 *** 26	Grande Arche 
@@ -97321,7 +97321,7 @@
 *** 26	Guy Bolton 
 *** 26	Guy Vanderhaeghe 
 *** 26	Gwendolyn MacEwen 
-*** 26	Győr-Moson-Sopron 
+*** 26	Gy?r-Moson-Sopron 
 *** 26	Gérald Tremblay 
 *** 26	Géza 
 *** 26	H game 
@@ -97784,7 +97784,7 @@
 *** 26	Junín Region 
 *** 26	Jury 
 *** 26	Jötunheimr 
-*** 26	Jūrmala 
+*** 26	J?rmala 
 *** 26	KCR Ma On Shan Rail 
 *** 26	KDDI 
 *** 26	KNSD 
@@ -97800,7 +97800,7 @@
 *** 26	Kamal Kharrazi 
 *** 26	Kamilaroi 
 *** 26	Kanakadasa 
-*** 26	Kaname T�?sen 
+*** 26	Kaname T?sen 
 *** 26	Kanata, Ontario 
 *** 26	Kanmon Straits 
 *** 26	Kansas City Brigade 
@@ -97881,7 +97881,7 @@
 *** 26	Kirtland Safety Society 
 *** 26	Kitaro 
 *** 26	Kitsch 
-*** 26	Klaipėda County 
+*** 26	Klaipwda County 
 *** 26	Klaus Badelt 
 *** 26	Klaus Mann 
 *** 26	Klaw 
@@ -98189,7 +98189,7 @@
 *** 26	Marika Kilius 
 *** 26	Marion, Alabama 
 *** 26	Marius Goring 
-*** 26	Mariánské Lázně 
+*** 26	Mariánské Lázn? 
 *** 26	Mark Aguirre 
 *** 26	Mark Bosnich 
 *** 26	Mark Eitzel 
@@ -98790,7 +98790,7 @@
 *** 26	Pierre de Marivaux 
 *** 26	Pierrefonds—Dollard 
 *** 26	Piers McDonald 
-*** 26	Piešťany 
+*** 26	Pieš?any 
 *** 26	Pike County, Illinois 
 *** 26	Pillar of Autumn 
 *** 26	Pilotwings 
@@ -98808,7 +98808,7 @@
 *** 26	Pluralism 
 *** 26	Plymouth Argyle 
 *** 26	Pneumoconiosis 
-*** 26	Pogoń Szczecin 
+*** 26	Pogo? Szczecin 
 *** 26	Poker strategy 
 *** 26	Pokémon Puzzle League 
 *** 26	Polish cuisine 
@@ -100023,7 +100023,7 @@
 *** 26	Winfield, Kansas 
 *** 26	Winteraceae 
 *** 26	Wisconsin State Capitol 
-*** 26	Wisła Płock 
+*** 26	Wis?a P?ock 
 *** 26	Wivenhoe 
 *** 26	Wolfsschanze 
 *** 26	Woluwe-Saint-Lambert 
@@ -100106,7 +100106,5 @@
 *** 26	Åseral 
 *** 26	École Polytechnique massacre 
 *** 26	Émile Combes 
-*** 26	Český Krumlov 
-*** 26	Śląsk Wrocław 
-### defined count    = 100110
-... referenced count = 100110
+*** 26	?eský Krumlov 
+*** 26	?l?sk Wroc?aw 

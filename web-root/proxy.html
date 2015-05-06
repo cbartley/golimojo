@@ -1,0 +1,139 @@
+<html>
+    <head>
+        <title>Golimojo Proxy Chrome</title>
+        
+        <style>
+
+            html
+            {
+                width: 100%;
+                height: 100%;   
+            }
+
+            body
+            {
+                margin: 0px;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+            }
+            
+            table.master-layout
+            {
+                width: 100%;
+                height: 100%;
+            }
+            
+            .keystone
+            {
+                width: 120px;
+                height: 50px;
+                border: solid darkslategray 1px;
+                background-color: darkgray;
+            }
+            
+            .topbar
+            {
+                margin: 1px;
+                border: solid lightgrey 1px;
+                background-color: cornsilk;
+                padding-top: 4px;
+                padding-left: 8px;
+                padding-bottom: 3px;
+            }
+            
+            .sidebar
+            {
+                border: solid darkgray 1px;
+                background-color: lightgrey;
+            }
+            
+            .content-area
+            {
+                border: inset lightgrey 2px;
+            }
+            
+            .content-frame
+            {
+                border: solid black 0px;
+                width:100%;
+                height: 100%;
+                
+            }
+            
+            .topbar-title
+            {
+                font: bold 10pt arial;
+                margin-bottom: 1px;
+            }
+            
+            .topbar-title a
+            {
+                color: darkblue;
+                font-family: monospace;
+                text-decoration: none;      
+            }
+            
+            .topbar-subtitle
+            {
+                color: darkgray;
+                font-style: italic;
+            }
+
+
+
+        </style>        
+        
+    </head>
+
+    <body>
+    
+        <table class="master-layout">
+        
+            <tbody>
+            
+                <tr>
+                
+                    <td class="keystone">
+                        xxxx
+                    </td>
+                    
+                    <td class="topbar">
+                        <div class="topbar-title">
+                            Golimojo Missing Link Proxy of 
+                            <a href="http://{{queryString}}">http://{{queryString}}</a>
+                        </div>
+                        <div class="topbar-subtitle">
+                            Note that forms and other interativity may not work correctly on this proxied page.
+                        </div>
+                    </td>
+                    
+                </tr>
+            
+                <tr>
+                
+                    <td class="sidebar">
+                        xxxxx
+                    </td>
+                    
+                    <td class="content-area">
+                        <iframe class="content-frame" src="http://localhost:8085/servlet/missing-link?{{queryString}}">
+                    </td>
+                    
+                </tr>
+
+            </tbody>
+            
+        </table>
+
+
+
+
+
+    
+    </body>
+
+
+    
+
+</html>

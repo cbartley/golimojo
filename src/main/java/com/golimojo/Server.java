@@ -59,6 +59,7 @@ public class Server {
         
         ServletHandler servletHandler = new ServletHandler();
         servletHandler.addServlet("Missing Link", "/servlet/missing-link/*", "com.golimojo.MissingLinkProxyServlet");
+        servletHandler.addServlet("Template", "*.html", "com.golimojo.TemplateServlet");
         context.addHandler(servletHandler);
 
         context.setResourceBase("web-root");
@@ -76,6 +77,9 @@ public class Server {
     
     public static void main(String[] args) throws Exception
     {
+        // Run the unit tests.
+        new Tester("L1TEST");
+
         String articleTitlePath = "resource-root/article-titles-small.txt";
         start(8085, articleTitlePath);
     }

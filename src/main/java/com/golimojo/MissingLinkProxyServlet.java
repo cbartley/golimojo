@@ -54,11 +54,11 @@ public class MissingLinkProxyServlet extends HttpServlet
         throws ServletException, IOException
     {       
         response.setContentType("text/html");
+        response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
         
-
-        String pathInfo = request.getPathInfo();
-        String urlArg = "http:/"+ pathInfo;
+        String pathInfo = request.getQueryString();
+        String urlArg = "http://"+ pathInfo;
         
         try
         {

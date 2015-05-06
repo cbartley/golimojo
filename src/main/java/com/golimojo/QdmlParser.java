@@ -30,7 +30,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.golimojo;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
@@ -66,7 +65,7 @@ public class QdmlParser
     public static List<QdmlFragment> readAndParseHttpFile(String urlString) throws Exception
     {
         URL url = new URL(urlString);
-        BufferedInputStream in = new BufferedInputStream(url.openStream());
+        InputStreamReader in = new InputStreamReader(new BufferedInputStream(url.openStream()), "UTF-8");
         QdmlParser parser = new QdmlParser();
         List<QdmlFragment> fragmentList = new ArrayList<QdmlFragment>();
         while (true)
@@ -249,6 +248,16 @@ public class QdmlParser
         }
     }
 
+    // ---------------------------------------- class QdmlCommentFragment
+
+    public static class QdmlCommentFragment extends QdmlFragment
+    {
+        public QdmlCommentFragment(String text)
+        {
+            super(text);
+        }
+    }
+
     // ---------------------------------------- class QdmlTextNodeFragment
 
     public static class QdmlTextNodeFragment extends QdmlFragment
@@ -305,6 +314,15 @@ public class QdmlParser
                 return leadingTextFragmentIfAny;
             }
             
+            // If we've hit the end of a comment then we need to return a comment fragment.
+            if (state == ParserState.TAGENDCOMMENT)
+            {
+                QdmlFragment commentFragment = new QdmlCommentFragment(_stringBuffer.toString());
+                _stateTracker.reset();
+                _stringBuffer.setLength(0);
+                return commentFragment;             
+            }
+
             // If we've hit the end of the tag then we need to return a tag fragment.
             if (state == ParserState.TAGEND)
             {
@@ -312,7 +330,7 @@ public class QdmlParser
                 int tagNameFirstIndex = _stateTracker.getFirstIndex(ParserState.TAGNAMEFIRST);
                 int tagNameLastIndex = Math.max(tagNameFirstIndex, _stateTracker.getLastIndex(ParserState.TAGNAMETAIL));
                 if (tagNameFirstIndex == -1)
-                {
+                {                   
                     // Not a tag at all, or a malformed tag.
                     _stateTracker.reset();
                     return null;
@@ -465,6 +483,15 @@ public class QdmlParser
     private static enum ParserState
     {
         TAGSTART,               // <tag ...>, </tag>
+        
+        TAGCOMMENT1,            // <(!)--...-->
+        TAGCOMMENT2,            // <!(-)-...-->
+        TAGCOMMENT3,            // <!-(-)...-->
+        TAGCOMMENTTEXT,         // <!--(.)...-->
+        TAGENDCOMMENT1,         // <!--...(-)->
+        TAGENDCOMMENT2,         // <!--...-(-)>
+        TAGENDCOMMENT,          // <!--...--(>)
+
         TAGSTARTSLASH,          // </tag>, <tag/>
         TAGNAMEFIRST,           // <head>, <h1>
         TAGNAMETAIL,                // <tag>, <tag...>, <tag/>
@@ -496,9 +523,59 @@ public class QdmlParser
                 if ('A' <= chNext && chNext <= 'Z') return TAGNAMEFIRST;
                 if ('a' <= chNext && chNext <= 'z') return TAGNAMEFIRST;
                 if (chNext == '/') return TAGSTARTSLASH;
+                if (chNext == '!') return TAGCOMMENT1;
                 return null;
             }
             
+            // <(!)--...-->
+            else if (state == TAGCOMMENT1)
+            {
+                if (chNext == '-') return TAGCOMMENT2;
+                return null;
+            }
+            
+            // <!(-)-...-->
+            else if (state == TAGCOMMENT2)
+            {
+                if (chNext == '-') return TAGCOMMENT3;
+                return null;
+            }
+            
+            // <!-(-)...-->
+            else if (state == TAGCOMMENT3)
+            {
+                if (chNext == '-') return TAGENDCOMMENT1;
+                return TAGCOMMENTTEXT;
+            }
+            
+            // <!--(.)...-->
+            else if (state == TAGCOMMENTTEXT)
+            {
+                if (chNext == '-') return TAGENDCOMMENT1;
+                return TAGCOMMENTTEXT;
+            }
+
+            // <!--...(-)->
+            else if (state == TAGENDCOMMENT1)
+            {
+                if (chNext == '-') return TAGENDCOMMENT2;
+                return TAGCOMMENTTEXT;
+            }
+
+            // <!--...-(-)>
+            else if (state == TAGENDCOMMENT2)
+            {
+                if (chNext == '>') return TAGENDCOMMENT;
+                return TAGCOMMENTTEXT;
+            }
+
+            // <!--...--(>)
+            else if (state == TAGENDCOMMENT)
+            {
+                if (chNext == '<') return TAGSTART;
+                return null;
+            }
+
             // </tag
             else if (state == TAGSTARTSLASH)
             {
@@ -547,6 +624,8 @@ public class QdmlParser
             
             else if (state == TAGATTRIBQ1TEXT)
             {
+                if (chNext == '\r') return TAGEND;          // ??? tentative ???
+                if (chNext == '\n') return TAGEND;          // ??? tentative ???
                 if (chNext == '\'') return TAGATTRIBQ1END;
                 return TAGATTRIBQ1TEXT;
             }
