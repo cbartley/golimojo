@@ -147,9 +147,9 @@ public class Linker
 
     private static Dictionary<String, String> readArticleTitles(String articleTitlesFilePath) throws Exception
     {
-        BufferedReader in = new BufferedReader(new FileReader("article-titles.txt"));
+        BufferedReader in = new BufferedReader(new FileReader(articleTitlesFilePath));
 
-        Hashtable<String, String> articleTitleBag = new Hashtable();
+        Hashtable<String, String> articleTitleBag = new Hashtable<String, String>();
 
         try
         {

@@ -43,10 +43,11 @@ public class Server {
     
     public static void main(String[] args) throws Exception
     {
+        
         // Create the server
         HttpServer server = new HttpServer();
         
-        String articleTitlePath = "article-titles.txt";
+        String articleTitlePath = "resource-root/article-titles.txt";
         Linker linker = new Linker(articleTitlePath);
         MissingLinkProxyServlet.setSharedLinker(linker);
 
@@ -58,7 +59,7 @@ public class Server {
         servletHandler.addServlet("Missing Link", "/servlet/missing-link/*", "com.golimojo.MissingLinkProxyServlet");
         context.addHandler(servletHandler);
 
-        context.setResourceBase(".");
+        context.setResourceBase("web-root");
         context.addHandler(new ResourceHandler());
         context.addHandler(new DumpHandler());
         context.addHandler(new NotFoundHandler());

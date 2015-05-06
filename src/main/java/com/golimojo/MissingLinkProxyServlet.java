@@ -76,26 +76,6 @@ public class MissingLinkProxyServlet extends HttpServlet
         }
 
         out.close();
-
-        
-        
-        
-        
-        
-        
-        
-        
-        out.println(
-            "<html>\n" +
-            "   <head>" +
-            "       <title>Missing Link Proxy Servlet</title>\n" +
-            "   </head>\n" +
-            "   <body>\n" +
-            "       <h1>Missing Link Proxy Servlet</h1>\n" +
-            "   </body>\n" +
-            "</html>\n" +
-            "\n"
-        );
     }
     
     

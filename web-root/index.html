@@ -1,0 +1,101 @@
+<html>
+    <head>
+        <title>Golimojo</title>
+        
+        <style>
+        
+            .alternative
+            {
+                margin-bottom: 1em;
+            }
+        
+            .heading
+            {
+                font-family: sans-serif;
+                font-size: 16pt;
+                font-weight: bold;
+                margin-bottom: 0.3em;
+            }
+            
+            .directions
+            {
+                margin-bottom: 0.3em;
+            }
+            
+            .url-label
+            {
+                font-weight: bold;
+            }
+            
+            #url-input
+            {
+                width: 30em;
+            }
+            
+            
+        </style>
+        
+        <script>
+        
+            function proxyUrl(url)
+            {
+                var strippedUrl = url.replace(/^http:\/\//, "");
+                var escapedStrippedUrl = escape(strippedUrl);
+                var proxyServletUrl = "http://" + location.host + "/servlet/missing-link/";
+                var proxyUrl = proxyServletUrl + escapedStrippedUrl;
+                location = proxyUrl;
+            }       
+        
+        
+        </script>
+
+    </head>
+    <body>
+        
+        <div class="alternative">
+            <div class="heading">Alternative 1.</div>
+            
+            <div class="directions">
+                Simply enter a URL and hit <b>Go</b>.  This is the easiest way to
+                use Golimojo.
+            </div>
+            
+            <div>
+                <label class="url-label">URL:</label> 
+                <input id="url-input" type="text">
+                <button onclick="proxyUrl(document.getElementById('url-input').value)">Go</button>
+            </div>
+        </div>
+        
+        <div class="alternative">
+            <div class="heading">Alternative 2.</div>
+            
+            <div class="directions">Use the <b>bookmarklet</b>.</div>
+            
+            <div>
+                Use the <a href="">Golimojo Bookmarklet</a>.  <i>No</i>, <i>no</i>, 
+                don't <i>click</i> on it -- instead, right-click it and use the 
+                context menu to select <b>Bookmark This Link</b>.
+            <div>
+                OK, now that you've successfully saved the bookmarklet you can go
+                to another page and then use the bookmarklet to redirect the page
+                through the Golimojo proxy.
+            </div>
+            
+            <div>
+                Right-click on the bookmarklet <a href="xxx">link</a> and save it as
+                a bookmark.  
+            </div>
+            
+        
+        
+        
+        </div>
+        
+        
+        
+        
+        
+        
+    </body>
+</html>
