@@ -47,7 +47,7 @@ public class Server {
         Tester tester = new Tester("L1TEST");
         tester.runTests();
 
-        String articleTitlePath = "resource-root/article-titles-medium.txt";
+        String articleTitlePath = "resource-root/article-titles-small.txt";
         start(8085, articleTitlePath);
     }
 
@@ -55,6 +55,11 @@ public class Server {
     
     protected static void start(int port, String articleTitlePath) throws Exception
     {
+        // Create the log.
+        QuickLog log = new QuickLog();
+        AddLinksProxyServlet.setSharedLog(log);
+        TemplateServlet.setSharedLog(log);
+        
         // Create the word ranker.
         String pathToWordFrequencyFile = "resource-root/word-frequency.txt";
         Ranker ranker = new Ranker(pathToWordFrequencyFile);
@@ -64,7 +69,8 @@ public class Server {
     
         // Create the page linker.
         Linker linker = new Linker(pageDataStore);
-        MissingLinkProxyServlet.setSharedLinker(linker);
+        AddLinksProxyServlet.setSharedLinker(linker);
+        FindLinksAjaxServlet.setSharedLinker(linker);
         
         // Set up the example HTML.
         String exampleBeforeHtml = Linker.getExampleHtml();
@@ -82,10 +88,12 @@ public class Server {
         // Default is no virtual host.
         String host=null;
         HttpContext context = server.getContext(host,"/");
-        
+
         ServletHandler servletHandler = new ServletHandler();
-        servletHandler.addServlet("Missing Link", "/servlet/missing-link/*", "com.golimojo.MissingLinkProxyServlet");
+        servletHandler.addServlet("Add Links", "/servlet/add-links", "com.golimojo.AddLinksProxyServlet");
+        servletHandler.addServlet("Find Links", "/servlet/find-links", "com.golimojo.FindLinksAjaxServlet");
         servletHandler.addServlet("Template", "*.html", "com.golimojo.TemplateServlet");
+        servletHandler.addServlet("Stats", "/servlet/stats", "com.golimojo.StatsServlet");
         context.addHandler(servletHandler);
 
         context.setResourceBase("web-root");

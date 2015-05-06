@@ -1,0 +1,84 @@
+<html>
+    <head>
+        <title>Tab Log</title>
+    </head>
+    
+    <style>
+
+        .templates
+        {
+            display: none;
+        }
+        
+        .message
+        {
+            border-bottom: dashed lightgrey 1px;
+            white-space: pre;
+            font-family: monospace;
+            font-size: 10pt;
+        }
+
+
+    </style>
+    
+    <script>
+
+        function GolimojoTabLog()
+        {
+            this.messageTemplate = document.getElementById("message-template");
+            this.messageTemplate.id = "";
+            
+            this.messageBox = document.getElementById("message-box");
+        }
+
+        GolimojoTabLog.prototype.createMessageElement = function (msgHtml)
+        {
+            var messageElem = this.messageTemplate.cloneNode(true);
+            messageElem.innerHTML = msgHtml;
+            return messageElem;
+        }
+
+        GolimojoTabLog.prototype.logHtmlMessage = function (msgHtml)
+        {
+            var messageElem = this.createMessageElement(msgHtml);
+            this.messageBox.appendChild(messageElem);
+            messageElem.scrollIntoView(false);
+        }
+
+        GolimojoTabLog.prototype.logMessage = function (msgText)
+        {
+            var msgHtml = msgText;
+            msgHtml = msgHtml.replace(/&/g, "&amp;");
+            msgHtml = msgHtml.replace(/\</g, "&lt;");
+            msgHtml = msgHtml.replace(/\>/g, "&gt;");
+            this.logHtmlMessage(msgHtml);
+        }
+        
+        window.onload = function ()
+        {
+            window.golimojoTabLog = new GolimojoTabLog();
+        }
+    
+
+
+    </script>
+    
+    
+    
+    <body>
+    
+        <div class="templates">
+
+            <div id="message-template" class="message">
+            </div>
+            
+        </div>
+    
+        <div id="message-box">
+        
+        
+        
+        </div>
+
+    </body>
+</html>

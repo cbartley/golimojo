@@ -38,7 +38,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 @SuppressWarnings("serial")
-public class TemplateServlet extends HttpServlet 
+public class TemplateServlet extends GolimojoServlet 
 {
     
     // ---------------------------------------- TemplateServlet instance variables
@@ -46,14 +46,11 @@ public class TemplateServlet extends HttpServlet
     private static String our_exampleBeforeHtml = "";
     private static String our_exampleAfterHtml = "";
     
-    // ---------------------------------------- TemplateServlet doGet
+    // ---------------------------------------- TemplateServlet customDoGet
     
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
+    public void customDoGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException
     {
-        response.setContentType("text/html");
-        response.setCharacterEncoding("UTF-8");
-
         PrintWriter out = response.getWriter();
         try
         {   
@@ -71,8 +68,8 @@ public class TemplateServlet extends HttpServlet
                 subDict.put("queryString", "null");
                 subDict.put("queryStringUnescaped", "null");
             }
-            subDict.put("localName", request.getLocalName());
-            subDict.put("localPort", Integer.toString(request.getLocalPort()));
+            subDict.put("serverName", request.getServerName());
+            subDict.put("serverPort", Integer.toString(request.getServerPort()));
             subDict.put("exampleBeforeHtml", our_exampleBeforeHtml);
             subDict.put("exampleAfterHtml", our_exampleAfterHtml);
             String finalText = applySubstitutions(templateText, subDict);

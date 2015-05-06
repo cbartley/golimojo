@@ -1,0 +1,112 @@
+
+<html>
+<head>
+
+    <title>Curtis Bartley's Home Page</title>
+    
+    <script src="golimojo.js"></script>
+    
+    <script src="javascript/linker.js"></script>
+
+    <style>
+
+        .banner
+        {
+            width: 100%;
+            background-color: whitesmoke;
+            border: solid black 1px;
+            border-collapse: collapse;
+        }
+
+        .banner .headline-bay
+        {
+            padding: 3pt;
+            text-align: center;
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 18pt;
+            letter-spacing: 0.4em;
+                white-space: nowrap;
+        }
+
+    </style>
+        
+</head>
+
+<body>
+
+    <iframe id="iframe-tablog" src="javascript/tablog.html" style="border:solid red 1px;width:100%;height:50%"></iframe>
+
+    <table class="banner">
+
+        <tbody>
+
+            <tr>
+
+                <td class="headline-bay" colspan="6">
+                    almost infinite
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+
+    <h3>Introduction</h3>
+    
+    <p>My name is Curtis Bartley, and I'm a software developer living in Seattle, Washington.  There's not a lot here yet, but there are two things you <i>can</i> find here: my <a href="curtisb-resume.html">resume</a> and a "portfolio" of some of my work.  In addition to this page I also have a home page on the <a href="http://www.c2.com/cgi/wiki?CurtisBartley">Wiki Wiki</a> which you may find interesting.  You can reach me by email at 
+    
+    <script>
+        var email = "";
+        email += "curtisb";
+        email += "@";
+        email += "almostinfinite.com"
+        hyperlink = "<a href='mailto:email'>email</a>";
+        hyperlink = hyperlink.replace(/email/g, email);
+        document.write(hyperlink);
+    </script>
+    
+    </p>
+    
+    <h3>Portfolio Projects and Documents</h3>
+
+    <p>Portfolios are typically associated with artists, but I've co-opted the idea.  I have assembled a collection of projects and documents I've done over the years which provide some concrete (but by no means complete) examples of my abilities as a software engineer.
+    </p>
+    
+    <ul>
+
+        <li>
+        <a href="theme-editor/theme-editor.html">theme-editor.html</a> describes the Theme Editor, a demo I wrote at Tangis Corporation.  It demonstrates that I know at least a little bit about user interfaces and a whole lot about key web technologies like XML, XSLT, CSS, Dynamic HTML, and JavaScript, with a little bit of COM and Outlook OLE Automation thrown in.
+        </li>
+
+        <li>
+        <a href="memtrack.html">memtrack.html</a> -- This is an article that I originally intended to submit to Dr. Dobbs Journal or the C/C++ Users Journal, but I never got around to it.  It describes a novel way of instrumenting memory allocations in C++ for debugging and performance analysis.  It should convince you that I can code in a real programming language and not just scripting languages.  I think it will convince you that I am an effective communicator as well.
+        </li>
+
+        <li>
+        <a href="Kiwi.zip">Kiwi.zip</a> -- Kiwi Wiki is an implementation in C# of Ward Cunningham's <a href="http://www.c2.com/cgi/wiki?FrontPage">Wiki Wiki</a> concept.  Unlike most wikis, Kiwi Wiki implements its own web server rather than installing under an existing server such as Apache or IIS.  It also stores its content as plain text files, rather than using a database.  Kiwi Wiki has only been tested under Windows 2000 and Windows XP.  Be forewarned that Kiwi Wiki is still a work in progress.  It seems to work pretty well, but it has only limited functionality and still has some rough edges.
+        </li>
+
+        <li>
+        <a href="FH-reader.zip">FH-reader.zip</a> -- This is a library I wrote after leaving Macromedia for a contract job that never quite panned out.  It reads FreeHand 5 and some FreeHand 7 files.  There's probably not much use for this library today, but it's the largest example of my work that I have access to.  It's about 13000 lines of C++ code, including the test harness.  The C++ style is a little outdated, but at the very least it should demonstrate that I know my way around the C++ language.
+        </li>
+        
+    </ul>
+    
+    <h3>Pictures</h3>
+    
+    <ul>
+
+        <li>The <a href='slideshow-enchantments/slideshow.html'>Enchantments</a>, July 2-4, 2005.
+        </li>
+
+        <li>Cross-country skiing: <a href='slideshow-tdl/slideshow.html'>That Dam Loop</a>, January 29, 2006.
+        </li>
+
+    </ul>
+
+</body>
+
+</html>

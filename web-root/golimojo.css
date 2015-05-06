@@ -40,12 +40,17 @@ table.banner-layout
 table.banner-layout td.left
 {
     width: 170px;
+    border-top: solid black 1px;
+    border-left: solid black 1px;
+    border-bottom: solid black 1px;
     background-color: #202020
 }
 
 table.banner-layout td.right
 {
-    border: solid black 1px;
+    border-top: solid black 1px;
+    border-right: solid black 1px;
+    border-bottom: solid black 1px;
     padding-right: 0.5em;
     color: white;
     background-color: #1D3F68;
@@ -87,7 +92,6 @@ table.content-layout td.right
     padding: 1px;
     padding-left: 5px;
     border: solid gray 1px;
-    width: 170px;
     font-size: 1em;
     font-weight: bold;
     text-decoration: none;
@@ -105,8 +109,9 @@ a.tab-unselected, a.tab-unselected:visited
     background-color: lightgrey;
 }
 
-a.tab-selected:hover
+a.tab-selected:hover, a.tab-unselected:hover
 {
+    text-decoration: none;
 }
 
 a.tab-unselected:hover

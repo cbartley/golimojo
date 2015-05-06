@@ -1,12 +1,7 @@
 <html>
     <head>
         <title>Golimojo</title>
-        
-        <style>
-        
     
-        </style>
-        
         <link rel=stylesheet href="golimojo.css" type="text/css">
 
 
@@ -23,7 +18,7 @@
 
                 var strippedUrl = url.replace(/^http:\/\//, "");
                 var escapedStrippedUrl = escape(strippedUrl);
-                var proxyServletUrl = "http://{{localName}}:{{localPort}}/proxy.html?";
+                var proxyServletUrl = "http://{{serverName}}:{{serverPort}}/proxy.html?";
                 var proxyUrl = proxyServletUrl + escapedStrippedUrl;
                 return proxyUrl;
             }
@@ -311,6 +306,7 @@
                                         <a custom-behavior="tab" custom-target-id="page-try" class="tab tab-unselected" href="index.html?try">Try It Out</a>
                                         <a custom-behavior="tab" custom-target-id="page-bookmarklet" class="tab tab-unselected" href="index.html?bookmarklet">Bookmarklet</a>
                                         <a custom-behavior="tab" custom-target-id="page-extension" class="tab tab-unselected" href="index.html?extension">Firefox Extension</a>
+                                        <a custom-behavior="tab" custom-target-id="page-contact" class="tab tab-unselected" href="index.html?contact">Contact</a>
 
                                     </td>
 
@@ -326,7 +322,7 @@
                                                 <b>Golimojo</b> scans the text on a web page, looking for words and phrases that
                                                 can be linked to Wikipedia articles of the same name.  When matching words or
                                                 phrases are found, they are turned into hyperlinks right on the web page.  The 
-                                                screenshots below illustrate what this looks like.
+                                                examples below illustrate what this looks like.
                                             </p>
                                             
                                             <h3>Before</h3>
@@ -359,7 +355,7 @@
                                                 The <a href="index.html?examples">Examples</a> page uses the Golimojo proxy 
                                                 service to display some pre-selected web pages with added links.  Or you can 
                                                 go directly  to the  <a href="index.html?try">Try It Out</a> page to try 
-                                                Golimojo out on pages of your own chosing.
+                                                Golimojo out on pages of your own choosing.
                                             </div>
                                             
                                         </div>
@@ -373,7 +369,7 @@
                                             <div>
                                                 This page contains a selection of web pages that can be viewed using the Golimojo
                                                 proxy service.  Or you can go directly to the <a href="index.html?try">Try It Out</a>
-                                                page to try Golimojo on web pages of your own choosing.
+                                                page and choose a page on your own.
                                             </div>
 
                                             <ul class="examples">
@@ -499,7 +495,7 @@
                                                     </li>
 
                                                     <li>
-                                                        Click <b>Ok</b> in the dialog box.
+                                                        Click <b>OK</b> in the dialog box.
                                                     </li>
 
                                                 </ol>
@@ -530,6 +526,26 @@
 
                                             <p>
                                                 <i>Coming Soon.</i>
+                                            </p>
+
+                                        </div>
+
+                                        <!-------------------------------------------------------------->
+
+                                        <div class="page page-unselected" id="page-contact">
+
+                                            <h2>Contact</h2>
+
+                                            <p>
+                                                Have a problem? Have a suggestion? Found a bug?  Just want to say "Hi"?
+                                                Whatever the reason, I want to hear from you:
+                                                
+                                                <script>
+                                                    var mailTo = "g!o!l!i!m!o!j!o!#!g!m!a!i!l!.!c!o!m";
+                                                    mailTo = mailTo.replace(/!/g, "");
+                                                    mailTo = mailTo.replace(/#/g, "@");
+                                                    document.write(mailTo.link("mailto:" + mailTo));
+                                                </script>.
                                             </p>
 
                                         </div>

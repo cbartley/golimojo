@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>Golimojo Proxy Chrome</title>
+        <title>Golimojo Proxy</title>
         
         <style>
 
@@ -104,7 +104,7 @@
                     <td class="topbar">
                         <div class="topbar-content">
                             <div class="topbar-title">
-                                Golimojo Missing Link Proxy of 
+                                Golimojo Add Links Proxy of 
                                 <a href="http://{{queryString}}">http://{{queryStringUnescaped}}</a>
                             </div>
                             <div class="topbar-subtitle">
@@ -122,7 +122,7 @@
                     </td>
                     
                     <td class="content-area">
-                        <iframe class="content-frame" src="http://localhost:8085/servlet/missing-link?{{queryString}}">
+                        <iframe class="content-frame" src="http://{{serverName}}:{{serverPort}}/servlet/add-links?{{queryString}}">
                     </td>
                     
                 </tr>

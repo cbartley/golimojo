@@ -78,6 +78,7 @@ public class StopList
         _stopWordBag.add("December");
         
         _stopWordBag.add("Rhodes");
+        _stopWordBag.add("I'll");
     }
 
     // ---------------------------------------- StopList hasWord

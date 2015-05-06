@@ -45,41 +45,40 @@ import com.golimojo.QdmlParser.QdmlFragment;
 import com.golimojo.QdmlParser.QdmlStartTagFragment;
 
 @SuppressWarnings("serial")
-public class MissingLinkProxyServlet extends HttpServlet 
+public class AddLinksProxyServlet extends GolimojoServlet 
 {
-    // ---------------------------------------- MissingLinkProxyServlet class variables
+    // ---------------------------------------- AddLinksProxyServlet class variables
     
-    private static Linker ourLinker = null;
+    private static Linker our_linker = null;
+
+    // ---------------------------------------- AddLinksProxyServlet setSharedLinker
     
     public static void setSharedLinker(Linker linker)
     {
-        ourLinker = linker;
+        our_linker = linker;
     }
     
-    // ---------------------------------------- MissingLinkProxyServlet doGet
+    // ---------------------------------------- AddLinksProxyServlet customDoGet
     
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
+    public void customDoGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException
     {
-        String localName = request.getLocalName();
-        int localPort = request.getLocalPort();
-        String proxyPageUrl = "http://" + localName + ":" + localPort + "/proxy.html";
+        String serverName = request.getServerName();
+        int serverPort = request.getServerPort();
+        String proxyPageUrl = "http://" + serverName + ":" + serverPort + "/proxy.html";
 
         String pathInfo = URLDecoder.decode(request.getQueryString(), "UTF-8");
         String urlArg = "http://"+ pathInfo;
         
         List<QdmlFragment> fragmentList = HttpReader.readAndParseHttpFile(urlArg);
-        
-        response.setContentType("text/html");
-        response.setCharacterEncoding("UTF-8");
 
         PrintWriter out = response.getWriter();
         try
         {
-            if (ourLinker != null)
+            if (our_linker != null)
             {
                 long startTimeMs = System.currentTimeMillis();
-                fragmentList = ourLinker.addLinksToHtmlDocument(fragmentList, urlArg);
+                fragmentList = our_linker.addLinksToHtmlDocument(fragmentList, urlArg);
                 long elapsedTimeMs = System.currentTimeMillis() - startTimeMs;
                 System.out.printf("### elapsed time: %1.2f\n", (0.001 * elapsedTimeMs));
                 fragmentList = stripProblemTags(fragmentList);
@@ -94,7 +93,7 @@ public class MissingLinkProxyServlet extends HttpServlet
         }
     }
     
-    // ---------------------------------------- MissingLinkProxyServlet rewriteAnchors
+    // ---------------------------------------- AddLinksProxyServlet rewriteAnchors
     
     private static void rewriteAnchors(List<QdmlFragment> fragmentList, String baseUrl, String proxyPageUrl)
     {
@@ -107,7 +106,7 @@ public class MissingLinkProxyServlet extends HttpServlet
         }
     }
     
-    // ---------------------------------------- MissingLinkProxyServlet stripProblemTags
+    // ---------------------------------------- AddLinksProxyServlet stripProblemTags
     
     private static List<QdmlFragment> stripProblemTags(List<QdmlFragment> fragmentList)
     {
@@ -122,7 +121,7 @@ public class MissingLinkProxyServlet extends HttpServlet
         return fragmentListOut;
     }
     
-    // ---------------------------------------- MissingLinkProxyServlet isMetaExpiresTag
+    // ---------------------------------------- AddLinksProxyServlet isMetaExpiresTag
 
     private static boolean isMetaExpiresTag(QdmlFragment fragment)
     {
@@ -143,7 +142,7 @@ public class MissingLinkProxyServlet extends HttpServlet
             
         }
     
-    // ---------------------------------------- MissingLinkProxyServlet remapAnchorStartTag
+    // ---------------------------------------- AddLinksProxyServlet remapAnchorStartTag
     
     private static void remapAnchorStartTag(QdmlStartTagFragment anchorStartTagFragment, String baseUrl, String proxyPageUrl)
     {
@@ -153,7 +152,7 @@ public class MissingLinkProxyServlet extends HttpServlet
         anchorStartTagFragment.setText(remappedAnchorText);
     }
     
-    // ---------------------------------------- MissingLinkProxyServlet remapAnchorText
+    // ---------------------------------------- AddLinksProxyServlet remapAnchorText
         
     private static String remapAnchorText(String anchorText, String baseUrl)
     {
@@ -183,15 +182,15 @@ public class MissingLinkProxyServlet extends HttpServlet
             assert remapAnchorText("<a href='https://www.example.com'>", "http://www.example.com/index.html")
                         .equals("<a href='https://www.example.com' target='_top'>");
             assert remapAnchorText("<a href='http://www.example.com'>", "http://www.example.com/index.html")
-                        .equals("<a href='#proxy#?www.example.com'>");
+                        .equals("<a href='#proxy#?www.example.com' target='_top'>");
             assert remapAnchorText("<a href='test.html'>", "http://www.example.com/index.html")
-                        .equals("<a href='#proxy#?www.example.com%2Ftest.html'>");
+                        .equals("<a href='#proxy#?www.example.com%2Ftest.html' target='_top'>");
             assert remapAnchorText("<a href='#fragment'>", "http://www.example.com/index.html")
-                        .equals("<a href='#proxy#?www.example.com%2Findex.html%23fragment'>");
+                        .equals("<a href='#proxy#?www.example.com%2Findex.html%23fragment' target='_top'>");
             
         }
     
-    // ---------------------------------------- MissingLinkProxyServlet splitAnchorAtHrefUrl
+    // ---------------------------------------- AddLinksProxyServlet splitAnchorAtHrefUrl
         
     private static Pattern our_anchorHrefUrlPattern = 
         Pattern.compile("^(.*href[ \\t\\r\\n]*=[ \\t\\r\\n]*)((\\\".*?\\\")|('.*?'))(.*)$");
@@ -233,7 +232,7 @@ public class MissingLinkProxyServlet extends HttpServlet
             assert splitAnchorAtHrefUrl("<a href=\"/intl/en/ads/\">")[1].equals("/intl/en/ads/");
         }
 
-    // ---------------------------------------- MissingLinkProxyServlet createProxyUrl
+    // ---------------------------------------- AddLinksProxyServlet createProxyUrl
 
     private static String createProxyUrl(String url, String baseUrl)
     {
@@ -272,7 +271,7 @@ public class MissingLinkProxyServlet extends HttpServlet
                         .equals("#proxy#?www.example.com%2Findex.html");
         }
     
-    // ---------------------------------------- MissingLinkProxyServlet createProxyUrlForAbsoluteUrl
+    // ---------------------------------------- AddLinksProxyServlet createProxyUrlForAbsoluteUrl
         
     private static String createProxyUrlForAbsoluteUrl(String url)
     {
@@ -298,7 +297,7 @@ public class MissingLinkProxyServlet extends HttpServlet
                         .equals("#proxy#?www.example.com%2Ftest%2Ftest.html");
         }
     
-    // ---------------------------------------- MissingLinkProxyServlet concatRelativeUrl
+    // ---------------------------------------- AddLinksProxyServlet concatRelativeUrl
 
     private static String concatRelativeUrl(String url, String relUrl)
     {

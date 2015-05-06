@@ -119,9 +119,67 @@ public class Linker
             }
         }
 
+        // Now add the links.
         return addLinksToHtmlDocument(fragmentList);
     }
+
+    // ---------------------------------------- Linker findLinks
     
+    public List<String> findLinks(List<QdmlFragment> fragmentList)
+    {
+        // Find all the matching page titles in the HTML.
+        List<String> pageTitleList = new ArrayList<String>();
+        for (QdmlFragment fragment : fragmentList)
+        {
+            findLinksInFragment(fragment, pageTitleList);
+        }
+        
+        // Remove duplicates.
+        Set<String> pageTitleSet = new HashSet<String>(pageTitleList);
+        pageTitleList = new ArrayList<String>(pageTitleSet);
+
+        // Sort by longest string first.
+        Comparator<String> longestStringFirstComparator = new Comparator<String>()
+        {
+            public int compare(String s1, String s2)
+            {
+                return s2.length() - s1.length();
+            }
+        };
+        Collections.sort(pageTitleList, longestStringFirstComparator);
+        
+        return pageTitleList;
+    }
+
+    // ---------------------------------------- Linker findLinksInFragment
+    
+    public void findLinksInFragment(QdmlFragment fragment, List<String> pageTitleReceiverList)
+    {
+        if (fragment instanceof QdmlTextNodeFragment)
+        {
+            String text = ((QdmlTextNodeFragment)fragment).getText();
+            findLinksInText(text, pageTitleReceiverList);
+        }
+        
+    }
+
+    // ---------------------------------------- Linker findLinksInText
+    
+    private void findLinksInText(String text, List<String> pageTitleReceiverList)
+    {
+        List<TextFragment> fragmentList = TextFragment.splitTextIntoFragments(text);
+        for (int i = 0; i < fragmentList.size(); i++)
+        {
+            int phraseFragmentCount = findLongestPhraseAtPosition(_pageDataStore, fragmentList, i);
+            if (phraseFragmentCount > 0)
+            {
+                String phraseText = TextFragment.subJoin(fragmentList, i, phraseFragmentCount);
+                String pageTitle = _pageDataStore.findMatchingPageTitle(phraseText);
+                pageTitleReceiverList.add(pageTitle);
+            }
+        }
+    }
+
     // ---------------------------------------- Linker addLinksToHtmlDocument
 
     private List<QdmlFragment> addLinksToHtmlDocument(List<QdmlFragment> fragmentList)
