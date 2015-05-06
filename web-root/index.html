@@ -2,56 +2,18 @@
     <head>
         <title>Golimojo</title>
         
-        <style>
-        
-            .title
-            {
-                font-family: sans-serif;
-                font-size: 24pt;
-                font-weight: bold;
-                margin-bottom: 0.3em;
-            }
-        
-            .description
-            {
-                margin-bottom: 1.0em;
-            }
-        
-            .alternative
-            {
-                margin-bottom: 1em;
-            }
-        
-            .heading
-            {
-                font-family: sans-serif;
-                font-size: 16pt;
-                font-weight: bold;
-                margin-bottom: 0.3em;
-            }
-            
-            .paragraph
-            {
-                margin-bottom: 0.5em;
-            }
-            
-            .url-label
-            {
-                font-weight: bold;
-            }
-            
-            #url-input
-            {
-                width: 30em;
-            }
-            
-            
-        </style>
+        <link rel=stylesheet href="golimojo.css" type="text/css">
         
         <script>
+
+            // ---------------------------------------- proxying
         
             var $host$ = location.host;
-        
+if ($host$ == "")
+{
+    $host$ = "localhost:8080";
+}
+    
             function createProxyUrl(url)
             {
                 if (!url.match(/^http:\/\//))
@@ -81,59 +43,370 @@
                 return bookmarklet;
             }
 
+            // ---------------------------------------- behavior framework
+        
+            function dumpError(e)
+            {
+                var lineList = [];
+                for (var id in e)
+                {
+                    var value = e[id];
+                    if (typeof(value) == "string")
+                    {
+                        var line = "[" + id + "]\t==> " + value;
+                        lineList.push(line);
+                    }
+                }
+                return lineList.join("\n");
+            }
+            
+            function typeCheck(obj, constructor)
+            {
+                if (obj == null) throw new Error("typeCheck: object was null!");
+                if (obj.constructor != constructor) throw new Error("typeCheck: type mismatch");
+                return obj;
+            }
+
+            function createThunk(fun, receiver, thunkName)
+            {
+                function thunk()
+                {
+                    try
+                    {
+                        return fun.apply(receiver, arguments);
+                    }
+                    catch (e)
+                    {
+                        alert(thunkName + " thunk error: " + dumpError(e));
+                        throw e;
+                    }
+                }
+                
+                return thunk;
+            }
+
+            function attachEventHandlers(elem, behavior)
+            {
+                for (var id in behavior)
+                {
+                    if (id.substring(0, 2) == "on")
+                    {
+                        elem[id] = createThunk(behavior[id], behavior, id);
+                    }
+                }
+            }
+
+            function attachBehavior(elem, behaviorBag, parentBehavior)
+            {
+                var behaviorName = elem.getAttribute("custom-behavior");
+                if (behaviorName == null) return null;
+                var behaviorConstructor = behaviorBag[behaviorName];
+                if (behaviorConstructor == null) return null;
+                var behavior = new behaviorConstructor(elem, parentBehavior);
+                attachEventHandlers(elem, behavior);
+                return behavior;
+            }           
+            
+            function recursiveAttachBehaviors(rootElem, behaviorBag, parentBehavior)
+            {
+                var behavior = attachBehavior(rootElem, behaviorBag, parentBehavior);
+                if (behavior != null)
+                {
+                    parentBehavior = behavior;
+                }
+                
+                var childNodes = rootElem.childNodes;
+                for (var i = 0; i < childNodes.length; i++)
+                {
+                    var childNode = childNodes[i];
+                    if (childNode.nodeType == 1)
+                    {
+                        recursiveAttachBehaviors(childNode, behaviorBag, parentBehavior);
+                    }
+                
+                }
+            }
+
+            // ---------------------------------------- class TabSet
+
+            function TabSet(elem, parentBehavior)
+            {
+                this.tabList = [];
+            }
+            
+            TabSet.prototype.registerTab = function (tab)
+            {
+                this.tabList.push(tab);
+            }
+            
+            TabSet.prototype.selectTab = function (tabToSelect)
+            {
+                tabToSelect.select();
+                for (var i = 0; i < this.tabList.length; i++)
+                {
+                    var tab = this.tabList[i];
+                    if (tab != tabToSelect)
+                    {
+                        tab.unselect();
+                    }
+                }
+            }
+
+            // ---------------------------------------- class Tab
+
+            function Tab(elem, parentBehavior)
+            {
+                this.elem = elem;
+                this.tabSet = typeCheck(parentBehavior, TabSet);
+                this.targetElem = document.getElementById(elem.getAttribute("custom-target-id"));
+                this.tabSet.registerTab(this);
+                
+                var queryString = elem.href.replace(/[^?]*/, "");
+                if (location.search == queryString)
+                {
+                    this.select();
+                }
+                else
+                {
+                    this.unselect();
+                }
+            }
+            
+            Tab.prototype.select = function ()
+            {
+                this.elem.className = this.elem.className.replace(/tab-unselected/, "tab-selected");
+                this.targetElem.className = this.targetElem.className.replace(/page-unselected/, "page-selected");          
+            }
+
+            Tab.prototype.unselect = function ()
+            {
+                this.elem.className = this.elem.className.replace(/tab-selected/, "tab-unselected");            
+                this.targetElem.className = this.targetElem.className.replace(/page-selected/, "page-unselected");          
+            }
+
+            // ---------------------------------------- class StackedTab
+            
+            function StackedTab(elem, parentBehavior)
+            {
+                this.elem = elem;
+                this.tabSet = typeCheck(parentBehavior, TabSet);
+                this.targetElem = document.getElementById(elem.getAttribute("custom-target-id"));
+                this.tabSet.registerTab(this);
+            }
+            
+            StackedTab.prototype.select = function ()
+            {
+                this.elem.style.zIndex = "100";
+            }
+
+            StackedTab.prototype.unselect = function ()
+            {
+                // IE and Firefox seem to have some disagreement about z-index.
+                this.elem.style.zIndex = (document.all) ? "-1" : "0";
+            }
+
+            StackedTab.prototype.onclick = function ()
+            {
+                this.tabSet.selectTab(this);
+            }
+
+            // ---------------------------------------- class ProxyLink
+            
+            function ProxyLink(elem, parentBehavior)
+            {
+                if (elem.href != null)
+                {
+                    elem.href = createProxyUrl(elem.href);
+                }
+            }
+
+            // ---------------------------------------- window onload
+
+            window.onload = function ()
+            {
+                var behaviorBag = {"tab-set": TabSet, "tab": Tab, "stacked-tab": StackedTab, "proxy-link": ProxyLink};
+                recursiveAttachBehaviors(document.body, behaviorBag);
+            }
 
         </script>
 
     </head>
     <body>
     
-        <div class="title">Missing Link</div>
+        <table class="tab-table">
         
-        <div class="description">
-            Missing Link analyzes web pages and inserts links for phrases that correspond to 
-            Wikipedia articles.  It currently uses a crude heuristic which works suprisingly
-            often and also sometimes fails spectacularly.  There are several ways that
-            Missing Link can be invoked which are described below.  Try it out.
-        </div>
-            
+            <tr>
+                <td custom-behavior="tab-set" class="tab-bar">
+                
+                    <a custom-behavior="tab" custom-target-id="page-introduction" class="tab tab-selected" href="index.html">Introduction/Overview</a>
+                    <a custom-behavior="tab" custom-target-id="page-examples" class="tab tab-unselected" href="index.html?examples">More Examples</a>
+                    <a custom-behavior="tab" custom-target-id="page-try" class="tab tab-unselected" href="index.html?try">Try It Out</a>
+                    <a custom-behavior="tab" custom-target-id="page-bookmarklet" class="tab tab-unselected" href="index.html?bookmarklet">Bookmarklet</a>
+                    <a custom-behavior="tab" custom-target-id="page-extension" class="tab tab-unselected" href="index.html?extension">Firefox Extension</a>
 
-        <div class="alternative">
-            <div class="heading">Alternative 1.</div>
-            
-            <div class="paragraph">
-                Simply enter a URL and hit <b>Go</b>.  This is the easiest way to
-                use Missing Link.
-            </div>
-            
-            <div class="paragraph">
-                <label class="url-label">URL:</label> 
-                <input id="url-input" type="text">
-                <button onclick="proxyUrl(document.getElementById('url-input').value)">Go</button>
-            </div>
-        </div>
-        
-        <div class="alternative">
-            <div class="heading">Alternative 2.</div>
-            
-            <div class="paragraph">Use the <b>bookmarklet</b>.</div>
-            
-            <div class="paragraph">
-                Use the 
-                    <script>
-                        document.write("Missing Link Bookmarklet".link(createBookmarklet()));
-                    </script>.              
-                <i>No</i>, <i>no</i>, 
-                don't <i>click</i> on it -- instead, right-click it and use the 
-                context menu to select <b>Bookmark This Link</b>.
-            </div>  
+                </td>
+                
+                <td class="content-bay">
+                
+                
+                    <!-------------------------------------------------------------->
 
-            <div class="paragraph">
-                OK, now that you've successfully saved the bookmarklet you can go
-                to another page and then use the bookmarklet to redirect the page
-                through the Missing Link proxy.
-            </div>
+                    <div class="page page-selected" id="page-introduction">
+                    
+                        <p>
+                            <b>Golimojo</b> scans the text on a web page, looking for words and phrases that
+                            can be linked to Wikipedia articles of the same name.  When matching words or
+                            phrases are found, they are turned into hyperlinks right on the web page.  The 
+                            screenshots below illustrate what this looks like.  Click on the <b>Before</b>
+                            tab to see the "before" screenshot in its entirety.
+                        </p>
 
-        </div>
+                        <div custom-behavior="tab-set" class="screenshot-stack">
+                            <img custom-behavior="stacked-tab" class="screenshot-before" src="screenshot-before-small.png">
+                            <img custom-behavior="stacked-tab" class="screenshot-after" src="screenshot-after-small.png">
+                        </div>
 
+                    </div>
+                
+                    <!-------------------------------------------------------------->
+                
+                    <div class="page page-unselected" id="page-examples">
+                        Examples
+                        
+                        <ul>
+
+                            <li>
+                                <a href="http://www.washingtonmonthly.com" custom-behavior="proxy-link">Kevin Drum's Blog</a>
+                            </li>
+
+                            <li>
+                                <a href="http://www.andrewsullivan.com" custom-behavior="proxy-link">Andrew Sullivan's Blog</a>
+                            </li>
+
+                            <li>
+                                <a href="http://www.boingboing.net" custom-behavior="proxy-link">Boing Boing</a>
+                            </li>
+
+                            <li>
+                                <a href="http://www.schneier.com/blog" custom-behavior="proxy-link">Bruce Schneier's Blog</a>
+                            </li>
+
+                            <li>
+                                <a href="http://www.juancole.com" custom-behavior="proxy-link">Juan Cole's Blog</a>
+                            </li>
+
+                            <li>
+                                <a href="http://slashdot.org" custom-behavior="proxy-link">Slashdot</a>
+                            </li>
+
+                            <li>
+                                <a href="http://www.techcrunch.com" custom-behavior="proxy-link">TechCrunch</a>
+                            </li>
+
+                        </ul>
+                        
+                        
+                        
+
+                    </div>
+                
+                    <!-------------------------------------------------------------->
+                
+                    <div class="page page-unselected" id="page-try">
+                    
+                    
+                        <style>         
+
+                            .url-label
+                            {
+                                font-weight: bold;
+                            }
+
+                            #url-input
+                            {
+                                width: 30em;
+                                margin-right: 0.3em;
+                            }
+                        </style>
+                        
+                        <h3>Try It Out</h3>
+                        
+                        <p>
+                            The Golimojo proxy service is the easiest way to use Golimojo to
+                            add links to arbitrary web pages.  To use the proxy service, 
+                            simply enter a URL into the text box below and hit <b>Go</b>.
+                        </p>
+
+                        <p>
+                            <form action="javascript:proxyUrl(document.getElementById('url-input').value)">
+                                <label class="url-label">URL:</label> 
+                                <input id="url-input" type="text">
+                                <button type="submit">Go</button>
+                            </form>
+                        </p>
+
+                    </div>
+                
+                    <!-------------------------------------------------------------->
+                
+                    <div class="page page-unselected" id="page-bookmarklet">
+                        
+                        <h3>Bookmarklet</h3>
+            
+                        <p>
+                            The Golimojo <b>bookmarklet</b> is the easiest way to invoke
+                            the Golimojo proxy service on a web page that you are currently
+                            looking at.  Adding Golimojo links to any page is simply a
+                            matter of selecting a bookmark from your Bookmarks or Favorites
+                            menu in your web browser.
+                        </p>
+
+                        <p>
+                            Here is the link to the
+                                <script>
+                                    document.write("Golimojo Bookmarklet".link(createBookmarklet()));
+                                </script>.              
+                            <i>No</i>, <i>no</i>, 
+                            don't <i>click</i> on it -- instead, right-click it and use the 
+                            context menu to select <b>Bookmark This Link</b>.
+                        </p>    
+
+                        <p>
+                            OK, now that you've successfully saved the bookmarklet you can go
+                            to another page and then use the bookmarklet to redirect the page
+                            through the Golimojo proxy.
+                        </p>
+
+                    
+                    </div>
+                    
+                    <!-------------------------------------------------------------->
+            
+                    <div class="page page-unselected" id="page-extension">
+
+                        <h3>Firefox Extension</h3>
+                        
+                        <p>
+                            <i>Coming Soon.</i>
+                        </p>
+
+                    </div>
+
+                </td>
+                
+                
+            </tr>
+    
+        </table>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     </body>
 </html>
