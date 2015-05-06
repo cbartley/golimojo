@@ -29,59 +29,202 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ************************************************************/
 
 // ------------------------------------------------------------
+// ------------------- class SidebarMonitor -------------------
+// ------------------------------------------------------------
+
+// ---------------------------------------- SidebarMonitor constructor
+
+function SidebarMonitor(sidebarCommandName)
+{
+    this.observe = Tools.createCallback(this.observe, this);
+    this.sidebarCommandName = sidebarCommandName;
+    this.isSidebarOpen = this.checkIsSidebarOpen();
+    this.driver = new Driver();
+
+    // Register this object as an observer.
+    with (Components.classes["@mozilla.org/observer-service;1"])
+    {
+        with (getService(Components.interfaces["nsIObserverService"]))
+        {
+            addObserver(this, "chrome-webnavigation-create", false);
+            addObserver(this, "chrome-webnavigation-destroy", false);
+        }
+    }
+}
+
+// ---------------------------------------- SidebarMonitor observe
+
+SidebarMonitor.prototype.observe = function ()
+{
+    var isSidebarOpen = this.checkIsSidebarOpen();
+    if (isSidebarOpen == this.isSidebarOpen) return;
+
+    this.isSidebarOpen = isSidebarOpen;
+    if (isSidebarOpen)
+    {   
+        this.driver.engage();
+    }
+    else
+    {
+        this.driver.disengage();
+    }
+}
+
+// ---------------------------------------- SidebarMonitor checkIsSidebarOpen
+
+SidebarMonitor.prototype.checkIsSidebarOpen = function ()
+{
+    var sidebarBox = document.getElementById("sidebar-box");
+    return (sidebarBox.getAttribute("sidebarcommand") == this.sidebarCommandName);
+}
+
+// ------------------------------------------------------------
 // ----------------------- class Driver -----------------------
 // ------------------------------------------------------------
 
-// ---------------------------------------- Driver constructor
-
-function Driver(targetWin)
+function Driver()
 {
+    this.observe = Tools.createCallback(this.observe, this);
+}
+
+// ---------------------------------------- Driver observe
+
+Driver.prototype.observe = function (windowWrapper)
+{
+    WindowDriver.engageWindow(windowWrapper.wrappedJSObject);
+}
+
+// ---------------------------------------- Driver engage
+
+Driver.prototype.engage = function ()
+{
+    // Listen for the EndDocumentLoadEvent.
+    with (Components.classes["@mozilla.org/observer-service;1"])
+    {
+        with (getService(Components.interfaces["nsIObserverService"]))
+        {
+            addObserver(this, "EndDocumentLoad", false);
+        }
+    }
+    
+    // If there are any windows already open then we want to engage them
+    // directly since we may be too late to get an event for them.
+    var tabWindowList = Tools.getTabWindows();
+    for (var i = 0; i < tabWindowList.length; i++)
+    {
+        var tabWindow = tabWindowList[i];
+        WindowDriver.engageWindow(tabWindow);
+    }
+}
+
+// ---------------------------------------- Driver disengage
+
+Driver.prototype.disengage = function ()
+{
+    // Stop listening for events.
+    with (Components.classes["@mozilla.org/observer-service;1"])
+    {
+        with (getService(Components.interfaces["nsIObserverService"]))
+        {
+            removeObserver(this, "EndDocumentLoad");
+        }
+    }
+    
+    // Disengage any currently engaged windows.
+    var tabWindowList = Tools.getTabWindows();
+    for (var i = 0; i < tabWindowList.length; i++)
+    {
+        var tabWindow = tabWindowList[i];
+        WindowDriver.disengageWindow(tabWindow);
+    }
+}
+
+// ------------------------------------------------------------
+// -------------------- class WindowDriver --------------------
+// ------------------------------------------------------------
+
+// ---------------------------------------- WindowDriver constructor
+
+function WindowDriver(targetWin)
+{
+    this.onPageShowCallback = Tools.createCallback(this.onPageShow, this);
+    this.onPageHideCallback = Tools.createCallback(this.onPageHide, this);
+    targetWin.golimojoDriver = this;
     this.targetWin = targetWin;
     this.linker = null;
 }
 
-// ---------------------------------------- Driver start
+// ---------------------------------------- WindowDriver engageWindow (static)
 
-Driver.prototype.start = function ()
+WindowDriver.engageWindow = function (targetWin)
 {
-Log.print("### start");
-    var onPageShowCallback = Tools.createCallback(this.onPageShow, this);
-    var onPageHideCallback = Tools.createCallback(this.onPageHide, this);
-    this.targetWin.addEventListener("pageshow", onPageShowCallback, false);
-    this.targetWin.addEventListener("pagehide", onPageHideCallback, false);
+    if (targetWin.location.protocol != "http:") return;
+    if (targetWin.gxPageType == "SystemPage") return;
+    if (targetWin.golimojoDriver != null) return;
+
+    targetWin.golimojoDriver = new WindowDriver(targetWin);
+    targetWin.golimojoDriver.engage();
+}
+
+// ---------------------------------------- WindowDriver disengageWindow (static)
+
+WindowDriver.disengageWindow = function (targetWin)
+{
+    if (targetWin.golimojoDriver != null) 
+    {
+        targetWin.golimojoDriver.disengage();
+        targetWin.golimojoDriver = null;
+    }
+}
+
+// ---------------------------------------- WindowDriver engage
+
+WindowDriver.prototype.engage = function ()
+{
+    this.targetWin.addEventListener("pageshow", this.onPageShowCallback, false);
+    this.targetWin.addEventListener("pagehide", this.onPageHideCallback, false);
 
     function onPageDataReceived(pageData)
     {
         var pageTitleList = pageData.pageTitleList;
-        this.startLinking(this.targetWin.document, pageTitleList);
+        this.linker = new Linker(this.targetWin.document, pageTitleList);
+        this.linker.engage();
     }
 
     var ajaxCall = new AjaxGetPageDataCall(this.targetWin.location.href);
     ajaxCall.send(Tools.createCallback(onPageDataReceived, this));
 }
 
-// ---------------------------------------- Driver onPageShow
+// ---------------------------------------- WindowDriver disengage
 
-Driver.prototype.onPageShow = function ()
+WindowDriver.prototype.disengage = function ()
 {
-Log.print("### pageshow");
-    this.linker.startLinking();
+    this.targetWin.removeEventListener("pageshow", this.onPageShowCallback, false);
+    this.targetWin.removeEventListener("pagehide", this.onPageHideCallback, false);
+    if (this.linker != null)
+    {
+        this.linker.disengage();
+    }
 }
 
-// ---------------------------------------- Driver onPageHide
+// ---------------------------------------- WindowDriver onPageShow
 
-Driver.prototype.onPageHide = function ()
+WindowDriver.prototype.onPageShow = function ()
 {
-Log.print("### pagehide");
-    this.linker.stopLinking();
+    if (this.linker != null)
+    {
+        this.linker.startLinking();
+    }
 }
 
-// ---------------------------------------- Driver startLinking
+// ---------------------------------------- WindowDriver onPageHide
 
-Driver.prototype.startLinking = function (targetDoc, pageTitleList)
+WindowDriver.prototype.onPageHide = function ()
 {
-    this.linker = new Linker(targetDoc, pageTitleList);
-    this.linker.startLinking();
+    if (this.linker != null)
+    {
+        this.linker.stopLinking();
+    }
 }
 
 // ------------------------------------------------------------
@@ -176,7 +319,10 @@ Log.print = function (msg)
 {
     var msgText = Log.stringify(msg);
     var tabLog = Log.getTabLog();
-    tabLog.logMessage(msgText);
+    if (tabLog != null)
+    {
+        tabLog.logMessage(msgText);
+    }
 }
 
 // ---------------------------------------- static Log printHtml
@@ -184,7 +330,10 @@ Log.print = function (msg)
 Log.printHtml = function (msgHtml)
 {
     var tabLog = Log.getTabLog();
-    tabLog.logHtmlMessage(msgHtml);
+    if (tabLog != null)
+    {
+        tabLog.logHtmlMessage(msgHtml);
+    }
 }
 
 // ---------------------------------------- static Log getTabLog
@@ -240,6 +389,56 @@ Log.inspectObject = function (obj)
     return lineList.join("\n");
 }
 
+// ---------------------------------------- static Log interrogate
+
+Log.interrogate = function (obj)
+{
+
+    try
+    {
+        function supportsInterface(obj, interface)
+        {
+            try
+            {
+                obj.QueryInterface(interface);
+                return true;
+            }
+            catch (e)
+            {
+                return false;
+            }
+        }
+
+        for (var id in Components.interfaces)
+        {
+            var interface = Components.interfaces[id];
+            if (supportsInterface(obj, interface))
+            {
+                Log.print("--- " + id);
+            }
+        }
+    }
+    catch (e)
+    {
+        Log.print(e);
+    }
+
+}
+
+// ---------------------------------------- static Log traverseTree
+
+Log.traverseTree = function (node)
+{
+    Log.print("+++ " + node);
+    for (var i = 0; i < node.childCount; i++)
+    {
+        var child = node.childAt(i);
+        Log.traverseTree(child);
+    }
+
+
+}
+
 // ------------------------------------------------------------
 // ------------------------ class Tools -----------------------
 // ------------------------------------------------------------
@@ -270,6 +469,22 @@ Tools.createCallback = function (fun, receiver)
     return callback;
 }
 
+
+// ---------------------------------------- static Tools getTabWindows
+
+Tools.getTabWindows = function ()
+{
+    var tabWindowList = [];
+    var tabBrowser = window.getBrowser();
+    var browserList = tabBrowser.browsers;
+    for (var i = 0; i < browserList.length; i++)
+    {
+        var browser = browserList[i];
+        var contentWindow = browser.contentWindow.wrappedJSObject;
+        tabWindowList.push(contentWindow);
+    }
+    return tabWindowList;
+}
 
 // ------------------------------------------------------------
 // ------------------------ class Test ------------------------
@@ -303,6 +518,16 @@ Test.assert = function (testResult, optionalContext, optionalValue)
 // ---------------------- initialization ----------------------
 // ------------------------------------------------------------
 
+try
+{
+    gSidebarMonitor = new SidebarMonitor("viewGolimojoSidebar");
+}
+catch (e)
+{
+    Log.print(e);
+}
+
+/*
 function initialize()
 {
     // Declare a function to handle the end-document-load event.
@@ -310,14 +535,17 @@ function initialize()
     {
         var win = windowWrapper.wrappedJSObject;
         if (win.location.protocol != "http:") return;
+        if (win.gxPageType == "SystemPage") return;
         if (win.golimojoDriver != null) return;
-        win.golimojoDriver = new Driver(win);
+        win.golimojoDriver = new WindowDriver(win);
         win.golimojoDriver.start();
     }
 
     // Create an observer object and bind the callback function to it.
     var observer = {};
     observer.observe = Tools.createCallback(onEndDocumentLoad, observer);
+    
+    gSidebarMonitor = new SidebarMonitor("viewGolimojoSidebar");
 
     // Register the observer.
     with (Components.classes["@mozilla.org/observer-service;1"])
@@ -327,37 +555,7 @@ function initialize()
             addObserver(observer, "EndDocumentLoad", false);
         }
     }
-
-                    var xobserver = 
-                    {
-                        observe: function (obj, eventName)
-                        {
-                            Log.print("### " + eventName);
-                            try
-                            {
-                                if (obj != null && eventName == "chrome-webnavigation-create")
-                                {
-                                    var docShell = obj.QueryInterface(Components.interfaces.nsIDocShell);
-                                    Log.print("*** " + docShell);
-
-                                }
-                            }
-                            catch (e)
-                            {
-                                Log.print("### " + e);
-                            }
-                        }
-                    };
-
-                    // Register the observer.
-                    with (Components.classes["@mozilla.org/observer-service;1"])
-                    {
-                        with (getService(Components.interfaces["nsIObserverService"]))
-                        {
-                            addObserver(xobserver, "*", false);
-                        }
-                    }
-
 }
 
 initialize();
+*/

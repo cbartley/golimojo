@@ -55,8 +55,8 @@ public class GolimojoXpiServlet extends HttpServlet
     public final void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException
     {
-        // Set the content type to binary.
-        response.setContentType("application/octet-stream");
+        // Set the appropriate content type for an XPI file.
+        response.setContentType("application/x-xpinstall");
         
         // Turn of caching.
         response.setDateHeader("Expires", 0);

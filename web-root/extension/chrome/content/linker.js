@@ -36,6 +36,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 function Linker(targetDoc, pageTitleList)
 {
+    this.targetDoc = targetDoc;
     this.insertStyleSheet(targetDoc);
     this.treatAsLeafNodeNameList = ["A", "SCRIPT", "STYLE"];
     this.textNodeIterator = new TextNodeIterator(targetDoc.body, this.treatAsLeafNodeNameList);
@@ -44,6 +45,21 @@ function Linker(targetDoc, pageTitleList)
     this.doLinking = false;
     this.startDelayMs = 10;
     this.delayMs = 50;
+}
+
+// ---------------------------------------- Linker engage
+
+Linker.prototype.engage = function ()
+{
+    this.startLinking();
+}
+
+// ---------------------------------------- Linker disengage
+
+Linker.prototype.disengage = function ()
+{
+    this.stopLinking();
+    this.textNodeLinker.removeOurLinks(this.targetDoc);
 }
 
 // ---------------------------------------- Linker startLinking
@@ -73,6 +89,10 @@ Linker.prototype.stopLinking = function ()
 
 Linker.prototype.insertStyleSheet = function (targetDoc)
 {
+    // If the stylesheet is already present, just return immediately.
+    var styleSheetId = "golimojo-stylesheet";
+    if (targetDoc.getElementById(styleSheetId) != null) return;
+
     // Figure out where to insert the style sheet.
     var styleParent = targetDoc.body;
     var elemList = targetDoc.getElementsByTagName("HEAD");
@@ -86,6 +106,7 @@ Linker.prototype.insertStyleSheet = function (targetDoc)
     
     // Create a style element for the style sheet and insert it.
     var style = targetDoc.createElement("STYLE");
+    style.id = styleSheetId;
     style.textContent = styleText;
     styleParent.appendChild(style);
 }
@@ -137,7 +158,7 @@ Linker.prototype.doSomeLimitedLinking = function (doneFlag)
     this.nextTextNode = this.textNodeIterator.next();
     
     // Link this text node.
-    this.textNodeLinker.linkTextNode(textNode);
+    this.textNodeLinker.linkTextNode(textNode, this.linkList);
     if (this.nextTextNode == null) return doneFlag;
     return null;
 }
@@ -231,13 +252,42 @@ function TextNodeLinker(pageTitleList)
 
 TextNodeLinker.prototype.linkTextNode = function (textNode)
 {
-//Log.print("*** " + textNode.ownerDocument);
-//Log.print("... " + textNode.parentNode);
-//Log.print("... " + textNode.textContent);
+    // Generally you'd expect text nodes to always have a parent.  Empirically,
+    // however, this is not always the case.  If there's no owner, just skip
+    // this text node and keep going.
+    if (textNode.ownerDocument == null) return;
+
     var tokenList = this.pageTitleStore.parseTextIntoTokens(textNode.textContent);
     var cutList = this.findPageTitleCuts(tokenList);
     var nodeList = this.createNodesFromCutList(textNode.ownerDocument, tokenList, cutList);
     this.replaceNodeWithNodes(textNode, nodeList);
+}
+
+// ---------------------------------------- TextNodeLinker removeOurLinks
+
+TextNodeLinker.prototype.removeOurLinks = function (targetDoc)
+{
+    // Build a list of all of the anchor elements that we've added.
+    var ourAnchorList = [];
+    var anchorList = targetDoc.getElementsByTagName("A");
+    for (var i = 0; i < anchorList.length; i++)
+    {
+        var anchor = anchorList[i];
+        if (anchor.className == "golimojo-wikipedia-link")
+        {
+            ourAnchorList.push(anchor);
+        }
+    }
+
+    // Replace each of our anchors with its respective contents.
+    // Note that getElementsByTagName returns a "live" list that
+    // changes dynamically to reflect changes in the document, so
+    // we do *not* want to use it here.
+    for (var i = 0; i < ourAnchorList.length; i++)
+    {
+        var anchor = ourAnchorList[i];
+        this.replaceNodeWithNodes(anchor, anchor.childNodes);
+    }
 }
 
 // ---------------------------------------- TextNodeLinker findPageTitleCuts
@@ -267,7 +317,6 @@ TextNodeLinker.prototype.findPageTitleCuts = function (tokenList)
         {
             var pageTitle = matchPair[0];
             matchCount = matchPair[1];
-Log.print(matchCount + " " + pageTitle);
             cutList.push(new TokenListCut(i, i + matchCount, pageTitle));
         }
         
