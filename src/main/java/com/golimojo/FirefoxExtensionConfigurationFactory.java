@@ -27,6 +27,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ************************************************************/
+
 package com.golimojo;
 
 import java.io.File;
@@ -70,7 +71,7 @@ class FirefoxExtensionConfigurationFactory
         if (!our_cacheSet.contains(uniqueXpiPathName))
         {
             FirefoxExtensionBuilder.createFirefoxExtension( our_pathToExtensionFolder, uniqueXpiName, 
-                                                        our_extensionName, serverName, serverPort );
+                                                            serverName, serverPort );
             our_cacheSet.add(uniqueXpiPathName);
         }
 

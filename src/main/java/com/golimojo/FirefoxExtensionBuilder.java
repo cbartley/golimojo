@@ -27,6 +27,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ************************************************************/
+
 package com.golimojo;
 
 import java.io.File;
@@ -47,8 +48,8 @@ public class FirefoxExtensionBuilder extends ShellTools
 {
     // ---------------------------------------- FirefoxExtensionBuilder createFirefoxExtension
 
-    public static void createFirefoxExtension(  String pathToExtensionFolder, String xpiName, String extensionName, 
-                                                String serverName, int serverPort )
+    public static void createFirefoxExtension(  String pathToExtensionFolder, String xpiName, String serverName, 
+                                                int serverPort )
         throws IOException
     {
         Dictionary<String, String> subDict = new Hashtable<String, String>();
@@ -56,36 +57,30 @@ public class FirefoxExtensionBuilder extends ShellTools
         subDict.put("serverPort", Integer.toString(serverPort));
         subDict.put("buildId", Long.toString(System.currentTimeMillis()));
         Template.preprocessFileTree(new File(pathToExtensionFolder), subDict);
-        createXpiJarFile(pathToExtensionFolder + "/chrome", extensionName + ".jar");
-        createXpi(pathToExtensionFolder, xpiName, extensionName);
+        createXpi(pathToExtensionFolder, xpiName);
     }
 
     // ---------------------------------------- FirefoxExtensionBuilder createXpi
-    
-    private static void createXpi(String pathToExtensionFolder, String xpiName, String extensionName)
+    /**
+     * The source for a Firefox extension lives inside the directory
+     * "pathToExtensionFolder". Zip the source into an XPI file named as
+     * specified in "xpiName". All the files and folders in the directory will
+     * be zipped except for any with the extension ".xpi", for obvious reasons.
+     * The relative paths inside the XPI file will be realtive to
+     * "pathToExtensionFolder", e.g. {pathToExtensionFolder}/content/example.txt
+     * will just be stored as "content/example.text".
+     */
+    private static void createXpi(String pathToExtensionFolder, String xpiName)
     {
-        String cmdLineCreateXpi = 
-            "jar cvfM {extFolder}/{xpiName}.xpi -C {extFolder} chrome/{extName}.jar -C {extFolder} install.rdf -C {extFolder} chrome.manifest";
-        system(cmdLineCreateXpi, sub("extFolder", pathToExtensionFolder), sub("xpiName", xpiName), sub("extName", extensionName));      
+        List<String> filesAndFoldersList = listFilesAndFolders(pathToExtensionFolder);
+        filesAndFoldersList = excludeXpiFiles(filesAndFoldersList);
+        String includeArgs = prefixJoin(" -C " + pathToExtensionFolder + " ", filesAndFoldersList);
+        system( "jar cvfM {extFolder}/{xpiName}.xpi {includeArgs}",
+                sub("extFolder", pathToExtensionFolder),
+                sub("xpiName", xpiName),
+                sub("includeArgs", includeArgs) );
     }
 
-    // ---------------------------------------- FirefoxExtensionBuilder createXpiJarFile
-    /** 
-     *  Create a jar file inside the directory "pathToFolder" which contains everything
-     *  inside the directory except for the new jar file itself.  The relative paths
-     *  inside the jar file will be relative to "pathToFolder", e.g. 
-     *  {pathToFolder}/content/example.txt will just be stored as "content/example.text".
-     */
-    private static void createXpiJarFile(String pathToFolder, String jarFileName)
-    {
-        List<String> filesAndFoldersList = listFilesAndFolders(pathToFolder);
-        filesAndFoldersList = excludeJarFiles(filesAndFoldersList);
-        String includeArgs = prefixJoin(" -C " + pathToFolder + " ", filesAndFoldersList);
-        String cmdLineCreateJar = "jar cvfM {pathToFolder}/{jarFileName} {includeArgs}";
-        system( cmdLineCreateJar, sub("pathToFolder", pathToFolder), 
-                sub("jarFileName", jarFileName), sub("includeArgs", includeArgs));
-    }
-    
     // ---------------------------------------- FirefoxExtensionBuilder prefixJoin
     
     private static String prefixJoin(String prefix, List<String> stringList)
@@ -113,14 +108,14 @@ public class FirefoxExtensionBuilder extends ShellTools
         return ffNameList;      
     }
 
-    // ---------------------------------------- FirefoxExtensionBuilder excludeJarFiles
+    // ---------------------------------------- FirefoxExtensionBuilder excludeXpiFiles
     
-    private static List<String> excludeJarFiles(List<String> ffNameList)
+    private static List<String> excludeXpiFiles(List<String> ffNameList)
     {
         List<String> ffNameListOut = new ArrayList<String>();
         for (String ffName : ffNameList)
         {
-            if (!ffName.toLowerCase().endsWith(".jar"))
+            if (!ffName.toLowerCase().endsWith(".xpi"))
             {
                 ffNameListOut.add(ffName);
             }

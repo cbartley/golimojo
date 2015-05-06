@@ -27,6 +27,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ************************************************************/
+
 package com.golimojo;
 
 import java.io.BufferedInputStream;
@@ -36,6 +37,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -85,6 +87,10 @@ public class HttpReader
         if (encoding == null)
         {
             encoding = getEncoding(connection);
+            if (!Charset.availableCharsets().containsKey(encoding))
+            {
+                encoding = "ISO-8859-1";  // Usable for most Western European languages.
+            }
         }
 
         InputStream inputStream = new BufferedInputStream(connection.getInputStream());
@@ -163,7 +169,14 @@ public class HttpReader
             if (matcher.matches())
             {
                 String explicitEncoding = matcher.group(1);
+                
+                // Don't report a change in encoding if we don't know the explicit encoding anyway.
+                if (!Charset.availableCharsets().containsKey(explicitEncoding)) return false;
+                
+                // If we're already using the explicit encoding, report no change.
                 if (explicitEncoding.equalsIgnoreCase(encodingInOut[0])) return false;
+                
+                // It's a new encoding and it's one we know, so report it.
                 encodingInOut[0] = explicitEncoding;
                 return true;
             }

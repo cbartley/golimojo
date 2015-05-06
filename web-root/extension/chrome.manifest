@@ -1,5 +1,5 @@
 
-content golimojo jar:chrome/golimojo.jar!/content/
-locale golimojo en-US jar:chrome/golimojo.jar!/locale/en-US/
+content golimojo content/
+locale golimojo en-US locale/en-US/
 overlay chrome://browser/content/browser.xul chrome://golimojo/content/golimojo-overlay.xul
 

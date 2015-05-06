@@ -27,6 +27,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ************************************************************/
+
 package com.golimojo;
 
 import java.io.BufferedReader;
@@ -58,7 +59,9 @@ public class PageDumpReader
     @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Exception
     {
+
         String pathToSmallPageDumpFile = "temp/truncated-enwiki-pages-articles.xml";
+//      String pathToLargePageDumpFile = "temp/enwiki-pages-articles.xml";
         String pathToLargePageDumpFile = "temp/enwiki-pages-articles.xml";
 //      Object[] results = readPageDump(pathToSmallPageDumpFile);
 //      Object[] results = readPageDump(pathToLargePageDumpFile);
@@ -68,12 +71,16 @@ public class PageDumpReader
 //      String pathToPageDumpFile = pathToSmallPageDumpFile;
         String pathToPageDumpFile = pathToLargePageDumpFile;
         Hashtable<String, PageData> pageDataBag = readPageDumpForPageData(pathToPageDumpFile);
+//      dumpPageData(pageDataBag, "temp/page-data-dump.txt", 100 * 1000);
+//      dumpPageData(pageDataBag, "temp/page-data-dump-large.txt", 2 * 1000 * 1000);
+
         dumpPageData(pageDataBag, "temp/page-data-dump.txt", 100 * 1000);
         dumpPageData(pageDataBag, "temp/page-data-dump-large.txt", 2 * 1000 * 1000);
 
         pageDataBag = null;
         
         Hashtable<String, WordData> wordDataBag = readPageDumpForWordData(pathToPageDumpFile);
+//      dumpWordData(wordDataBag, "temp/word-data-dump.txt");
         dumpWordData(wordDataBag, "temp/word-data-dump.txt");
 
         System.out.println("Done.");

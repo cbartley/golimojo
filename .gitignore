@@ -6,4 +6,4 @@ jetty.log
 *.jar
 *.xpi
 *.zip
-/web-root/extension/chrome/content/config.js
+/web-root/extension/content/config.js

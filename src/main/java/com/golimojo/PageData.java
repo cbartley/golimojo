@@ -27,6 +27,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ************************************************************/
+
 package com.golimojo;
 
 import java.io.BufferedReader;
@@ -45,18 +46,36 @@ public class PageData
     // ---------------------------------------- PageData instance variables
 
     private String _title;
+    private String _canonicalTitle;
     private int _wordCount;
     private int _refCount;
     private int _refRank;
 
-    // ---------------------------------------- PageData constructor
+    // ---------------------------------------- PageData constructor #1
 
     public PageData(String title, int refCount)
     {
         _title = title;
+        _canonicalTitle = title;
         _wordCount = countWords(title);
         _refCount = refCount;
         _refRank = -1;
+    }
+
+    // ---------------------------------------- PageData constructor #2
+    /**
+     * Alternate constructor for creating a PageData object that is
+     * essentially an alias of another one, e.g. "MiG 15" as an alias
+     * for the more common "MiG-15".  Useful for some explicit special
+     * cases.
+     */
+    public PageData(PageData primary, String title)
+    {
+        _title = title;
+        _canonicalTitle = primary._canonicalTitle;
+        _wordCount = primary._wordCount;
+        _refCount = primary._refCount;
+        _refRank = primary._refRank;
     }
 
     // ---------------------------------------- PageData getTitle
@@ -64,6 +83,12 @@ public class PageData
     public String getTitle()
     {
         return _title;
+    }
+
+    // ---------------------------------------- PageData getCanonicalTitle
+
+    public String getCanonicalTitle() {
+        return _canonicalTitle;
     }
 
     // ---------------------------------------- PageData getWordCount

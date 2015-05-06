@@ -27,6 +27,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ************************************************************/
+
 package com.golimojo;
 
 import java.util.ArrayList;
@@ -48,6 +49,9 @@ public class PageFilter
 
     public static void removeLowQualityPages(Hashtable<String, PageData> pageDataBag, Ranker ranker)
     {
+        // TODO: Be more systematic and explicit about these sorts of things.
+        addPageAlias(pageDataBag, "MiG-15", "MIG 15");
+
         List<PageData> pageDataList = new ArrayList<PageData>(pageDataBag.values());
         HashSet<String> stopWordSet = createStopWordSet(pageDataBag);
         
@@ -61,6 +65,10 @@ public class PageFilter
     }
 
     // ---------------------------------------- PageFilter isHighQualityPage
+
+    private static SimpleRule rule1 = new SimpleRule(new Range(1, 1), new Range(null, 50000), 1, 1);
+    private static SimpleRule rule2 = new SimpleRule(new Range(1, 1), new Range(50001, null), 5, 1);
+    private static SimpleRule rule3 = new SimpleRule(new Range(2, null), new Range(null, null), 13, 1);
     
     private static boolean isHighQualityPage(PageData pageData, Ranker ranker, HashSet<String> stopWordSet)
     {
@@ -77,13 +85,9 @@ public class PageFilter
             wordCount = wordCount - 1;
         }
         
-        SimpleRule r1 = new SimpleRule(new Range(1, 1), new Range(null, 50000), 1, 1);
-        SimpleRule r2 = new SimpleRule(new Range(1, 1), new Range(50001, null), 5, 1);
-        SimpleRule r3 = new SimpleRule(new Range(2, null), new Range(null, null), 13, 1);
-        
-        if (!r1.test(pageData, pageScore)) return false;
-        if (!r2.test(pageData, pageScore)) return false;
-        if (!r3.test(pageData, pageScore)) return false;
+        if (!rule1.test(pageData, pageScore)) return false;
+        if (!rule2.test(pageData, pageScore)) return false;
+        if (!rule3.test(pageData, pageScore)) return false;
         
         if (wordCount == 1 && stopWordSet.contains(pageTitle.toLowerCase())) return false;
 
@@ -215,6 +219,7 @@ public class PageFilter
         
         stopWordSet.add("rhodes");
         stopWordSet.add("i'll");
+        stopWordSet.add("aldrin");
 
         return stopWordSet;
     }
@@ -448,5 +453,26 @@ public class PageFilter
             assert createCountedKeyBag(itemTupleList, 1).get("foo") == null;
             assert createCountedKeyBag(itemTupleList, 1).get("bar") == 2;
         }
+
+
+    // ---------------------------------------- PageFilter addPageAlias
+    /**
+     * Add an alias for a particular page data, e.g. "MIG 15" for the
+     * more common "MiG-15".  A smarter system would be able to handle
+     * this kind of thing automatically, but we're not there yet.
+     */
+    private static void addPageAlias(Hashtable<String, PageData> pageDataBag, String sourceTitle, String aliasTitle)
+    {
+        PageData pageData = pageDataBag.get(sourceTitle.toLowerCase());
+        if (pageData != null)
+        {
+            PageData pageDataAlias = new PageData(pageData, aliasTitle);
+            pageDataBag.put(aliasTitle.toLowerCase(), pageDataAlias);
+        }
+        else
+        {
+            System.err.printf("### unknown title for alias: %s\n", sourceTitle);
+        }   
+    }
 
 }

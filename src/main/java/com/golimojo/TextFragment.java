@@ -27,6 +27,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ************************************************************/
+
 package com.golimojo;
 
 import java.util.ArrayList;
@@ -251,7 +252,7 @@ public class TextFragment
         private static boolean isWordChar(char ch)
         {
             if (ch == '-') return true;
-            if (ch == '\'') return true;
+//          if (ch == '\'') return true;                // TODO: Is this really the right thing to do?
             if ('0' <= ch && ch <= '9') return true;
             if ('A' <= ch && ch <= 'Z') return true;
             if ('a' <= ch && ch <= 'z') return true;

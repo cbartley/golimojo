@@ -27,6 +27,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ************************************************************/
+
 package com.golimojo;
 
 import java.io.*;
@@ -54,29 +55,27 @@ public class Linker
         _pageDataStore = pageDataStore;
     }
 
+    // ---------------------------------------- Linker getExampleHtmlDescription
+    
+    public static String getExampleHtmlDescription()
+    {
+        return  "Here's an excerpt from Buzz Aldrin's NASA " +
+                "<a href='http://www.jsc.nasa.gov/Bios/htmlbios/aldrin-b.html'>biography</a>:";
+    }
+
     // ---------------------------------------- Linker getExampleHtml
 
     public static String getExampleHtml()
     {
-        String[] exampleLines = new String[]
-        {
-            "... Rhodes spends a great ",
-            "deal of time at the <a href='#'>Cavendish Laboratory</a> at Cambridge, the marvelous site where so ",
-            "many discoveries were made in the early 20th Century. Giants walk the pages of ",
-            "Rhodes' book: men like J.J. Thomson, Ernest Rutherford, Niels Bohr, <a href='#'>Robert ",
-            "Oppenheimer</a>, Enrico Fermi, Leo Szilard, Leslie Groves, Vannevar Bush, and Albert ",
-            "Einstein all make important appearances throughout the book. ...",
-            ""
-        };
-        
-        StringBuffer sbExample = new StringBuffer();
-        for (String line : exampleLines)
-        {
-            sbExample.append(line);
-            sbExample.append("\n");
-        }
-        
-        return sbExample.toString();    
+        return  "Prior to joining NASA, Aldrin flew 66 combat missions in F-86's while on " +
+                "duty in Korea. At Nellis Air Force Base, Nevada, he served as an aerial " +
+                "gunnery instructor. Following his assignment as aide to the dean of " +
+                "faculty at the Air Force Academy, Aldrin flew F-100's as a flight " +
+                "commander at Bitburg, Germany. He went on to receive a doctorate at MIT, " +
+                "and was then assigned to the Gemini Target Office of the Air Force Space " +
+                "Systems Division, Los Angeles. In March 1972, Aldrin retired from Air " +
+                "Force active duty, after 21 years of service. As a USAF jet fighter pilot " +
+                "during the Korean War, he shot down two MIG 15 aircraft.";
     }
 
     // ---------------------------------------- Linker addLinksToHtmlFragmentText
@@ -103,26 +102,45 @@ public class Linker
 
     public List<QdmlFragment> addLinksToHtmlDocument(List<QdmlFragment> fragmentList, String baseUrl)
     {
-        // Insert BASE element.
+        // Assign the HTML tag an ID.  We can use the ID to specify higher priority rules in our CSS.
+        int htmlStartTagIndex = findStartTag(fragmentList, "HTML");
+        if (htmlStartTagIndex >= 0)
+        {
+            QdmlStartTagFragment htmlStartTagFragment =
+                (QdmlStartTagFragment)fragmentList.get(htmlStartTagIndex);
+            String tagText = htmlStartTagFragment.getText();
+            String newTagText = tagText.substring(0, tagText.length() - 1) + " id='html'>";
+            fragmentList.set(htmlStartTagIndex, new QdmlStartTagFragment("HTML", newTagText));
+        }
+
+        // Insert BASE and STYLE elements immediately after the HEAD.
+        int headStartTagIndex = findStartTag(fragmentList, "HEAD");
+        if (headStartTagIndex >= 0)
+        {
+            QdmlElementFragment elem = new QdmlElementFragment("<base href='" + baseUrl + "'>\n");
+            fragmentList.add(headStartTagIndex + 1, elem);
+            QdmlFragment styleElem = createGolimojoStyleElement();
+            fragmentList.add(headStartTagIndex + 2, styleElem);         
+        }
+
+        // Now add the links.
+        return addLinksToHtmlDocument(fragmentList);
+    }
+
+    // ---------------------------------------- Linker findStartTag
+    
+    private static int findStartTag(List<QdmlFragment> fragmentList, String tagName)
+    {
         for (int i = 0; i < fragmentList.size(); i++)
         {
             QdmlFragment fragment = fragmentList.get(i);
             if (fragment instanceof QdmlStartTagFragment)
             {
                 QdmlStartTagFragment startTag = (QdmlStartTagFragment)fragment;
-                if (startTag.isStartTagCi("HEAD"))
-                {
-                    QdmlElementFragment elem = new QdmlElementFragment("<base href='" + baseUrl + "'>\n");
-                    fragmentList.add(i + 1, elem);
-                    QdmlFragment styleElem = createGolimojoStyleElement();
-                    fragmentList.add(i + 2, styleElem);                 
-                    break;
-                }
+                if (startTag.isStartTagCi(tagName)) return i;
             }
         }
-
-        // Now add the links.
-        return addLinksToHtmlDocument(fragmentList);
+        return -1;
     }
 
     // ---------------------------------------- Linker findLinks
@@ -162,7 +180,6 @@ public class Linker
             String text = ((QdmlTextNodeFragment)fragment).getText();
             findLinksInText(text, pageTitleReceiverList);
         }
-        
     }
 
     // ---------------------------------------- Linker createGolimojoStyleElement
@@ -185,15 +202,15 @@ public class Linker
     {
         String[] fragments = new String[]
         {
-            createStyle("", "red", "underline", "none"),
-            createStyle(".black", "black", "underline", "none"),
-            createStyle(".blue", "blue", "underline", "none"),
-            createStyle(".red", "red", "underline", "none"),
-            createStyle(".green", "green", "underline", "none"),
-            createStyle(".yellow", "yellow", "underline", "none"),
+            createStyle("#html", "red", "underline", "none"),
+            createStyle("#html.black", "black", "underline", "none"),
+            createStyle("#html.blue", "blue", "underline", "none"),
+            createStyle("#html.red", "red", "underline", "none"),
+            createStyle("#html.green", "green", "underline", "none"),
+            createStyle("#html.yellow", "yellow", "underline", "none"),
             ""
         };
-        
+
         return join(fragments, "\n");
     }
 
@@ -208,13 +225,13 @@ public class Linker
             "   , #key-selector# a.golimojo-wikipedia-link:hover",
             "   , #key-selector# a.golimojo-wikipedia-link:active",
             "   {",
-            "       color: #color#;",
-            "       text-decoration: #text-decoration#;",
-            "       border-bottom: #border-style#;",
+            "       color: #color# !important;",
+            "       text-decoration: #text-decoration# !important;",
+            "       border-bottom: #border-style# !important;",
             "   }",
             ""
         };
-        
+
         String text = join(lineList, "\n");
         text = text.replace("#key-selector#", keySelector);
         text = text.replace("#color#", color);

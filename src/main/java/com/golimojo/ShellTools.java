@@ -27,6 +27,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ************************************************************/
+
 package com.golimojo;
 
 import java.io.IOException;
@@ -99,6 +100,34 @@ public class ShellTools
         System.exit(1);
     }
     
+    // ---------------------------------------- Deployer onWindows
+    
+    public static boolean onWindows()
+    {
+        return System.getProperty("os.name").startsWith("Windows");
+    }
+    
+    // ---------------------------------------- Deployer onUnix
+    
+    public static boolean onUnix()
+    {
+        return !onWindows();
+    }
+    
+    // ---------------------------------------- Deployer onLinux
+    
+    public static boolean onLinux()
+    {
+        return System.getProperty("os.name").equals("Linux");
+    }
+    
+    // ---------------------------------------- Deployer onOSX
+    
+    public static boolean onOSX()
+    {
+        return System.getProperty("os.name").equals("Mac OS X");
+    }
+
     // ---------------------------------------- ShellTools sub
     
     public static Substitution sub(String name, String value)

@@ -27,6 +27,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ************************************************************/
+
 package com.golimojo;
 
 import java.io.IOException;
@@ -79,9 +80,11 @@ public class GetPageDataAjaxServlet extends GolimojoServlet
             {
                 long startTimeMs = System.currentTimeMillis();
                 List<String> pageTitleList = our_linker.findLinks(fragmentList);
+                long elapsedTimeMs1 = System.currentTimeMillis() - startTimeMs;
+                System.out.printf("### %s: elapsed time: %1.2f\n", this.getClass().getName(), (0.001 * elapsedTimeMs1));
                 generatePageTitleXml(out, pageTitleList);
-                long elapsedTimeMs = System.currentTimeMillis() - startTimeMs;
-                System.out.printf("### %s: elapsed time: %1.2f\n", this.getClass().getName(), (0.001 * elapsedTimeMs));
+                long elapsedTimeMs2 = System.currentTimeMillis() - startTimeMs;
+                System.out.printf("... %s: elapsed time: %1.2f (overall)\n", this.getClass().getName(), (0.001 * elapsedTimeMs2));
                 System.out.printf("... %d\n", pageTitleList.size());
             }
         }

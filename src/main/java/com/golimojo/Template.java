@@ -27,6 +27,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ************************************************************/
+
 package com.golimojo;
 
 import java.io.BufferedReader;
@@ -99,8 +100,10 @@ public class Template
         String pathToShellFile = templateTriplet[0];
         String title = templateTriplet[1];
         String templateText = templateTriplet[2];
+        
+        templateText = applySubstitutions(templateText, subDict);
 
-        String contentText = Template.applySubstitutions(templateText, subDict);
+        String contentText = applySubstitutions(templateText, subDict);
         if (pathToShellFile == null) return contentText;
 
         subDict.put("title", title);
@@ -145,7 +148,7 @@ public class Template
     
     // ---------------------------------------- Template readFile
     
-    private static String readFile(String pathToFile) throws IOException
+    public static String readFile(String pathToFile) throws IOException
     {
         Reader reader = new BufferedReader(new FileReader(pathToFile));
         try

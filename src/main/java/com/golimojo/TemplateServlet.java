@@ -27,6 +27,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ************************************************************/
+
 package com.golimojo;
 
 import java.io.*;
@@ -45,6 +46,7 @@ public class TemplateServlet extends GolimojoServlet
     
     // ---------------------------------------- TemplateServlet instance variables
     
+    private static String our_exampleHtmlDescription = "";
     private static String our_exampleBeforeHtml = "";
     private static String our_exampleAfterHtml = "";
     
@@ -101,6 +103,13 @@ public class TemplateServlet extends GolimojoServlet
         return redirectUrl;
     }   
 
+    // ---------------------------------------- TemplateServlet setSharedExampleHtmlDescription
+    
+    public static void setSharedExampleHtmlDescription(String exampleHtmlDescription)
+    {
+        our_exampleHtmlDescription = exampleHtmlDescription;
+    }
+
     // ---------------------------------------- TemplateServlet setSharedExampleBeforeHtml
     
     public static void setSharedExampleBeforeHtml(String exampleBeforeHtml)
@@ -140,8 +149,10 @@ public class TemplateServlet extends GolimojoServlet
         subDict.put("queryStringUnescaped", URLDecoder.decode(queryString, "UTF-8"));
         subDict.put("serverName", request.getServerName());
         subDict.put("serverPort", Integer.toString(request.getServerPort()));
+        subDict.put("exampleHtmlDescription", our_exampleHtmlDescription);
         subDict.put("exampleBeforeHtml", our_exampleBeforeHtml);
         subDict.put("exampleAfterHtml", our_exampleAfterHtml);
+        subDict.put("siteName", Configuration.get().getSiteName());
         return subDict;
     }
     
