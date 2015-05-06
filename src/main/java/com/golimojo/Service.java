@@ -29,53 +29,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ************************************************************/
 package com.golimojo;
 
-import org.mortbay.http.HttpContext;
-import org.mortbay.http.HttpServer;
-import org.mortbay.http.handler.DumpHandler;
-import org.mortbay.http.handler.NotFoundHandler;
-import org.mortbay.http.handler.ResourceHandler;
-import org.mortbay.jetty.servlet.ServletHandler;
-import org.mortbay.util.InetAddrPort;
 
-public class Server {
-
-    // ---------------------------------------- Server start
-    
-    protected static void start(int port) throws Exception
-    {
-        
-        // Create the server
-        HttpServer server = new HttpServer();
-        
-        String articleTitlePath = "resource-root/article-titles.txt";
-        Linker linker = new Linker(articleTitlePath);
-        MissingLinkProxyServlet.setSharedLinker(linker);
-
-        // Default is no virtual host
-        String host=null;
-        HttpContext context = server.getContext(host,"/");
-        
-        ServletHandler servletHandler = new ServletHandler();
-        servletHandler.addServlet("Missing Link", "/servlet/missing-link/*", "com.golimojo.MissingLinkProxyServlet");
-        context.addHandler(servletHandler);
-
-        context.setResourceBase("web-root");
-        context.addHandler(new ResourceHandler());
-        context.addHandler(new DumpHandler());
-        context.addHandler(new NotFoundHandler());
-        
-        InetAddrPort address = new InetAddrPort(port);
-        server.addListener(address);
-        
-        server.start();
-    }
-
-    // ---------------------------------------- Server main
+public class Service extends Server
+{
+    // ---------------------------------------- Service main
     
     public static void main(String[] args) throws Exception
     {
-        start(8085);
+        start(8080);
     }
-    
-}
 
+}

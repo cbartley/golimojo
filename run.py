@@ -6,6 +6,7 @@ entryPoints = [
 
     ("Server"            , "com.golimojo.Server"),
     ("Parser"            , "com.golimojo.Parser"),
+    ("Service"           , "com.golimojo.Service"),
 
 ]
 

@@ -33,6 +33,8 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
+import com.golimojo.Parser.*;
+
 public class Linker 
 {
     private Dictionary<String, String> myArticleTitleBag;
@@ -67,12 +69,29 @@ public class Linker
             }
         }
         
-        // Process text nodes.
+        return findLinks(fragmentList);
+    }
+
+    public List<HtmlFragment> findLinks(List<HtmlFragment> fragmentList)
+    {   
+        boolean inBody = false;
+        boolean inStyle = false;
+        boolean inScript = false;
+        boolean inAnchor = false;
+        
         List<HtmlFragment> fragmentOutList = new ArrayList<HtmlFragment>();
         for (int i = 0; i < fragmentList.size(); i++)
         {
             HtmlFragment fragment = fragmentList.get(i);
-            if (!(fragment instanceof TextNode))
+            
+            boolean isTextNode = (fragment instanceof TextNode);
+            
+            inBody = insideElement(fragment, "BODY", inBody);
+            inStyle = insideElement(fragment, "STYLE", inStyle);
+            inScript = insideElement(fragment, "SCRIPT", inScript);
+            inAnchor = insideElement(fragment, "A", inAnchor);
+                
+            if (!isTextNode || !inBody || inStyle || inScript || inAnchor)
             {
                 fragmentOutList.add(fragment);
             }
@@ -82,10 +101,25 @@ public class Linker
                 findLinks(textNode, fragmentOutList);
             }
         }
-        
+
         return fragmentOutList;
     }
 
+    private boolean insideElement(HtmlFragment fragment, String tagName, boolean insideElementNow)
+    {
+        if (fragment instanceof StartTag)
+        {
+            StartTag startTag = (StartTag)fragment;
+            if (startTag.getTagName().equals(tagName)) return true;
+        }
+        if (fragment instanceof EndTag)
+        {
+            EndTag endTag = (EndTag)fragment;
+            if (endTag.getTagName().equals(tagName)) return false;
+        }
+        return insideElementNow;
+    }
+    
     private void findLinks(TextNode textNode, List<HtmlFragment> fragmentOutList)
     {
         String text = textNode.toString();
@@ -164,7 +198,6 @@ public class Linker
                     if (!justLetters(articleTitle)) continue;
                     articleTitleCount++;
                     articleTitle = translateArticleTitle(articleTitle);
-//if (articleTitle.indexOf("ward") >= 0) System.out.println("... " + articleTitle);
                     articleTitleBag.put(articleTitle, articleTitle);
             }
             long endTimeMs = new Date().getTime();
@@ -208,7 +241,7 @@ public class Linker
     
     private static String translateArticleTitle(String articleTitle)
     {
-        articleTitle = articleTitle.toLowerCase();
+//      articleTitle = articleTitle.toLowerCase();
         articleTitle = articleTitle.replace('_', ' ');
         return articleTitle;
     }
@@ -281,7 +314,7 @@ public class Linker
         List<String> links = new ArrayList<String>();
         for (String phrase : phrases)
         {
-            if (articleTitleBag.get(phrase.toLowerCase()) != null)
+            if (articleTitleBag.get(phrase/*.toLowerCase()*/) != null)
             {
                 links.add(phrase);
             }

@@ -4,6 +4,19 @@
         
         <style>
         
+            .title
+            {
+                font-family: sans-serif;
+                font-size: 24pt;
+                font-weight: bold;
+                margin-bottom: 0.3em;
+            }
+        
+            .description
+            {
+                margin-bottom: 1.0em;
+            }
+        
             .alternative
             {
                 margin-bottom: 1em;
@@ -17,9 +30,9 @@
                 margin-bottom: 0.3em;
             }
             
-            .directions
+            .paragraph
             {
-                margin-bottom: 0.3em;
+                margin-bottom: 0.5em;
             }
             
             .url-label
@@ -37,30 +50,62 @@
         
         <script>
         
-            function proxyUrl(url)
+            var $host$ = location.host;
+        
+            function createProxyUrl(url)
             {
+                if (!url.match(/^http:\/\//))
+                {
+                    url = "http://" + url;
+                }
+
                 var strippedUrl = url.replace(/^http:\/\//, "");
                 var escapedStrippedUrl = escape(strippedUrl);
-                var proxyServletUrl = "http://" + location.host + "/servlet/missing-link/";
+                var proxyServletUrl = "http://" + $host$ + "/servlet/missing-link/";
                 var proxyUrl = proxyServletUrl + escapedStrippedUrl;
-                location = proxyUrl;
-            }       
+                return proxyUrl;
+            }
         
-        
+            function proxyUrl(url)
+            {
+                location = createProxyUrl(url);
+            }
+            
+            function createBookmarklet()
+            {
+                var bookmarklet = 
+                    "javascript:location = ((#createProxyUrl#)(location.href))"
+                        .replace(/#createProxyUrl#/, createProxyUrl.toString())
+                            .replace(/\$host\$/, '"' + $host$ + '"')
+                                .replace(/"/g, "'");
+                return bookmarklet;
+            }
+
+
         </script>
 
     </head>
     <body>
+    
+        <div class="title">Missing Link</div>
         
+        <div class="description">
+            Missing Link analyzes web pages and inserts links for phrases that correspond to 
+            Wikipedia articles.  It currently uses a crude heuristic which works suprisingly
+            often and also sometimes fails spectacularly.  There are several ways that
+            Missing Link can be invoked which are described below.  Try it out.
+        </div>
+            
+
         <div class="alternative">
             <div class="heading">Alternative 1.</div>
             
-            <div class="directions">
+            <div class="paragraph">
                 Simply enter a URL and hit <b>Go</b>.  This is the easiest way to
-                use Golimojo.
+                use Missing Link.
             </div>
             
-            <div>
+            <div class="paragraph">
                 <label class="url-label">URL:</label> 
                 <input id="url-input" type="text">
                 <button onclick="proxyUrl(document.getElementById('url-input').value)">Go</button>
@@ -70,32 +115,25 @@
         <div class="alternative">
             <div class="heading">Alternative 2.</div>
             
-            <div class="directions">Use the <b>bookmarklet</b>.</div>
+            <div class="paragraph">Use the <b>bookmarklet</b>.</div>
             
-            <div>
-                Use the <a href="">Golimojo Bookmarklet</a>.  <i>No</i>, <i>no</i>, 
+            <div class="paragraph">
+                Use the 
+                    <script>
+                        document.write("Missing Link Bookmarklet".link(createBookmarklet()));
+                    </script>.              
+                <i>No</i>, <i>no</i>, 
                 don't <i>click</i> on it -- instead, right-click it and use the 
                 context menu to select <b>Bookmark This Link</b>.
-            <div>
+            </div>  
+
+            <div class="paragraph">
                 OK, now that you've successfully saved the bookmarklet you can go
                 to another page and then use the bookmarklet to redirect the page
-                through the Golimojo proxy.
+                through the Missing Link proxy.
             </div>
-            
-            <div>
-                Right-click on the bookmarklet <a href="xxx">link</a> and save it as
-                a bookmark.  
-            </div>
-            
-        
-        
-        
+
         </div>
-        
-        
-        
-        
-        
-        
+
     </body>
 </html>
