@@ -2,3 +2,6 @@ target/
 temp/*
 !temp/.gitignore
 
+*.jar
+*.xpi
+/web-root/extension/chrome/content/config.js

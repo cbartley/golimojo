@@ -55,7 +55,7 @@ public class TemplateServlet extends GolimojoServlet
         try
         {   
             String pathToRequestedTemplateFile = getServletContext().getRealPath(request.getServletPath());
-            String templateText = readFile(pathToRequestedTemplateFile);
+            String templateText = Template.readFile(pathToRequestedTemplateFile);
             Dictionary<String, String> subDict = new Hashtable<String, String>();
             String queryString = request.getQueryString();
             if (queryString != null)
@@ -72,7 +72,7 @@ public class TemplateServlet extends GolimojoServlet
             subDict.put("serverPort", Integer.toString(request.getServerPort()));
             subDict.put("exampleBeforeHtml", our_exampleBeforeHtml);
             subDict.put("exampleAfterHtml", our_exampleAfterHtml);
-            String finalText = applySubstitutions(templateText, subDict);
+            String finalText = Template.applySubstitutions(templateText, subDict);
             out.print(finalText);
         }
         finally
@@ -94,93 +94,6 @@ public class TemplateServlet extends GolimojoServlet
     {
         our_exampleAfterHtml = exampleAfterHtml;        
     }
-    
-    // ---------------------------------------- TemplateServlet applySubstitutions
-    
-    private static String readFile(String pathToFile) throws IOException
-    {
-        Reader reader = new BufferedReader(new FileReader(pathToFile));
-        
-        StringBuffer sbText = new StringBuffer();
-        while (true)
-        {
-            int chInt = reader.read();
-            if (chInt == -1) break;
-            char ch = (char)chInt;
-            sbText.append(ch);
-        }
-        
-        return sbText.toString();
-    }
-    
-    // ---------------------------------------- TemplateServlet applySubstitutions
-
-    private static String applySubstitutions(String templateText, Dictionary<String, String> subDict)
-    {
-        // Substitutions are of the form "{{variable}}".  We split at "{{" or "}}"
-        // which gives us an array where odd locations (1, 3, 5, ...) are variable
-        // names to be substituted, and even locations are literal text runs which
-        // may be empty strings but usually aren't.
-        String[] fragments = templateText.split("(\\{\\{)|(\\}\\})");
-
-        // Replace each odd location in the array with its substitution.
-        for (int i = 1; i < fragments.length; i += 2)
-        {
-            String key = fragments[i];
-            String value = subDict.get(key);
-            if (value == null)
-            {
-                value = "{{" + key + "}}";
-                System.err.printf("Error -- attempt to substitute unknown variable: '%s'\n", key);
-            }
-            fragments[i] = value;
-        }
-
-        // Re-assemble the fragments into the final output text.
-        StringBuffer sbFinalText = new StringBuffer();
-        for (String fragment : fragments)
-        {
-            sbFinalText.append(fragment);
-        }
-        
-        // Return the result.
-        return sbFinalText.toString();
-    }
-    
-    
-        public static void L1TEST_split()
-        {
-            // --- First, let's verify split works as expected. ---
-
-            assert "[foo]".split("[\\[\\]]")[1].equals("foo");
-            assert "alpha[foo]".split("[\\[\\]]")[1].equals("foo");
-            assert "alpha[foo]bravo".split("[\\[\\]]")[1].equals("foo");
-            assert "[foo]bravo".split("[\\[\\]]")[1].equals("foo");
-
-            assert "[foo][bar]".split("[\\[\\]]")[1].equals("foo");
-            assert "alpha[foo][bar]".split("[\\[\\]]")[1].equals("foo");
-            assert "alpha[foo]bravo[bar]".split("[\\[\\]]")[1].equals("foo");
-            assert "alpha[foo]bravo[bar]charlie".split("[\\[\\]]")[1].equals("foo");
-            assert "alpha[foo][bar]charlie".split("[\\[\\]]")[1].equals("foo");
-
-            assert "[foo][bar]".split("[\\[\\]]")[3].equals("bar");
-            assert "alpha[foo][bar]".split("[\\[\\]]")[3].equals("bar");
-            assert "alpha[foo]bravo[bar]".split("[\\[\\]]")[3].equals("bar");
-            assert "alpha[foo]bravo[bar]charlie".split("[\\[\\]]")[3].equals("bar");
-            assert "alpha[foo][bar]charlie".split("[\\[\\]]")[3].equals("bar");
-            
-            // --- Now, verify our function ---
-            
-            Dictionary<String, String> subDict = new Hashtable<String, String>();
-            subDict.put("foo", "FOO");
-            subDict.put("bar", "BAR");
-            assert applySubstitutions("{{foo}}{{bar}}", subDict).equals("FOOBAR");
-            assert applySubstitutions("alpha{{foo}}{{bar}}", subDict).equals("alphaFOOBAR");
-            assert applySubstitutions("alpha{{foo}}bravo{{bar}}", subDict).equals("alphaFOObravoBAR");
-            assert applySubstitutions("alpha{{foo}}bravo{{bar}}charlie", subDict).equals("alphaFOObravoBARcharlie");
-            assert applySubstitutions("alpha{{foo}}{{bar}}charlie", subDict).equals("alphaFOOBARcharlie");
-            
-        }
     
     
 

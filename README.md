@@ -1,8 +1,8 @@
 ## Introduction
 
-Golimojo is a tool for automatically adding Wikipedia links to existing web pages.  If you have Git, Java, Maven, and Python (the last is optional) then it should be easy to build and run the full system on your development machine.
+Golimojo is a tool for automatically adding Wikipedia links to existing web pages.  The full Golimojo system consists of a web server, web site, a bookmarklet, and a Firefox extension.  If you have Git, Java, Maven, and Python (the last is optional) then it should be easy to build and run the full system on your development machine.
 
-There is a demo system running at <http://www.golimojo.com>.
+There is a demo system running at <http://www.golimojo.com>.  Note that the website can add links to existing web pages by proxying them, so you don't need the Firefox extension to do this.  If you are a Firefox user, you might find the Firefox extension more convenient, however.
 
 ## Building and running the system
 
@@ -12,9 +12,9 @@ The project has several main entry points which can be run directly using `mvn e
 
 You can use `python run.py help` to see a list of all entry points.  If you are using **Bash** or a similar shell, you may find this alias convenient: `alias run='python run.py'` -- this way you can simply say `run server`.
 
+
 ## History
 
 The Git repository for Golimojo was created in 2015 but many of the source revisions date from the original closed-source project back in 2005 followed by a few more revisions from 2010 when the the first open-source version of the project was pushed to Google Code.
 
 Each of these early revisions are a combination of changes from 2005 or 2010 with changes from 2015.  Notably, the Maven configuration and the Python "run" script were written in 2015.  This README and the BSD license are also new, though the 2010 revisions were also BSD licensed with slightly different wording.  The core Java, JavaScript, HTML, and CSS files are largely unchanged from their original versions except for a few minor changes to ensure that each revision will compile and run with the 2015 build tooling.
-

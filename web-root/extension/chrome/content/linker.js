@@ -229,6 +229,7 @@ TextNodeLinker.prototype.findPageTitleCuts = function (tokenList)
         {
             var pageTitle = matchPair[0];
             matchCount = matchPair[1];
+Log.print(matchCount + " " + pageTitle);
             cutList.push(new TokenListCut(i, i + matchCount, pageTitle));
         }
         
@@ -268,7 +269,7 @@ TextNodeLinker.prototype.createNodeFromCut = function (ownerDocument, tokenList,
     // If there is a page title, wrap an anchor around the
     // text node and return the anchor.
     var pageTitle = cut.data;
-    var anchor = document.createElement("A");
+    var anchor = ownerDocument.createElement("A");
     anchor.className = "golimojo-wikipedia-link";
     anchor.appendChild(textNode);
     anchor.href = this.createWikipediaLink(pageTitle);

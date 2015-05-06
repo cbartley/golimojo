@@ -5,6 +5,7 @@ import sys, subprocess
 entryPoints = [
 
     ("Server"            , "com.golimojo.Server"),
+    ("ExtensionBuilder"  , "com.golimojo.ExtensionBuilder"),
     ("PageDumpReader"    , "com.golimojo.PageDumpReader"),
     ("Service"           , "com.golimojo.Service"),
 

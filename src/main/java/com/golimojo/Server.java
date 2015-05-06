@@ -37,7 +37,12 @@ import org.mortbay.http.handler.ResourceHandler;
 import org.mortbay.jetty.servlet.ServletHandler;
 import org.mortbay.util.InetAddrPort;
 
-public class Server {
+// ------------------------------------------------------------
+// ----------------------- class Server -----------------------
+// ------------------------------------------------------------
+
+public class Server extends ShellTools
+{
 
     // ---------------------------------------- Server main
     
@@ -95,6 +100,7 @@ public class Server {
         servletHandler.addServlet("Get Page Data", "/servlet/get-page-data", GetPageDataAjaxServlet.class.getName());
         servletHandler.addServlet("Template", "*.html", TemplateServlet.class.getName());
         servletHandler.addServlet("Stats", "/servlet/stats", StatsServlet.class.getName());
+servletHandler.addServlet("XPI", "/extension/golimojo.xpi", XpiServlet.class.getName());
         context.addHandler(servletHandler);
 
         context.setResourceBase("web-root");

@@ -80,6 +80,7 @@ public class GetPageDataAjaxServlet extends GolimojoServlet
                 generatePageTitleXml(out, pageTitleList);
                 long elapsedTimeMs = System.currentTimeMillis() - startTimeMs;
                 System.out.printf("### %s: elapsed time: %1.2f\n", this.getClass().getName(), (0.001 * elapsedTimeMs));
+                System.out.printf("... %d\n", pageTitleList.size());
             }
         }
         finally

@@ -1,4 +1,4 @@
-<html>
+<html golimojo-page-type="tablog">
     <head>
         <title>Tab Log</title>
     </head>
@@ -29,6 +29,7 @@
             this.messageTemplate.id = "";
             
             this.messageBox = document.getElementById("message-box");
+            this.messageCount = 0;
         }
 
         GolimojoTabLog.prototype.createMessageElement = function (msgHtml)
@@ -43,6 +44,7 @@
             var messageElem = this.createMessageElement(msgHtml);
             this.messageBox.appendChild(messageElem);
             messageElem.scrollIntoView(false);
+            document.title = "Tab Log: " + (++this.messageCount) + " messages";
         }
 
         GolimojoTabLog.prototype.logMessage = function (msgText)
@@ -58,8 +60,6 @@
         {
             window.golimojoTabLog = new GolimojoTabLog();
         }
-    
-
 
     </script>
     

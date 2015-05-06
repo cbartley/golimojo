@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://golimojo/locale/golimojo.dtd">
+<overlay id="golimojoSidebarOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  
+  <menupopup id="viewSidebarMenu">
+    <menuitem key="key_openGolimojoSidebar" observes="viewGolimojoSidebar"  />
+  </menupopup>
+  
+  <keyset id="mainKeyset">
+    <key id="key_openGolimojoSidebar" command="viewGolimojoSidebar"
+         key="&openGolimojoSidebar.commandkey;" 
+         modifiers="&openGolimojoSidebar.modifierskey;" />
+  </keyset>
+  
+  <broadcasterset id="mainBroadcasterSet"> 
+    <broadcaster id="viewGolimojoSidebar" 
+                 label="&golimojo.title;"
+                 autoCheck="false"
+                 type="checkbox"
+                 group="sidebar"
+                 sidebarurl="chrome://golimojo/content/golimojo-sidebar.xul"
+                 sidebartitle="&golimojo.title;"
+                 oncommand="toggleSidebar('viewGolimojoSidebar');" />
+  </broadcasterset>
+
+  <script src="chrome://golimojo/content/config.js"/>
+  <script src="chrome://golimojo/content/golimojo.js"/>
+  <script src="chrome://golimojo/content/linker.js"/>  
+  
+</overlay>
