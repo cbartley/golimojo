@@ -157,9 +157,6 @@ TextNodeIterator.prototype.nextTextNode = function (node)
 
 TextNodeIterator.prototype.nextNode = function (node)
 {
-
-
-
     // If a node has children then its first child is the "next" node
     // for an in-order traversal, which is what we're doing here.
     // However, we treat some kinds of nodes as leaves, even if the
@@ -192,46 +189,90 @@ TextNodeIterator.prototype.nextNode = function (node)
 
 function TextNodeLinker(pageTitleList)
 {
-    this.phraseFinder = new PhraseFinder(pageTitleList);
+    this.pageTitleStore = new PageTitleStore(pageTitleList);
 }
 
 // ---------------------------------------- TextNodeLinker linkTextNode
 
 TextNodeLinker.prototype.linkTextNode = function (textNode)
 {
-    var tokenList = this.phraseFinder.tokenize(textNode.textContent);
-    nodeList = this.createNodeListFromTokenList(tokenList);
+    var tokenList = this.pageTitleStore.parseTextIntoTokens(textNode.textContent);
+    var cutList = this.findPageTitleCuts(tokenList);
+    var nodeList = this.createNodesFromCutList(textNode.ownerDocument, tokenList, cutList);
     this.replaceNodeWithNodes(textNode, nodeList);
 }
 
-// ---------------------------------------- TextNodeLinker createNodeListFromTokenList
+// ---------------------------------------- TextNodeLinker findPageTitleCuts
+// Find the page titles in the token list, then return a cut list indicating
+// which parts are page titles and which aren't.  The cuts in the cut list
+// are in order, they completely cover the token list, and they don't overlap.
+// However, some cuts may be degenerate "empty" cuts.  If a cut matches a
+// page title, that page title is stored in the cut object's "data" member.
+TextNodeLinker.prototype.findPageTitleCuts = function (tokenList)
+{
+    var index = 0;
+    var cutList = [];
+    while (index < tokenList.length)
+    {
+        var i = 0; 
+        var matchPair = null;
+        for (i = index; i < tokenList.length; i++)
+        {
+            matchPair = this.pageTitleStore.matchTokensAt(tokenList, i);
+            if (matchPair != null) break;
+        }
+        
+        cutList.push(new TokenListCut(index, i, null));
+        
+        var matchCount = 0;
+        if (matchPair != null)
+        {
+            var pageTitle = matchPair[0];
+            matchCount = matchPair[1];
+            cutList.push(new TokenListCut(i, i + matchCount, pageTitle));
+        }
+        
+        index = i + matchCount;
+    }
+    
+    return cutList;
+}
 
-TextNodeLinker.prototype.createNodeListFromTokenList = function (tokenList)
+// ---------------------------------------- TextNodeLinker createNodesFromCutList
+
+TextNodeLinker.prototype.createNodesFromCutList = function (ownerDocument, tokenList, cutList)
 {
     var nodeList = [];
-    for (var i = 0; i < tokenList.length; i++)
+    for (var i = 0; i < cutList.length; i++)
     {
-        var token = tokenList[i];
-        var node = this.createNodeFromToken(token);
-        nodeList.push(node);        
+        var cut = cutList[i];
+        var node = this.createNodeFromCut(ownerDocument, tokenList, cut);
+        if (node != null) 
+        {
+            nodeList.push(node);
+        }
     }
     return nodeList;
 }
 
-// ---------------------------------------- TextNodeLinker createNodeFromToken
+// ---------------------------------------- TextNodeLinker createNodeFromCut
 
-TextNodeLinker.prototype.createNodeFromToken = function (token)
+TextNodeLinker.prototype.createNodeFromCut = function (ownerDocument, tokenList, cut)
 {
-    // It may be just a text run.
-    var textNode = document.createTextNode(token.text);
-    if (token instanceof Text) return textNode;
+    // Create a text node for the cut, and if there is no
+    // associated page title, just return the text node.
+    if (cut.isEmpty()) return null;
+    var textNode = cut.createTextNode(ownerDocument, tokenList);
+    if (cut.data == null) return textNode;
 
-    // Or it may be a linkable page title.
+    // If there is a page title, wrap an anchor around the
+    // text node and return the anchor.
+    var pageTitle = cut.data;
     var anchor = document.createElement("A");
     anchor.className = "golimojo-wikipedia-link";
     anchor.appendChild(textNode);
-    anchor.href = this.createWikipediaLink(token.phrase);
-    return anchor;
+    anchor.href = this.createWikipediaLink(pageTitle);
+    return anchor;      
 }
 
 // ---------------------------------------- TextNodeLinker replaceNodeWithNodes
@@ -256,67 +297,196 @@ TextNodeLinker.prototype.createWikipediaLink = function (pageTitle)
 }
 
 // ------------------------------------------------------------
-// -------------------- class PhraseFinder --------------------
+// -------------------- class TokenListCut --------------------
 // ------------------------------------------------------------
 
-// ---------------------------------------- PhraseFinder constructor
+// ---------------------------------------- TokenListCut constructor
 
-function PhraseFinder(phraseList)
+function TokenListCut(startIndex, endIndex, data)
 {
-    var tokenTypeList = this.createTokenTypeList(phraseList);
-    this.matcher = new Matcher(tokenTypeList);
+    this.startIndex = startIndex; 
+    this.endIndex = endIndex;
+    this.data = data;
 }
 
-// ---------------------------------------- PhraseFinder tokenize
+// ---------------------------------------- TokenListCut isEmpty
 
-PhraseFinder.prototype.tokenize = function (text)
+TokenListCut.prototype.isEmpty = function ()
 {
-    return this.matcher.tokenize(text);
+    if (this.startIndex == this.endIndex) return true;
+    return false;
 }
 
-// ---------------------------------------- PhraseFinder createTokenTypeList
+// ---------------------------------------- TokenListCut createTextNode
 
-PhraseFinder.prototype.createTokenTypeList = function (phraseList)
+TokenListCut.prototype.createTextNode = function (ownerDocument, tokenList)
+{   
+    var cutTokenList = tokenList.slice(this.startIndex, this.endIndex);
+    var cutText = cutTokenList.join("");
+    var textNode = ownerDocument.createTextNode(cutText);
+    return textNode;
+}
+
+// ------------------------------------------------------------
+// ------------------- class PageTitleStore -------------------
+// ------------------------------------------------------------
+
+// ---------------------------------------- PageTitleStore constructor
+
+function PageTitleStore(pageTitleList)
 {
-    var tokenTypeList = [];
-    for (var i = 0; i < phraseList.length; i++)
+    this.matcher = new Matcher([WhitespaceFragment, NumbersFragment, LettersFragment], SymbolsFragment);
+    this.pageTitlePrefixBag = {};
+    this.pageTitleBag = {};
+    this.storePageTitleList(pageTitleList);
+}
+
+// ---------------------------------------- PageTitleStore storePageTitleList
+
+PageTitleStore.prototype.storePageTitleList = function (pageTitleList)
+{
+    for (var i = 0; i < pageTitleList.length; i++)
     {
-        var phrase = phraseList[i];
-        var tokenType = this.createTokenType(phrase);
-        tokenTypeList.push(tokenType);
+        var pageTitle = pageTitleList[i];
+        this.storePageTitle(pageTitle);
     }
-    return tokenTypeList;
 }
 
-// ---------------------------------------- PhraseFinder createTokenType
+// ---------------------------------------- PageTitleStore storePageTitle
 
-PhraseFinder.prototype.createTokenType = function (phrase)
+PageTitleStore.prototype.storePageTitle = function (pageTitle)
 {
-    var phrasePattern = this.createPhrasePattern(phrase);
-    
-    function constructor(text)
+    // Store the prefixes.
+    var prefix = "";
+    var fragmentList = this.matcher.tokenize(pageTitle);
+    for (var i = 0; i < fragmentList.length; i++)
     {
-        this.phrase = phrase;
-        this.text = text;
+        var fragment = fragmentList[i];
+        prefix = prefix + fragment.toString();
+        this.pageTitlePrefixBag[prefix] = "";
     }
     
-    return Matcher.prototype.createTokenType(constructor, phrasePattern);
-
+    // Store the page title itself.
+    var pageTitleNormalized = prefix;
+    this.pageTitleBag[pageTitleNormalized] = pageTitle;
 }
 
-// ---------------------------------------- PhraseFinder createPhrasePattern
+// ---------------------------------------- PageTitleStore matchTokensAt
 
-PhraseFinder.prototype.rxPass1AddBrackets = /([^A-Za-z0-9_])/g;
-PhraseFinder.prototype.rxPass2AddBackslashes = /\[([\[\]\\])\]/g;
-PhraseFinder.prototype.rxPass3Whitespace = /(\[[ \t\r\n]\])+/g;
-
-PhraseFinder.prototype.createPhrasePattern = function (phrase)
+PageTitleStore.prototype.matchTokensAt = function (tokenList, index)
 {
-    pattern = phrase;
-    pattern = pattern.replace(this.rxPass1AddBrackets, "[$1]");
-    pattern = pattern.replace(this.rxPass2AddBackslashes, "\\$1");
-    pattern = pattern.replace(this.rxPass3Whitespace, "[ \\t\\r\\n]+");
-    return pattern;
+    var phraseText = "";
+    var longestMatchPair = null;
+    for (var i = index; i < tokenList.length; i++)
+    {
+        var token = tokenList[i];
+        phraseText = phraseText + token.toCanonicalString();
+        if (this.pageTitlePrefixBag[phraseText] == null) break;
+        var pageTitle = this.pageTitleBag[phraseText];
+        if (pageTitle != null)
+        {
+            var matchCount = i + 1 - index;
+            longestMatchPair = [pageTitle, i + 1 - index];
+        }
+    }
+    return longestMatchPair;
+}
+
+// ---------------------------------------- PageTitleStore parseTextIntoTokens
+
+PageTitleStore.prototype.parseTextIntoTokens = function (text)
+{
+    var tokenList = this.matcher.tokenize(text);
+    return tokenList;
+}
+
+// ------------------------------------------------------------
+// ---------------- text fragment/token classes ---------------
+// ------------------------------------------------------------
+
+// ---------------------------------------- Subclass
+// "Subclass(Derived, Base)" is roughly analogous to the idiomatic
+// "Derived.prototype = new Base(...)", except that the constructor
+// property is properly fixed up and no dummy Base instance is
+// needed for the prototype.
+function Subclass(derivedConstructor, baseConstructor)
+{
+    protoConstructor.prototype = baseConstructor.prototype;
+    protoConstructor.prototype.constructor = baseConstructor;
+    function protoConstructor()
+    {
+    }
+    
+    derivedConstructor.prototype = new protoConstructor();
+    derivedConstructor.prototype.constructor = derivedConstructor;
+}
+
+// ---------------------------------------- class TextFragment
+
+TextFragment.rpToken = null;
+
+function TextFragment(text)
+{
+    this.text = text;
+}
+
+TextFragment.prototype.toString = function ()
+{
+    return this.text;
+}
+
+TextFragment.prototype.toCanonicalString = function ()
+{
+    return this.toString();
+}
+
+// ---------------------------------------- class WhitespaceFragment
+
+Subclass(WhitespaceFragment, TextFragment);
+
+WhitespaceFragment.rpToken = "[ \\t\\r\\n]+";
+
+function WhitespaceFragment(text)
+{
+    this.text = text;
+}
+
+WhitespaceFragment.prototype.toCanonicalString = function ()
+{
+    return " ";
+}
+
+// ---------------------------------------- class NumbersFragment
+
+Subclass(NumbersFragment, TextFragment);
+
+NumbersFragment.rpToken = "[0-9]+";
+
+function NumbersFragment(text)
+{
+    this.text = text;
+}
+
+// ---------------------------------------- class LettersFragment
+
+Subclass(LettersFragment, TextFragment);
+
+LettersFragment.rpToken = "[A-Za-z]+";
+
+function LettersFragment(text)
+{
+    this.text = text;
+}
+
+// ---------------------------------------- class SymbolsFragment
+
+Subclass(SymbolsFragment, TextFragment);
+
+SymbolsFragment.rpToken = null;
+
+function SymbolsFragment(text)
+{
+    this.text = text;
 }
 
 // ------------------------------------------------------------
@@ -325,7 +495,7 @@ PhraseFinder.prototype.createPhrasePattern = function (phrase)
 
 // ---------------------------------------- Matcher constructor
 
-function Matcher(tokenTypeList)
+function Matcher(tokenTypeList, defaultTokenType)
 {
     // Save a copy of the token type list.
     this.tokenTypeList = tokenTypeList.slice();
@@ -362,7 +532,7 @@ function Matcher(tokenTypeList)
     // Non-token runs can be represented by Text nodes so put a mapping in from 
     // master keys (representing non-token runs) to Text nodes.
     Test.assert(this.tokenTypeList[this.masterKey.length - 1] == null, "The master key must be big enough!");
-    this.tokenTypeList[this.masterKey.length - 1] = Text;
+    this.tokenTypeList[this.masterKey.length - 1] = defaultTokenType;
 }
 
 // ---------------------------------------- Matcher tokenize
