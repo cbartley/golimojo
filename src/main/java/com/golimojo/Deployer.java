@@ -40,8 +40,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Deployer extends ShellTools
 {
@@ -93,25 +91,19 @@ public class Deployer extends ShellTools
         final String DEPLOYMENT_FOLDER_PATH = DEPLOYMENT_PARENT_FOLDER_PATH + "/service";
         final String DEPLOYMENT_JAR_FOLDER_PATH = DEPLOYMENT_FOLDER_PATH + "/lib";
 
-        String pathToConfigFile = DEPLOYMENT_FOLDER_PATH + "/wrapper.conf";
-        String pathToWrapperExe = DEPLOYMENT_FOLDER_PATH + "/wrapper.exe";
         String pathToPlistFile = DEPLOYMENT_FOLDER_PATH + "/golimojo.plist";
 
         // Get our full classpath.
         String classPath = System.getProperty("java.class.path");
         
         // If the service exists, make sure it's stopped and remove it.
-        if (onWindows())
-        {
-            if (new File(pathToWrapperExe).exists() && system(pathToWrapperExe + " -qs " + pathToConfigFile) != 0)
-            {
-                system("net stop golimojo");
-                system(pathToWrapperExe + " -r " + pathToConfigFile);
-            }
-        }
-        else if (onOSX())
+        if (onOSX())
         {
             system("launchctl unload {pathToPlistFile}", sub("pathToPlistFile", pathToPlistFile));
+        }
+        else
+        {
+            System.err.printf("*** Don't know how to start and stop the service on this system! ***\n");
         }
 
         // Build the deployment folder structure.
@@ -124,21 +116,19 @@ public class Deployer extends ShellTools
         // Deploy the jar files and configure the config file.
         List<String> pathToDeployedJarFileList = deployJarFiles(classPath, DEPLOYMENT_JAR_FOLDER_PATH);
 
-        editServiceConfigFile(pathToConfigFile, pathToDeployedJarFileList);
         editPlistFile(pathToPlistFile, DEPLOYMENT_FOLDER_PATH, pathToDeployedJarFileList);
         
         // Write out the properties file.
         com.golimojo.Configuration.writeConfiguration(DEPLOYMENT_FOLDER_PATH + "/golimojo.properties");
 
         // Install and start the new service.
-        if (onWindows())
-        {
-            system(pathToWrapperExe + " -i " + pathToConfigFile);
-            system("net start golimojo");
-        }
-        else if (onOSX()) 
+        if (onOSX()) 
         {
             system("launchctl load {pathToPlistFile}", sub("pathToPlistFile", pathToPlistFile));
+        }
+        else
+        {
+            System.err.printf("*** Don't know how to start and stop the service on this system! ***\n");
         }
     }
 
@@ -216,52 +206,6 @@ public class Deployer extends ShellTools
             }
         }
         return null;
-    }
-    
-    // ---------------------------------------- Deployer editServiceConfigFile
-    
-    private static void editServiceConfigFile(String pathToConfigFile, List<String> pathToDeployedJarFileList)
-    {
-        List<String> lineList = readLines(pathToConfigFile);
-
-        // Figure out where to insert our classpath additions and also figure
-        // out which classpath index to start with.
-        int lastClassPathLineIndex = -1;
-        int lastClassPathIndex = -1;
-        for (int i = 0; i < lineList.size(); i++)
-        {
-            String line = lineList.get(i);
-            Pattern pattern = Pattern.compile("^wrapper\\.java\\.classpath\\.([0-9]+).*");
-            Matcher matcher = pattern.matcher(line);
-            if (matcher.matches())
-            {
-                lastClassPathLineIndex = i;
-                String digits = matcher.group(1);
-                lastClassPathIndex = Integer.parseInt(digits);
-            }
-        }
-
-        // Build the list of new lines to insert.
-        List<String> insertLineList = new ArrayList<String>();
-        for (int i = 0; i < pathToDeployedJarFileList.size(); i++)
-        {
-            String pathToDeployedJarFile = pathToDeployedJarFileList.get(i);
-            String line = "wrapper.java.classpath.#index#=#pathToDeployedJarFileList#"
-                .replace("#index#", "" + (i + 1 + lastClassPathIndex))
-                .replace("#pathToDeployedJarFileList#", pathToDeployedJarFile)
-            ;
-            insertLineList.add(line);
-        }
-        
-        List<String> lineListBefore = lineList.subList(0, lastClassPathLineIndex + 1);
-        List<String> lineListAfter = lineList.subList(lastClassPathLineIndex + 1, lineList.size());
-        
-        List<String> newLineList = new ArrayList<String>();
-        newLineList.addAll(lineListBefore);
-        newLineList.addAll(insertLineList);
-        newLineList.addAll(lineListAfter);
-        
-        writeLines(pathToConfigFile, newLineList);
     }
     
     // ---------------------------------------- Deployer editPlistFile
