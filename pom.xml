@@ -53,6 +53,7 @@
                 <artifactId>maven-assembly-plugin</artifactId>
 
                 <configuration>
+                    <finalName>golimojo</finalName>
                     <descriptors>
                         <descriptor>assembly.xml</descriptor>
                     </descriptors>
