@@ -4,16 +4,14 @@
 
     function createProxyUrl(url)
     {
-        if (!url.match(/^http:\/\//))
+        if (!/^https?:\/\//.test(url))
         {
             url = "http://" + url;
         }
-
-        var strippedUrl = url.replace(/^http:\/\//, "");
-        var escapedStrippedUrl = escape(strippedUrl);
+        var escapedUrl = escape(url);
         var proxyServletUrl = "http://{{serverName}}:{{serverPort}}/proxy.html?";
         if (url.indexOf(proxyServletUrl) >= 0) return url;      // just say no to nested proxies
-        var proxyUrl = proxyServletUrl + escapedStrippedUrl;
+        var proxyUrl = proxyServletUrl + escapedUrl;
         return proxyUrl;
     }
 

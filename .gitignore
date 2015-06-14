@@ -2,6 +2,8 @@ target/
 temp/*
 !temp/.gitignore
 jetty.log
+golimojo.iml
+.idea/
 
 *.jar
 *.xpi

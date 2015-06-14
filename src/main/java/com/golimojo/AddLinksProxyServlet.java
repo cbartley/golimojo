@@ -68,9 +68,17 @@ public class AddLinksProxyServlet extends GolimojoServlet
         int serverPort = request.getServerPort();
         String proxyPageUrl = "http://" + serverName + ":" + serverPort + "/proxy.html";
 
+        String urlArg;
         String pathInfo = URLDecoder.decode(request.getQueryString(), "UTF-8");
-        String urlArg = "http://"+ pathInfo;
-        
+        if (pathInfo.startsWith("http://") || pathInfo.startsWith("https://"))
+        {
+            urlArg = pathInfo;
+        }
+        else
+        {
+            urlArg = "http://"+ pathInfo;
+        }
+
         List<QdmlFragment> fragmentList = HttpReader.readAndParseHttpFile(urlArg);
 
         PrintWriter out = response.getWriter();
